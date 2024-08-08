@@ -42,6 +42,8 @@ export class ClientGame {
     private ticksThisTurn = 0
     private currTurn = 0
 
+    private spawned = false
+
     constructor(
         private playerName: string,
         private id: ClientID,
@@ -94,7 +96,7 @@ export class ClientGame {
 
         this.renderer.initialize()
         this.input.initialize()
-        this.executor.spawnBots(500)
+        // this.executor.spawnBots(500)
 
 
         setInterval(() => this.tick(), 10);
@@ -130,12 +132,16 @@ export class ClientGame {
 
     private inputEvent(event: MouseDownEvent) {
         const cell = this.renderer.screenToWorldCoordinates(event.x, event.y)
-        const tile = this.gs.tile(cell)
-        if (!tile.hasOwner() && !this.hasSpawned()) {
-            this.sendSpawnIntent(cell)
+        if (!this.gs.isOnMap(cell)) {
             return
         }
-        if (!this.hasSpawned()) {
+        const tile = this.gs.tile(cell)
+        if (!tile.hasOwner() && !this.spawned && this.myPlayer == null) {
+            this.sendSpawnIntent(cell)
+            this.spawned = true
+            return
+        }
+        if (!this.spawned || this.myPlayer == null) {
             return
         }
 
@@ -151,10 +157,6 @@ export class ClientGame {
             }
         }
 
-    }
-
-    private hasSpawned(): boolean {
-        return this.myPlayer != null
     }
 
     private sendSpawnIntent(cell: Cell) {

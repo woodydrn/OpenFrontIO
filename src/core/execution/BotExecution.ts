@@ -3,7 +3,6 @@ import {PseudoRandom} from "../PseudoRandom"
 import {AttackExecution} from "./AttackExecution";
 
 export class BotExecution implements Execution {
-    private ticks = 0
 
     private active = true
     private random: PseudoRandom;
@@ -13,7 +12,7 @@ export class BotExecution implements Execution {
     constructor(private bot: MutablePlayer) {
 
         this.random = new PseudoRandom(bot.id())
-        this.attackRate = this.random.nextInt(100, 500)
+        this.attackRate = this.random.nextInt(50, 200)
     }
 
     init(gs: MutableGame, ticks: number) {
@@ -26,9 +25,8 @@ export class BotExecution implements Execution {
             return
         }
 
-        this.ticks++
 
-        if (this.ticks % this.attackRate == 0) {
+        if (ticks % this.attackRate == 0) {
             const ns = this.bot.neighbors()
             if (ns.length == 0) {
                 return

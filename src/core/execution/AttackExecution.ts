@@ -11,6 +11,8 @@ export class AttackExecution implements Execution {
     private _owner: MutablePlayer
     private target: MutablePlayer | TerraNullius
 
+    private mg: MutableGame
+
     constructor(
         private troops: number,
         private _ownerID: PlayerID,
@@ -23,21 +25,32 @@ export class AttackExecution implements Execution {
         this.target = this.targetID == null ? gs.terraNullius() : gs.player(this.targetID)
         this.troops = Math.min(this._owner.troops(), this.troops)
         this._owner.setTroops(this._owner.troops() - this.troops)
+        this.mg = gs
     }
 
     tick(ticks: number) {
         if (!this.active) {
             return
         }
+        // const t = this.mg.tile(new Cell(0, 0))
+        // this.toConquer.add(new TileContainer(t, 4))
+        // this.toConquer.add(new TileContainer(t, 1))
+        // this.toConquer.add(new TileContainer(t, 2))
+        // this.toConquer.add(new TileContainer(t, 3))
 
-        let numTilesPerTick = this._owner.borderTilesWith(this.target).size / 2
+        // while (this.toConquer.size() > 0) {
+        //     console.log(`!!! got ${this.toConquer.poll().priority}`)
+        // }
+
+
+        let numTilesPerTick = this._owner.borderTilesWith(this.target).size
         while (numTilesPerTick > 0) {
             if (this.troops < 1) {
                 this.active = false
                 return
             }
 
-            if (this.toConquer.size() == 0) {
+            if (this.toConquer.size() < this._owner.borderTilesWith(this.target).size / 1.5) {
                 this.calculateToConquer()
             }
             if (this.toConquer.size() == 0) {
@@ -46,7 +59,8 @@ export class AttackExecution implements Execution {
                 return
             }
 
-            const tileToConquer: Tile = this.toConquer.poll().tile
+            const toConquerContainer = this.toConquer.poll()
+            const tileToConquer: Tile = toConquerContainer.tile
             const onBorder = tileToConquer.neighbors().filter(t => t.owner() == this._owner).length > 0
             if (tileToConquer.owner() != this.target || !onBorder) {
                 continue
@@ -77,21 +91,42 @@ export class AttackExecution implements Execution {
         // }
 
         // tileByDist.forEach(t => console.log(`tile dist: ${manhattanDist(t.cell(), closestTile.cell())}`))
-        let tileByDist = []
-        if (this.targetCell == null) {
-            tileByDist = Array.from(enemyBorder).slice().sort((a, b) => this.random.next() - .5)
-        } else {
-            tileByDist = Array.from(enemyBorder).slice().sort((a, b) => manhattanDist(a.cell(), this.targetCell) - manhattanDist(b.cell(), this.targetCell))
+        // let tileByDist = []
+        // if (this.targetCell == null) {
+        //     tileByDist = Array.from(enemyBorder).slice().sort((a, b) => this.random.next() - .5)
+        // } else {
+        // }
+        // for (let i = 0; i < Math.min(enemyBorder.size / 2, tileByDist.length); i++) {
+        //     const enemyTile = tileByDist[i]
+        //     const numOwnedByMe = enemyTile.neighbors()
+        //         .filter(t => t.terrain() == TerrainTypes.Land)
+        //         .filter(t => t.owner() == this._owner)
+        //         .length
+        //     // this.toConquer.add(new TileContainer(enemyTile, numOwnedByMe + (this.random.next() % 5) + (-5 * i / tileByDist.length)))
+        //     const r = this.random.next() % 4
+        //     this.toConquer.add(new TileContainer(enemyTile, r + numOwnedByMe * 1000))
+        // }
+        this.toConquer.clear()
+
+        let tiles = Array.from(enemyBorder)
+
+        if (this.targetCell != null) {
+            tiles = tiles.slice().sort((a, b) => manhattanDist(a.cell(), this.targetCell) - manhattanDist(b.cell(), this.targetCell))
         }
-        for (let i = 0; i < Math.min(enemyBorder.size / 2, tileByDist.length); i++) {
-            const enemyTile = tileByDist[i]
-            const numOwnedByMe = enemyTile.neighbors()
+
+
+        for (let i = 0; i < tiles.length; i++) {
+            const numOwnedByMe = tiles[i].neighbors()
                 .filter(t => t.terrain() == TerrainTypes.Land)
                 .filter(t => t.owner() == this._owner)
                 .length
-            // this.toConquer.add(new TileContainer(enemyTile, numOwnedByMe + (this.random.next() % 5) + (-5 * i / tileByDist.length)))
-            const r = this.random.next() % 4
-            this.toConquer.add(new TileContainer(enemyTile, r + numOwnedByMe * 1000))
+
+            let distModifer = 0
+            if (this.targetCell != null) {
+                distModifer = i / tiles.length * 2
+            }
+            this.toConquer.add(new TileContainer(tiles[i], distModifer - numOwnedByMe + this.random.nextInt(0, 2)))
+            // this.toConquer.add(new TileContainer(tiles[i], i))
         }
 
     }

@@ -1,7 +1,8 @@
-* fix conquer expansion
+* fix conquer expansion DONE
+* perf improvements on graphics (only draw images to canvas on ticks)
+* double join lobby bug
 * improve front page
 * make boats larger
-* perf improvements on graphics (only draw images to canvas on ticks)
 * better troop addition logic
 * maybe cache neigbors?
 * have boats not get close to shore
