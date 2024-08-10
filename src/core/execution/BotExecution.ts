@@ -35,7 +35,7 @@ export class BotExecution implements Execution {
             const toAttack = ns[this.random.nextInt(0, ns.length)]
 
             this.gs.addExecution(new AttackExecution(
-                this.bot.troops() / 5,
+                this.bot.troops() / 15,
                 this.bot.id(),
                 toAttack.isPlayer() ? toAttack.id() : null,
                 null

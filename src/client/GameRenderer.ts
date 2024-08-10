@@ -192,8 +192,6 @@ export class GameRenderer {
 	}
 
 	paintTile(tile: Tile) {
-		// const index = (tile.cell().y * this.gs.width()) + tile.cell().x
-		// color.toRGB().writeToBuffer(this.imageData.data, index * 4)
 		let terrainColor = this.theme.terrainColor(tile.terrain())
 		this.paintCell(tile.cell(), terrainColor)
 		const owner = tile.owner()

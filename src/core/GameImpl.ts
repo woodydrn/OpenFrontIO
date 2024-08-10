@@ -69,6 +69,9 @@ export class BoatImpl implements MutableBoat {
 
 class Border {
     borderWith: Map<Player | TerraNullius, Set<Tile>> = new Map()
+    public _borderTiles: Map<CellString, Tile> = new Map()
+
+    constructor(private gs: GameImpl, private player: Player | TerraNullius) { }
 
     sharesBorderWith(other: Player | TerraNullius): boolean {
         if (!this.borderWith.has(other)) {
@@ -76,17 +79,66 @@ class Border {
         }
         return this.borderWith.get(other).size > 0
     }
+
+    addCalcBorderWithTile(tile: Tile) {
+        this.gs.neighbors(tile.cell()).map(c => this.gs.tile(c)).forEach(t => {
+            this.insertBorderWithTile(tile, t.owner())
+        })
+    }
+
+    removeCalcBorderWithTile(tile: Tile, oldNeighbor: Player | TerraNullius) {
+        const length = this.gs.neighbors(tile.cell()).map(c => this.gs.tile(c)).filter(t => t.owner() == oldNeighbor).length
+        if (length == 0) {
+            this.deleteBorderWithTile(tile, oldNeighbor)
+        }
+    }
+
+    insertBorderWithTile(tile: Tile, player: Player | TerraNullius) {
+        if (!this.borderWith.has(player)) {
+            this.borderWith.set(player, new Set())
+        }
+        if (player != this.player && tile.terrain() == TerrainTypes.Land) {
+            this.borderWith.get(player).add(tile)
+        }
+    }
+
+    deleteBorderWithTile(tile: Tile, player: Player | TerraNullius) {
+        if (!this.borderWith.has(player)) {
+            this.borderWith.set(player, new Set())
+        }
+        this.borderWith.get(player).delete(tile)
+    }
+    updateBorderWithTile(tile: Tile, oldOwner: Player | TerraNullius, newOwner: Player | TerraNullius) {
+        if (!this.borderWith.has(oldOwner)) {
+            this.borderWith.set(oldOwner, new Set())
+        }
+        if (!this.borderWith.has(newOwner)) {
+            this.borderWith.set(newOwner, new Set())
+        }
+
+        // Delete old neighbors
+        if (this.gs.tileNeighbors(tile).filter(t => t.owner() == newOwner).length == 0) {
+            this.borderWith.get(oldOwner).delete(tile)
+        }
+    }
+
+    borderTiles(): ReadonlySet<Tile> {
+        return new Set(this._borderTiles.values())
+    }
+    borderTilesWith(other: Player | TerraNullius): ReadonlySet<Tile> {
+        return this.borderWith.get(other) || new Set();
+    }
 }
 
 export class PlayerImpl implements MutablePlayer {
 
     public _boats: BoatImpl[] = []
-
-    public _borderTiles: Map<CellString, Tile> = new Map()
-    _borderWith: Map<Player | TerraNullius, Set<Tile>> = new Map()
     public tiles: Map<CellString, Tile> = new Map<CellString, Tile>()
+    public border: Border
 
-    constructor(private gs: GameImpl, public readonly _id: PlayerID, public readonly playerInfo: PlayerInfo, private _troops) { }
+    constructor(private gs: GameImpl, public readonly _id: PlayerID, public readonly playerInfo: PlayerInfo, private _troops) {
+        this.border = new Border(gs, this)
+    }
 
     addBoat(troops: number, cell: Cell, target: Player | TerraNullius): BoatImpl {
         const b = new BoatImpl(this.gs, cell, troops, this, target as PlayerImpl | TerraNulliusImpl)
@@ -98,22 +150,19 @@ export class PlayerImpl implements MutablePlayer {
         return this._boats
     }
     sharesBorderWith(other: Player | TerraNullius): boolean {
-        if (!this._borderWith.has(other)) {
-            return false
-        }
-        return this._borderWith.get(other).size > 0
+        return this.border.sharesBorderWith(other)
     }
     numTilesOwned(): number {
         return this.tiles.size
     }
 
     borderTiles(): ReadonlySet<Tile> {
-        return new Set(this._borderTiles.values())
+        return this.border.borderTiles()
     }
 
     neighbors(): (MutablePlayer | TerraNullius)[] {
         const ns: (MutablePlayer | TerraNullius)[] = []
-        for (const [player, tiles] of this._borderWith) {
+        for (const [player, tiles] of this.border.borderWith) {
             if (tiles.size > 0) {
                 ns.push(player as MutablePlayer)
             }
@@ -140,60 +189,19 @@ export class PlayerImpl implements MutablePlayer {
     executions(): Execution[] {
         return this.gs.executions().filter(exec => exec.owner().id() == this.id())
     }
-
     borderTilesWith(other: Player | TerraNullius): ReadonlySet<Tile> {
-        return this._borderWith.get(other) || new Set();
-    }
-
-    updateBorderWithTile(tile: Tile, oldOwner: Player | TerraNullius, newOwner: Player | TerraNullius) {
-        if (!this._borderWith.has(oldOwner)) {
-            this._borderWith.set(oldOwner, new Set())
-        }
-        if (!this._borderWith.has(newOwner)) {
-            this._borderWith.set(newOwner, new Set())
-        }
-
-        // Delete old neighbors
-        if (this.gs.tileNeighbors(tile).filter(t => t.owner() == newOwner).length == 0) {
-            this._borderWith.get(oldOwner).delete(tile)
-        }
-    }
-
-    addCalcBorderWithTile(tile: Tile) {
-        this.gs.neighbors(tile.cell()).map(c => this.gs.tile(c)).forEach(t => {
-            this.insertBorderWithTile(tile, t.owner())
-        })
-    }
-
-    removeCalcBorderWithTile(tile: Tile, oldNeighbor: Player | TerraNullius) {
-        const length = this.gs.neighbors(tile.cell()).map(c => this.gs.tile(c)).filter(t => t.owner() == oldNeighbor).length
-        if (length == 0) {
-            this.deleteBorderWithTile(tile, oldNeighbor)
-        }
-    }
-
-    insertBorderWithTile(tile: Tile, player: Player | TerraNullius) {
-        if (!this._borderWith.has(player)) {
-            this._borderWith.set(player, new Set())
-        }
-        if (player != this) {
-            this._borderWith.get(player).add(tile)
-        }
-    }
-
-    deleteBorderWithTile(tile: Tile, player: Player | TerraNullius) {
-        if (!this._borderWith.has(player)) {
-            this._borderWith.set(player, new Set())
-        }
-        this._borderWith.get(player).delete(tile)
+        return this.border.borderTilesWith(other)
     }
 }
 
 class TerraNulliusImpl implements TerraNullius {
-    _borderWith: Map<Player | TerraNullius, Set<Tile>> = new Map()
     public tiles: Map<Cell, Tile> = new Map<Cell, Tile>()
+    public border: Border
 
-    constructor(private gs: MutableGame) { }
+
+    constructor(private gs: GameImpl) {
+        this.border = new Border(gs, this)
+    }
 
     id(): PlayerID {
         return 0
@@ -204,19 +212,11 @@ class TerraNulliusImpl implements TerraNullius {
     isPlayer(): false {return false as const}
 
     borderTilesWith(other: Player): ReadonlySet<Tile> {
-        const border = new Set<Tile>()
-        for (const enemyBorder of other.borderTilesWith(this)) {
-            for (const neighbor of enemyBorder.neighbors()) {
-                if (neighbor.terrain() == TerrainTypes.Land && neighbor.owner() == this) {
-                    border.add(neighbor)
-                }
-            }
-        }
-        return border
+        return this.border.borderTilesWith(other)
     }
 
     sharesBorderWith(other: Player): boolean {
-        return other.sharesBorderWith(this)
+        return this.border.sharesBorderWith(other)
     }
 }
 
@@ -349,12 +349,13 @@ export class GameImpl implements MutableGame {
 
     neighbors(cell: Cell): Cell[] {
         this.assertIsOnMap(cell)
-        return [
+        const ns = [
             new Cell(cell.x + 1, cell.y),
             new Cell(cell.x - 1, cell.y),
             new Cell(cell.x, cell.y + 1),
             new Cell(cell.x, cell.y - 1)
         ].filter(c => this.isOnMap(c))
+        return ns
     }
 
     tileNeighbors(tile: Tile): Tile[] {
@@ -378,7 +379,7 @@ export class GameImpl implements MutableGame {
         let previousOwner = tile._owner
         if (previousOwner.isPlayer()) {
             previousOwner.tiles.delete(cell.toString())
-            previousOwner._borderTiles.delete(cell.toString())
+            previousOwner.border._borderTiles.delete(cell.toString())
         }
         tile._owner = owner
         owner.tiles.set(cell.toString(), tile)
@@ -393,9 +394,9 @@ export class GameImpl implements MutableGame {
         this.neighbors(cell).forEach(c => cells.push(c))
         cells.map(c => this.tile(c)).filter(c => c.hasOwner()).forEach(t => {
             if (this.isBorder(t)) {
-                (t.owner() as PlayerImpl)._borderTiles.set(t.cell().toString(), t)
+                (t.owner() as PlayerImpl).border._borderTiles.set(t.cell().toString(), t)
             } else {
-                (t.owner() as PlayerImpl)._borderTiles.delete(t.cell().toString())
+                (t.owner() as PlayerImpl).border._borderTiles.delete(t.cell().toString())
             }
         })
     }
@@ -404,19 +405,13 @@ export class GameImpl implements MutableGame {
         const newOwner = tile._owner
         const neighbors = this.neighbors(tile.cell()).map(c => this.tile(c))
 
-        if (newOwner.isPlayer()) {
-            newOwner.addCalcBorderWithTile(tile)
-        }
+        newOwner.border.addCalcBorderWithTile(tile)
 
         neighbors.map(t => (t as TileImpl)).forEach(t => {
             const p = t._owner
-            if (p.isPlayer()) {
-                p.addCalcBorderWithTile(t)
-                p.removeCalcBorderWithTile(t, previousOwner)
-            }
-            if (previousOwner.isPlayer()) {
-                previousOwner.deleteBorderWithTile(tile, p)
-            }
+            p.border.addCalcBorderWithTile(t)
+            p.border.removeCalcBorderWithTile(t, previousOwner)
+            previousOwner.border.deleteBorderWithTile(tile, p)
         })
     }
 
