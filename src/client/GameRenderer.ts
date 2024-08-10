@@ -25,6 +25,10 @@ export class GameRenderer {
 
 	private rand = new PseudoRandom(10)
 
+	private offscreenContext: CanvasRenderingContext2D
+	private offscreenCanvas: HTMLCanvasElement
+
+
 	constructor(private gs: Game, private theme: Theme, private canvas: HTMLCanvasElement) {
 		this.context = canvas.getContext("2d")
 	}
@@ -47,6 +51,13 @@ export class GameRenderer {
 		document.body.appendChild(this.canvas);
 		window.addEventListener('resize', () => this.resizeCanvas());
 		this.resizeCanvas();
+
+
+		this.offscreenCanvas = document.createElement('canvas');
+		this.offscreenContext = this.offscreenCanvas.getContext('2d');
+		this.offscreenCanvas.width = this.gs.width();
+		this.offscreenCanvas.height = this.gs.height();
+
 
 		requestAnimationFrame(() => this.renderGame());
 	}
@@ -101,13 +112,13 @@ export class GameRenderer {
 			);
 		}
 
-		let numCalcs = 0
-		for (const player of this.gs.players()) {
-			if (numCalcs < 50 && this.maybeRecalculatePlayerInfo(player)) {
-				numCalcs++
-			}
-			this.renderPlayerInfo(player)
-		}
+		this.context.drawImage(
+			this.offscreenCanvas,
+			-this.gs.width() / 2,
+			-this.gs.height() / 2,
+			this.gs.width(),
+			this.gs.height()
+		);
 
 		// const paths = this.gs.executions().map(e => e as Execution).filter(e => e instanceof BoatAttackExecution).map(e => e as BoatAttackExecution).filter(e => e.path != null).map(e => e.path)
 		// paths.forEach(p => {
@@ -128,6 +139,13 @@ export class GameRenderer {
 
 		// Put the ImageData on the temp canvas
 		tempCtx.putImageData(this.imageData, 0, 0);
+		let numCalcs = 0
+		for (const player of this.gs.players()) {
+			if (numCalcs < 50 && this.maybeRecalculatePlayerInfo(player)) {
+				numCalcs++
+			}
+			//this.renderPlayerInfo(player)
+		}
 	}
 
 	maybeRecalculatePlayerInfo(player: Player): boolean {
@@ -162,15 +180,15 @@ export class GameRenderer {
 
 		const render = this.nameRenders.get(player)
 
-		this.context.font = `${render.fontSize}px Arial`;
-		this.context.fillStyle = this.theme.playerInfoColor(player.id()).toHex();
-		this.context.textAlign = 'center';
-		this.context.textBaseline = 'middle';
+		this.offscreenContext.font = `${render.fontSize}px Arial`;
+		this.offscreenContext.fillStyle = this.theme.playerInfoColor(player.id()).toHex();
+		this.offscreenContext.textAlign = 'center';
+		this.offscreenContext.textBaseline = 'middle';
 
 		const nameCenterX = render.location.x - this.gs.width() / 2
 		const nameCenterY = render.location.y - this.gs.height() / 2
-		this.context.fillText(player.info().name, nameCenterX, nameCenterY - render.fontSize / 2);
-		this.context.fillText(String(Math.floor(player.troops())), nameCenterX, nameCenterY + render.fontSize);
+		this.offscreenContext.fillText(player.info().name, nameCenterX, nameCenterY - render.fontSize / 2);
+		this.offscreenContext.fillText(String(Math.floor(player.troops())), nameCenterX, nameCenterY + render.fontSize);
 	}
 
 	tileUpdate(event: TileEvent) {
