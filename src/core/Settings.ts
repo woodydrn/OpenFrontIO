@@ -25,7 +25,7 @@ export const defaultSettings = new class implements Settings {
 		return 1
 	}
 	turnIntervalMs(): number {
-		return 1000 / 10
+		return 1000 / 5
 	}
 	lobbyCreationRate(): number {
 		return 5 * 1000

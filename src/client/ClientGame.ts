@@ -148,7 +148,7 @@ export class ClientGame {
         const owner = tile.owner()
         const targetID = owner.isPlayer() ? owner.id() : null
         if (tile.owner() != this.myPlayer) {
-            if (this.myPlayer.sharesBorderWith(tile.owner())) {
+             if (this.myPlayer.sharesBorderWith(tile.owner())) {
                 this.sendAttackIntent(targetID, cell)
             } else {
                 // TODO verify on ocean

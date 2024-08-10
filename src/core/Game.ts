@@ -9,12 +9,17 @@ export type GameID = string
 export type LobbyID = string
 
 export class Cell {
+
+    private strRepr: string
+
     constructor(
         public readonly x,
         public readonly y
-    ) { }
+    ) {
+        this.strRepr = `Cell[${this.x},${this.y}]`
+    }
 
-    toString(): string {return `Cell[${this.x},${this.y}]`}
+    toString(): string {return this.strRepr}
 }
 
 export interface ExecutionView {
@@ -85,8 +90,6 @@ export interface MutableBoat extends Boat {
 export interface TerraNullius {
     ownsTile(cell: Cell): boolean
     isPlayer(): false
-    borderTilesWith(other: Player): ReadonlySet<Tile>
-    sharesBorderWith(other: Player): boolean
 }
 
 export interface Player {
@@ -98,7 +101,6 @@ export interface Player {
     isAlive(): boolean
     executions(): ExecutionView[]
     borderTiles(): ReadonlySet<Tile>
-    borderTilesWith(other: Player | TerraNullius): ReadonlySet<Tile>
     isPlayer(): this is Player
     neighbors(): (Player | TerraNullius)[]
     numTilesOwned(): number

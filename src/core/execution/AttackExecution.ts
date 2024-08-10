@@ -43,14 +43,14 @@ export class AttackExecution implements Execution {
         // }
 
 
-        let numTilesPerTick = this._owner.borderTilesWith(this.target).size
+        let numTilesPerTick = this._owner.borderTiles().size / 2
         while (numTilesPerTick > 0) {
             if (this.troops < 1) {
                 this.active = false
                 return
             }
 
-            if (this.toConquer.size() < this._owner.borderTilesWith(this.target).size / 1.5) {
+            if (this.toConquer.size() < 10) {
                 this.calculateToConquer()
             }
             if (this.toConquer.size() == 0) {
@@ -73,8 +73,6 @@ export class AttackExecution implements Execution {
 
     private calculateToConquer() {
         // console.profile('calc_to_conquer')
-
-        const enemyBorder = this.target.borderTilesWith(this._owner)
 
 
 
@@ -106,32 +104,36 @@ export class AttackExecution implements Execution {
         this.toConquer.clear()
 
 
-        if (this.targetCell != null) {
-            let tiles = Array.from(enemyBorder)
-            tiles = tiles.slice().sort((a, b) => manhattanDist(a.cell(), this.targetCell) - manhattanDist(b.cell(), this.targetCell))
-            for (let i = 0; i < tiles.length; i++) {
-                const numOwnedByMe = tiles[i].neighbors()
-                    .filter(t => t.terrain() == TerrainTypes.Land)
-                    .filter(t => t.owner() == this._owner)
-                    .length
+        // if (this.targetCell != null) {
+        //     let tiles = Array.from(enemyBorder)
+        //     tiles = tiles.slice().sort((a, b) => manhattanDist(a.cell(), this.targetCell) - manhattanDist(b.cell(), this.targetCell))
+        //     for (let i = 0; i < tiles.length; i++) {
+        //         const numOwnedByMe = tiles[i].neighbors()
+        //             .filter(t => t.terrain() == TerrainTypes.Land)
+        //             .filter(t => t.owner() == this._owner)
+        //             .length
 
-                let distModifer = 0
-                if (this.targetCell != null) {
-                    distModifer = i / tiles.length * 2
+        //         let distModifer = 0
+        //         if (this.targetCell != null) {
+        //             distModifer = i / tiles.length * 2
+        //         }
+        //         this.toConquer.add(new TileContainer(tiles[i], distModifer - numOwnedByMe + this.random.nextInt(0, 2)))
+        //         // this.toConquer.add(new TileContainer(tiles[i], i))
+        //     }
+        // } else {
+        for (const tile of this._owner.borderTiles()) {
+            for (const neighbor of tile.neighbors()) {
+                if (neighbor.terrain() == TerrainTypes.Water || neighbor.owner() != this.target) {
+                    continue
                 }
-                this.toConquer.add(new TileContainer(tiles[i], distModifer - numOwnedByMe + this.random.nextInt(0, 2)))
-                // this.toConquer.add(new TileContainer(tiles[i], i))
-            }
-        } else {
-            for (const tile of enemyBorder) {
-                const numOwnedByMe = tile.neighbors()
-                    .filter(t => t.terrain() == TerrainTypes.Land)
-                    .filter(t => t.owner() == this._owner)
-                    .length
-
-                this.toConquer.add(new TileContainer(tile, - numOwnedByMe + this.random.nextInt(0, 2)))
+                // const numOwnedByMe = tile.neighbors()
+                //     .filter(t => t.terrain() == TerrainTypes.Land)
+                //     .filter(t => t.owner() == this._owner)
+                //     .length
+                this.toConquer.add(new TileContainer(neighbor, + this.random.nextInt(0, 4)))
             }
         }
+        // }
 
         // console.profileEnd('calc_to_conquer')
 
