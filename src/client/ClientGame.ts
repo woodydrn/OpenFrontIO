@@ -118,6 +118,7 @@ export class ClientGame {
         this.ticksThisTurn++
         console.log('client ticking')
         this.gs.tick()
+        this.renderer.tick()
     }
 
     private playerEvent(event: PlayerEvent) {

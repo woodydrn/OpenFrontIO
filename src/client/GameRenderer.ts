@@ -11,6 +11,7 @@ class NameRender {
 }
 
 export class GameRenderer {
+	private tempCanvas;
 
 	private scale: number = .8
 	private offsetX: number = 0
@@ -72,15 +73,6 @@ export class GameRenderer {
 		this.context.fillStyle = this.theme.backgroundColor().toHex();
 		this.context.fillRect(0, 0, this.gs.width(), this.gs.height());
 
-		// Create a temporary canvas for the game content
-		const tempCanvas = document.createElement('canvas');
-		const tempCtx = tempCanvas.getContext('2d');
-		tempCanvas.width = this.gs.width();
-		tempCanvas.height = this.gs.height();
-
-		// Put the ImageData on the temp canvas
-		tempCtx.putImageData(this.imageData, 0, 0);
-
 		// Disable image smoothing for pixelated effect
 		if (this.scale > 3) {
 			this.context.imageSmoothingEnabled = false;
@@ -98,14 +90,16 @@ export class GameRenderer {
 			this.gs.height() / 2 - this.offsetY * this.scale
 		);
 
-		// Draw the game content from the temp canvas
-		this.context.drawImage(
-			tempCanvas,
-			-this.gs.width() / 2,
-			-this.gs.height() / 2,
-			this.gs.width(),
-			this.gs.height()
-		);
+		if (this.tempCanvas != null) {
+			// Draw the game content from the temp canvas
+			this.context.drawImage(
+				this.tempCanvas,
+				-this.gs.width() / 2,
+				-this.gs.height() / 2,
+				this.gs.width(),
+				this.gs.height()
+			);
+		}
 
 		let numCalcs = 0
 		for (const player of this.gs.players()) {
@@ -123,6 +117,17 @@ export class GameRenderer {
 		// })
 
 		requestAnimationFrame(() => this.renderGame());
+	}
+
+	tick() {
+		// Create a temporary canvas for the game content
+		this.tempCanvas = document.createElement('canvas');
+		const tempCtx = this.tempCanvas.getContext('2d');
+		this.tempCanvas.width = this.gs.width();
+		this.tempCanvas.height = this.gs.height();
+
+		// Put the ImageData on the temp canvas
+		tempCtx.putImageData(this.imageData, 0, 0);
 	}
 
 	maybeRecalculatePlayerInfo(player: Player): boolean {
