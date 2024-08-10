@@ -72,14 +72,11 @@ export class AttackExecution implements Execution {
     }
 
     private calculateToConquer() {
-        const border = this.owner().borderTilesWith(this.target)
-        const enemyBorder: Set<Tile> = new Set()
-        for (const b of border) {
-            b.neighbors()
-                .filter(t => t.terrain() == TerrainTypes.Land)
-                .filter(t => t.owner() == this.target)
-                .forEach(t => enemyBorder.add(t))
-        }
+        // console.profile('calc_to_conquer')
+
+        const enemyBorder = this.target.borderTilesWith(this._owner)
+
+
 
         // let closestTile: Tile;
         // let closestDist: number = Number.POSITIVE_INFINITY;
@@ -108,26 +105,36 @@ export class AttackExecution implements Execution {
         // }
         this.toConquer.clear()
 
-        let tiles = Array.from(enemyBorder)
 
         if (this.targetCell != null) {
+            let tiles = Array.from(enemyBorder)
             tiles = tiles.slice().sort((a, b) => manhattanDist(a.cell(), this.targetCell) - manhattanDist(b.cell(), this.targetCell))
-        }
+            for (let i = 0; i < tiles.length; i++) {
+                const numOwnedByMe = tiles[i].neighbors()
+                    .filter(t => t.terrain() == TerrainTypes.Land)
+                    .filter(t => t.owner() == this._owner)
+                    .length
 
-
-        for (let i = 0; i < tiles.length; i++) {
-            const numOwnedByMe = tiles[i].neighbors()
-                .filter(t => t.terrain() == TerrainTypes.Land)
-                .filter(t => t.owner() == this._owner)
-                .length
-
-            let distModifer = 0
-            if (this.targetCell != null) {
-                distModifer = i / tiles.length * 2
+                let distModifer = 0
+                if (this.targetCell != null) {
+                    distModifer = i / tiles.length * 2
+                }
+                this.toConquer.add(new TileContainer(tiles[i], distModifer - numOwnedByMe + this.random.nextInt(0, 2)))
+                // this.toConquer.add(new TileContainer(tiles[i], i))
             }
-            this.toConquer.add(new TileContainer(tiles[i], distModifer - numOwnedByMe + this.random.nextInt(0, 2)))
-            // this.toConquer.add(new TileContainer(tiles[i], i))
+        } else {
+            for (const tile of enemyBorder) {
+                const numOwnedByMe = tile.neighbors()
+                    .filter(t => t.terrain() == TerrainTypes.Land)
+                    .filter(t => t.owner() == this._owner)
+                    .length
+
+                this.toConquer.add(new TileContainer(tile, - numOwnedByMe + this.random.nextInt(0, 2)))
+            }
         }
+
+        // console.profileEnd('calc_to_conquer')
+
 
     }
 

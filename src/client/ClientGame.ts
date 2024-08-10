@@ -7,7 +7,6 @@ import {Settings} from "../core/Settings";
 import {GameRenderer} from "./GameRenderer";
 import {InputHandler, MouseUpEvent, ZoomEvent, DragEvent, MouseDownEvent} from "./InputHandler"
 import {ClientIntentMessageSchema, ClientJoinMessageSchema, ClientMessageSchema, ServerMessage, ServerMessageSchema, ServerSyncMessage, Turn} from "../core/Schemas";
-import {AttackIntent, Intent, SpawnIntent} from "../core/Schemas";
 
 
 
@@ -96,7 +95,7 @@ export class ClientGame {
 
         this.renderer.initialize()
         this.input.initialize()
-        // this.executor.spawnBots(500)
+        this.executor.spawnBots(500)
 
 
         setInterval(() => this.tick(), 10);

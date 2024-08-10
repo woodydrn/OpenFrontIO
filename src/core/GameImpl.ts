@@ -67,6 +67,17 @@ export class BoatImpl implements MutableBoat {
     }
 }
 
+class Border {
+    borderWith: Map<Player | TerraNullius, Set<Tile>> = new Map()
+
+    sharesBorderWith(other: Player | TerraNullius): boolean {
+        if (!this.borderWith.has(other)) {
+            return false
+        }
+        return this.borderWith.get(other).size > 0
+    }
+}
+
 export class PlayerImpl implements MutablePlayer {
 
     public _boats: BoatImpl[] = []
@@ -192,6 +203,21 @@ class TerraNulliusImpl implements TerraNullius {
     }
     isPlayer(): false {return false as const}
 
+    borderTilesWith(other: Player): ReadonlySet<Tile> {
+        const border = new Set<Tile>()
+        for (const enemyBorder of other.borderTilesWith(this)) {
+            for (const neighbor of enemyBorder.neighbors()) {
+                if (neighbor.terrain() == TerrainTypes.Land && neighbor.owner() == this) {
+                    border.add(neighbor)
+                }
+            }
+        }
+        return border
+    }
+
+    sharesBorderWith(other: Player): boolean {
+        return other.sharesBorderWith(this)
+    }
 }
 
 export class TerrainMapImpl implements TerrainMap {

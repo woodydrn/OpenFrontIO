@@ -85,6 +85,8 @@ export interface MutableBoat extends Boat {
 export interface TerraNullius {
     ownsTile(cell: Cell): boolean
     isPlayer(): false
+    borderTilesWith(other: Player): ReadonlySet<Tile>
+    sharesBorderWith(other: Player): boolean
 }
 
 export interface Player {
