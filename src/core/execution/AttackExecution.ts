@@ -43,7 +43,7 @@ export class AttackExecution implements Execution {
         // }
 
 
-        let numTilesPerTick = this._owner.borderTiles().size / 2
+        let numTilesPerTick = this._owner.borderTiles().size / 5
         while (numTilesPerTick > 0) {
             if (this.troops < 1) {
                 this.active = false

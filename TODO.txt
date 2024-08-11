@@ -1,11 +1,13 @@
 * fix conquer expansion DONE
 * perf improvements on graphics (only draw images to canvas on ticks) DONE
-* double join lobby bug
+* double join lobby bug DONE
 * render player info efficiently
 * better troop addition logic
-* use draw rect instead of image data ?
+* better expansion, add back directed expansion
+* use pastel theme for territories
 * improve front page
+* add username in front page
+* upload and start server
 * make boats larger
 * have boats not get close to shore
 * better algorithm for name render placement
-* re-enable directed expansion

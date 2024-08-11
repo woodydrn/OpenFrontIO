@@ -1,14 +1,13 @@
 import {Colord} from "colord";
-import {Cell, MutableGame, Game, PlayerEvent, Tile, TileEvent, Player, Execution, BoatEvent} from "../core/Game";
-import {Theme} from "../core/Settings";
-import {DragEvent, ZoomEvent} from "./InputHandler";
-import {calculateBoundingBox, placeName} from "./NameBoxCalculator";
-import {PseudoRandom} from "../core/PseudoRandom";
-import {BoatAttackExecution} from "../core/execution/BoatAttackExecution";
+import {Cell, MutableGame, Game, PlayerEvent, Tile, TileEvent, Player, Execution, BoatEvent} from "../../core/Game";
+import {Theme} from "../../core/Settings";
+import {DragEvent, ZoomEvent} from "../InputHandler";
+import {calculateBoundingBox, placeName} from "../NameBoxCalculator";
+import {PseudoRandom} from "../../core/PseudoRandom";
+import {BoatAttackExecution} from "../../core/execution/BoatAttackExecution";
+import {NameRenderer} from "./NameRenderer";
 
-class NameRender {
-	constructor(public lastRendered: number, public location: Cell, public fontSize: number) { }
-}
+
 
 export class GameRenderer {
 	private tempCanvas;
@@ -21,16 +20,12 @@ export class GameRenderer {
 
 	private imageData: ImageData
 
-	private nameRenders: Map<Player, NameRender> = new Map()
-
-	private rand = new PseudoRandom(10)
-
-	private offscreenContext: CanvasRenderingContext2D
-	private offscreenCanvas: HTMLCanvasElement
+	private nameRenderer: NameRenderer;
 
 
 	constructor(private gs: Game, private theme: Theme, private canvas: HTMLCanvasElement) {
 		this.context = canvas.getContext("2d")
+		this.nameRenderer = new NameRenderer(gs, theme)
 	}
 
 	initialize() {
@@ -46,17 +41,12 @@ export class GameRenderer {
 
 		this.imageData = this.context.getImageData(0, 0, this.gs.width(), this.gs.height())
 		this.initImageData()
+		this.nameRenderer.initialize()
 
 
 		document.body.appendChild(this.canvas);
 		window.addEventListener('resize', () => this.resizeCanvas());
 		this.resizeCanvas();
-
-
-		this.offscreenCanvas = document.createElement('canvas');
-		this.offscreenContext = this.offscreenCanvas.getContext('2d');
-		this.offscreenCanvas.width = this.gs.width();
-		this.offscreenCanvas.height = this.gs.height();
 
 
 		requestAnimationFrame(() => this.renderGame());
@@ -111,14 +101,8 @@ export class GameRenderer {
 				this.gs.height()
 			);
 		}
-
-		this.context.drawImage(
-			this.offscreenCanvas,
-			-this.gs.width() / 2,
-			-this.gs.height() / 2,
-			this.gs.width(),
-			this.gs.height()
-		);
+		const [upperLeft, bottomRight] = this.boundingRect()
+		this.nameRenderer.render(this.context, this.scale, upperLeft, bottomRight)
 
 		// const paths = this.gs.executions().map(e => e as Execution).filter(e => e instanceof BoatAttackExecution).map(e => e as BoatAttackExecution).filter(e => e.path != null).map(e => e.path)
 		// paths.forEach(p => {
@@ -139,56 +123,7 @@ export class GameRenderer {
 
 		// Put the ImageData on the temp canvas
 		tempCtx.putImageData(this.imageData, 0, 0);
-		let numCalcs = 0
-		for (const player of this.gs.players()) {
-			if (numCalcs < 50 && this.maybeRecalculatePlayerInfo(player)) {
-				numCalcs++
-			}
-			//this.renderPlayerInfo(player)
-		}
-	}
-
-	maybeRecalculatePlayerInfo(player: Player): boolean {
-		if (!this.nameRenders.has(player)) {
-			this.nameRenders.set(player, new NameRender(0, null, null))
-		}
-
-		const render = this.nameRenders.get(player)
-
-		let wasUpdated = false
-
-		if (Date.now() - render.lastRendered > 1000) {
-			render.lastRendered = Date.now() + this.rand.nextInt(0, 100)
-			wasUpdated = true
-
-			const box = calculateBoundingBox(player)
-			const centerX = box.min.x + ((box.max.x - box.min.x) / 2)
-			const centerY = box.min.y + ((box.max.y - box.min.y) / 2)
-			render.location = new Cell(centerX, centerY)
-			render.fontSize = Math.max(Math.min(box.max.x - box.min.x, box.max.y - box.min.y) / player.info().name.length / 2, 1)
-		}
-		return wasUpdated
-	}
-
-	renderPlayerInfo(player: Player) {
-		if (!player.isAlive()) {
-			return
-		}
-		if (!this.nameRenders.has(player)) {
-			return
-		}
-
-		const render = this.nameRenders.get(player)
-
-		this.offscreenContext.font = `${render.fontSize}px Arial`;
-		this.offscreenContext.fillStyle = this.theme.playerInfoColor(player.id()).toHex();
-		this.offscreenContext.textAlign = 'center';
-		this.offscreenContext.textBaseline = 'middle';
-
-		const nameCenterX = render.location.x - this.gs.width() / 2
-		const nameCenterY = render.location.y - this.gs.height() / 2
-		this.offscreenContext.fillText(player.info().name, nameCenterX, nameCenterY - render.fontSize / 2);
-		this.offscreenContext.fillText(String(Math.floor(player.troops())), nameCenterX, nameCenterY + render.fontSize);
+		this.nameRenderer.tick()
 	}
 
 	tileUpdate(event: TileEvent) {
@@ -271,12 +206,27 @@ export class GameRenderer {
 		const gameX = centerX + this.gs.width() / 2
 		const gameY = centerY + this.gs.height() / 2
 
-
-		console.log(`zoom point ${centerX} ${centerY}`)
-		console.log(`Current scale: ${this.scale}`);
-		console.log(`Current offset: ${this.offsetX}, ${this.offsetY}`);
-
 		return new Cell(Math.floor(gameX), Math.floor(gameY));
+	}
+
+	boundingRect(): [Cell, Cell] {
+
+		// Calculate the world point we want to zoom towards
+		const LeftX = (- this.gs.width() / 2) / this.scale + this.offsetX;
+		const TopY = (- this.gs.height() / 2) / this.scale + this.offsetY;
+
+		const gameLeftX = LeftX + this.gs.width() / 2
+		const gameTopY = TopY + this.gs.height() / 2
+
+
+		// Calculate the world point we want to zoom towards
+		const rightX = (screen.width - this.gs.width() / 2) / this.scale + this.offsetX;
+		const rightY = (screen.height - this.gs.height() / 2) / this.scale + this.offsetY;
+
+		const gameRightX = rightX + this.gs.width() / 2
+		const gameBottomY = rightY + this.gs.height() / 2
+
+		return [new Cell(Math.floor(gameLeftX), Math.floor(gameTopY)), new Cell(Math.floor(gameRightX), Math.floor(gameBottomY))]
 	}
 
 }

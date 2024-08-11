@@ -28,10 +28,10 @@ export const defaultSettings = new class implements Settings {
 		return 100
 	}
 	lobbyCreationRate(): number {
-		return 5 * 1000
+		return 2 * 1000
 	}
 	lobbyLifetime(): number {
-		return 2 * 1000
+		return 3 * 1000
 	}
 	theme(): Theme {return pastelTheme;}
 

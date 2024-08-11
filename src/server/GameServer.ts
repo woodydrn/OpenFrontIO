@@ -22,7 +22,11 @@ export class GameServer {
             c.ws.on('message', (message: string) => {
                 const clientMsg: ClientMessage = ClientMessageSchema.parse(JSON.parse(message))
                 if (clientMsg.type == "intent") {
-                    this.addIntent(clientMsg.intent)
+                    if (clientMsg.gameID == this.id) {
+                        this.addIntent(clientMsg.intent)
+                    } else {
+                        console.warn(`client ${clientMsg.clientID} sent to wrong game`)
+                    }
                 }
             })
         })
@@ -46,6 +50,7 @@ export class GameServer {
     private endTurn() {
         const pastTurn: Turn = {
             turnNumber: this.turns.length,
+            gameID: this.id,
             intents: this.intents
         }
         this.turns.push(pastTurn)

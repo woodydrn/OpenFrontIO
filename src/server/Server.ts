@@ -27,7 +27,7 @@ const gm = new GameManager(defaultSettings)
 
 // New GET endpoint to list lobbies
 app.get('/lobbies', (req, res) => {
-    const lobbyList = Array.from(gm.lobbies()).map(lobby => ({
+    const lobbyList = Array.from(gm.lobbies()).filter(l => !l.isExpired(Date.now())).map(lobby => ({
         id: lobby.id,
     }));
 
@@ -42,8 +42,12 @@ wss.on('connection', (ws) => {
         console.log(`got message ${message}`)
         const clientMsg: ClientMessage = ClientMessageSchema.parse(JSON.parse(message))
         if (clientMsg.type == "join") {
+            console.log('got join request')
             if (gm.hasLobby(clientMsg.lobbyID)) {
+                console.log('client joining lobby')
                 gm.addClientToLobby(new Client(clientMsg.clientID, ws), clientMsg.lobbyID)
+            } else {
+                console.log('lobby not found')
             }
         }
         // TODO: send error message

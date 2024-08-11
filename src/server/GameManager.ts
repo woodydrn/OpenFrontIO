@@ -49,11 +49,11 @@ export class GameManager {
     tick() {
         const now = Date.now()
 
-        const active = this.lobbies().filter(l => !l.isExpired(now - 1000))
-        const expired = this.lobbies().filter(l => l.isExpired(now - 1000))
+        const active = this.lobbies().filter(l => !l.isExpired(now - 2000))
+        const expired = this.lobbies().filter(l => l.isExpired(now - 2000))
         this._lobbies = new Map(active.map(lobby => [lobby.id, lobby]));
         expired.forEach(lobby => {
-            const game = new GameServer(generateUniqueID(), lobby.clients, this.settings)
+            const game = new GameServer(lobby.id, lobby.clients, this.settings)
             this.games.set(game.id, game)
             game.start()
         })

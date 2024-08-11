@@ -12,7 +12,7 @@ export class PlayerExecution implements Execution {
     }
 
     tick(ticks: number) {
-        this.player.addTroops(Math.sqrt(this.player.numTilesOwned() * this.player.troops() + 1000) / 1000 + 100)
+        this.player.addTroops(Math.sqrt(this.player.numTilesOwned() * this.player.troops() + 1000) / 1000)
     }
 
     owner(): MutablePlayer {

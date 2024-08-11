@@ -56,6 +56,7 @@ const IntentSchema = z.union([AttackIntentSchema, SpawnIntentSchema, BoatAttackI
 
 const TurnSchema = z.object({
     turnNumber: z.number(),
+    gameID: z.string(),
     intents: z.array(IntentSchema)
 })
 
@@ -87,7 +88,7 @@ const ClientBaseMessageSchema = z.object({
 export const ClientIntentMessageSchema = ClientBaseMessageSchema.extend({
     type: z.literal('intent'),
     clientID: z.string(),
-    //gameID: z.string(),
+    gameID: z.string(),
     intent: IntentSchema
 })
 

@@ -11,7 +11,6 @@ import {v4 as uuidv4} from 'uuid';
 class Client {
     private hasJoined = false
 
-    private startButton: HTMLButtonElement | null;
     private socket: WebSocket | null = null;
     private terrainMap: Promise<TerrainMap>
     private game: ClientGame
@@ -20,7 +19,6 @@ class Client {
     private lobbiesInterval: NodeJS.Timeout | null = null;
 
     constructor() {
-        this.startButton = document.getElementById('startButton') as HTMLButtonElement | null;
         this.lobbiesContainer = document.getElementById('lobbies-container');
 
     }
@@ -80,7 +78,12 @@ class Client {
     }
 
     private async joinLobby(lobbyID: string) {
+        clearInterval(this.lobbiesInterval)
+        this.lobbiesContainer.innerHTML = 'Joining'; // Clear existing lobbies
         this.terrainMap.then((map) => {
+            if (this.game != null) {
+                return
+            }
             this.game = createClientGame(uuidv4().slice(0, 4), generateUniqueID(), lobbyID, defaultSettings, map)
             this.game.joinLobby()
         })

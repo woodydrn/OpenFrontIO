@@ -4,7 +4,7 @@ import {createGame} from "../core/GameImpl";
 import {Ticker, TickEvent} from "../core/Ticker";
 import {EventBus} from "../core/EventBus";
 import {Settings} from "../core/Settings";
-import {GameRenderer} from "./GameRenderer";
+import {GameRenderer} from "./graphics/GameRenderer";
 import {InputHandler, MouseUpEvent, ZoomEvent, DragEvent, MouseDownEvent} from "./InputHandler"
 import {ClientIntentMessageSchema, ClientJoinMessageSchema, ClientMessageSchema, ServerMessage, ServerMessageSchema, ServerSyncMessage, Turn} from "../core/Schemas";
 
@@ -34,7 +34,7 @@ export class ClientGame {
     private myPlayer: Player
     private turns: Turn[] = []
     private socket: WebSocket
-    private started = false
+    private isActive = false
 
     private ticksPerTurn = 1
 
@@ -43,10 +43,12 @@ export class ClientGame {
 
     private spawned = false
 
+    private intervalID: NodeJS.Timeout
+
     constructor(
         private playerName: string,
         private id: ClientID,
-        private lobbyID: LobbyID,
+        private gameID: LobbyID,
         private ticker: Ticker,
         private eventBus: EventBus,
         private gs: Game,
@@ -63,7 +65,7 @@ export class ClientGame {
                 JSON.stringify(
                     ClientJoinMessageSchema.parse({
                         type: "join",
-                        lobbyID: this.lobbyID,
+                        lobbyID: this.gameID,
                         clientID: this.id
                     })
                 )
@@ -76,13 +78,14 @@ export class ClientGame {
                 this.start()
             }
             if (message.type == "turn") {
-                this.addTurn(message.turn)
+                if (message.turn.intents)
+                    this.addTurn(message.turn)
             }
         };
     }
 
     public start() {
-        this.started = true
+        this.isActive = true
         console.log('starting game!')
         // TODO: make each class do this, or maybe have client intercept all requests?
         //this.eventBus.on(TickEvent, (e) => this.tick(e))
@@ -98,7 +101,12 @@ export class ClientGame {
         this.executor.spawnBots(1000)
 
 
-        setInterval(() => this.tick(), 10);
+        this.intervalID = setInterval(() => this.tick(), 10);
+    }
+
+    public stop() {
+        clearInterval(this.intervalID)
+        this.isActive = false
     }
 
     public addTurn(turn: Turn): void {
@@ -131,6 +139,9 @@ export class ClientGame {
     }
 
     private inputEvent(event: MouseDownEvent) {
+        if (!this.isActive) {
+            return
+        }
         const cell = this.renderer.screenToWorldCoordinates(event.x, event.y)
         if (!this.gs.isOnMap(cell)) {
             return
@@ -164,6 +175,7 @@ export class ClientGame {
             ClientIntentMessageSchema.parse({
                 type: "intent",
                 clientID: this.id,
+                gameID: this.gameID,
                 intent: {
                     type: "spawn",
                     name: this.playerName,
@@ -187,6 +199,7 @@ export class ClientGame {
             ClientIntentMessageSchema.parse({
                 type: "intent",
                 clientID: this.id,
+                gameID: this.gameID,
                 intent: {
                     type: "attack",
                     attackerID: this.myPlayer.id(),
@@ -211,6 +224,7 @@ export class ClientGame {
             ClientIntentMessageSchema.parse({
                 type: "intent",
                 clientID: this.id,
+                gameID: this.gameID,
                 intent: {
                     type: "boat",
                     attackerID: this.myPlayer.id(),
