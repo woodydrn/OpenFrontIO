@@ -128,7 +128,7 @@ export class PlayerImpl implements MutablePlayer {
     isPlayer(): this is MutablePlayer {return true as const}
     ownsTile(cell: Cell): boolean {return this.tiles.has(cell.toString())}
     setTroops(troops: number) {this._troops = troops}
-    conquer(cell: Cell) {this.gs.conquer(this, cell)}
+    conquer(tile: Tile) {this.gs.conquer(this, tile)}
     info(): PlayerInfo {return this.playerInfo}
     id(): PlayerID {return this._id}
     troops(): number {return this._troops}
@@ -310,26 +310,26 @@ export class GameImpl implements MutableGame {
         }
     }
 
-    conquer(owner: PlayerImpl, cell: Cell): void {
-        if (owner.ownsTile(cell)) {
-            throw new Error(`Player ${owner} already owns cell ${cell.toString()}`)
+    conquer(owner: PlayerImpl, tile: Tile): void {
+        if (tile.owner() == owner) {
+            throw new Error(`Player ${owner} already owns cell ${tile.cell().toString()}`)
         }
         if (!owner.isPlayer()) {
             throw new Error("Must be a player")
         }
-        let tile = this.tile(cell) as TileImpl
         if (tile.terrain() == TerrainTypes.Water) {
             throw new Error("Cannot conquer water")
         }
-        let previousOwner = tile._owner
+        const tileImpl = tile as TileImpl
+        let previousOwner = tileImpl._owner
         if (previousOwner.isPlayer()) {
-            previousOwner.tiles.delete(cell.toString())
-            previousOwner._borderTiles.delete(cell.toString())
+            previousOwner.tiles.delete(tile.cell().toString())
+            previousOwner._borderTiles.delete(tile.cell().toString())
             previousOwner._borderTileSet.delete(tile)
-            tile._isBorder = false
+            tileImpl._isBorder = false
         }
-        tile._owner = owner
-        owner.tiles.set(cell.toString(), tile)
+        tileImpl._owner = owner
+        owner.tiles.set(tile.cell().toString(), tile)
         this.updateBorders(tile)
         this.eventBus.emit(new TileEvent(tile))
     }

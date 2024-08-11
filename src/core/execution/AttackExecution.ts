@@ -65,7 +65,7 @@ export class AttackExecution implements Execution {
             if (tileToConquer.owner() != this.target || !onBorder) {
                 continue
             }
-            this._owner.conquer(tileToConquer.cell())
+            this._owner.conquer(tileToConquer)
             this.troops -= 1
             numTilesPerTick -= 1
         }
@@ -126,11 +126,11 @@ export class AttackExecution implements Execution {
                 if (neighbor.terrain() == TerrainTypes.Water || neighbor.owner() != this.target) {
                     continue
                 }
-                // const numOwnedByMe = tile.neighbors()
-                //     .filter(t => t.terrain() == TerrainTypes.Land)
-                //     .filter(t => t.owner() == this._owner)
-                //     .length
-                this.toConquer.add(new TileContainer(neighbor, 1))
+                const numOwnedByMe = tile.neighbors()
+                    .filter(t => t.terrain() == TerrainTypes.Land)
+                    .filter(t => t.owner() == this._owner)
+                    .length
+                this.toConquer.add(new TileContainer(neighbor, -numOwnedByMe))
             }
         }
         // }

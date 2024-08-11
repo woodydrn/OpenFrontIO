@@ -111,7 +111,7 @@ export interface MutablePlayer extends Player {
     setTroops(troops: number): void
     addTroops(troops: number): void
     removeTroops(troops: number): void
-    conquer(cell: Cell): void
+    conquer(tile: Tile): void
     executions(): Execution[]
     neighbors(): (MutablePlayer | TerraNullius)[]
     boats(): MutableBoat[]

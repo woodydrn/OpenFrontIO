@@ -25,7 +25,7 @@ export class SpawnExecution implements Execution {
         const player = this.gs.addPlayer(this.playerInfo)
         getSpawnCells(this.gs, this.cell).forEach(c => {
             console.log('conquering cell')
-            player.conquer(c)
+            player.conquer(this.gs.tile(c))
         })
         this.gs.addExecution(new PlayerExecution(player.id()))
         if (player.info().isBot) {
