@@ -56,12 +56,12 @@ class Client {
             this.lobbiesContainer.appendChild(button);
         });
 
-        // Join first lobby
-        if (!this.hasJoined && lobbies.length > 0) {
-            this.hasJoined = true
-            console.log(`joining lobby ${lobbies[0].id}`)
-            this.joinLobby(lobbies[0].id)
-        }
+        // // Join first lobby
+        // if (!this.hasJoined && lobbies.length > 0) {
+        //     this.hasJoined = true
+        //     console.log(`joining lobby ${lobbies[0].id}`)
+        //     this.joinLobby(lobbies[0].id)
+        // }
     }
 
     async fetchLobbies() {

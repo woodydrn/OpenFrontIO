@@ -12,7 +12,7 @@ export class BotExecution implements Execution {
     constructor(private bot: MutablePlayer) {
 
         this.random = new PseudoRandom(bot.id())
-        this.attackRate = this.random.nextInt(50, 200)
+        this.attackRate = this.random.nextInt(10, 50)
     }
 
     init(gs: MutableGame, ticks: number) {
@@ -35,7 +35,7 @@ export class BotExecution implements Execution {
             const toAttack = ns[this.random.nextInt(0, ns.length)]
 
             this.gs.addExecution(new AttackExecution(
-                this.bot.troops() / 5,
+                this.bot.troops() / 100,
                 this.bot.id(),
                 toAttack.isPlayer() ? toAttack.id() : null,
                 null

@@ -75,13 +75,13 @@ export interface Tile {
 
 export interface Boat {
     troops(): number
-    cell(): Cell
+    tile(): Tile
     owner(): Player
     target(): Player | TerraNullius
 }
 
 export interface MutableBoat extends Boat {
-    move(cell: Cell): void
+    move(tile: Tile): void
     owner(): MutablePlayer
     target(): MutablePlayer | TerraNullius
     setTroops(troops: number): void
@@ -115,7 +115,7 @@ export interface MutablePlayer extends Player {
     executions(): Execution[]
     neighbors(): (MutablePlayer | TerraNullius)[]
     boats(): MutableBoat[]
-    addBoat(troops: number, cell: Cell, target: Player | TerraNullius): MutableBoat
+    addBoat(troops: number, tile: Tile, target: Player | TerraNullius): MutableBoat
 }
 
 export interface Game {
@@ -124,7 +124,7 @@ export interface Game {
     players(): Player[]
     tile(cell: Cell): Tile
     isOnMap(cell: Cell): boolean
-    neighbors(cell: Cell): Cell[]
+    neighbors(cell: Cell | Tile): Tile[]
     width(): number
     height(): number
     forEachTile(fn: (tile: Tile) => void): void

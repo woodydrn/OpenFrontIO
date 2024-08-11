@@ -9,6 +9,8 @@ type CellString = string
 
 class TileImpl implements Tile {
 
+    public _isBorder = false
+
     constructor(
         private readonly gs: GameImpl,
         public _owner: PlayerImpl | TerraNulliusImpl,
@@ -24,13 +26,13 @@ class TileImpl implements Tile {
 
     hasOwner(): boolean {return this._owner != this.gs._terraNullius}
     owner(): MutablePlayer | TerraNullius {return this._owner}
-    isBorder(): boolean {return this.gs.isBorder(this)}
+    isBorder(): boolean {return this._isBorder}
     isInterior(): boolean {return this.hasOwner() && !this.isBorder()}
     cell(): Cell {return this._cell}
     terrain(): TerrainType {return this._terrain}
 
     neighbors(): Tile[] {
-        return this.gs.neighbors(this._cell).map(c => this.gs.tile(c))
+        return this.gs.neighbors(this)
     }
 
     game(): Game {return this.gs}
@@ -40,14 +42,14 @@ export class BoatImpl implements MutableBoat {
 
     constructor(
         private g: GameImpl,
-        private _cell: Cell,
+        private _tile: Tile,
         private _troops: number,
         private _owner: PlayerImpl,
         private _target: PlayerImpl | TerraNulliusImpl
     ) { }
 
-    move(cell: Cell): void {
-        this._cell = cell
+    move(tile: Tile): void {
+        this._tile = tile
         this.g.fireBoatUpdateEvent(this)
     }
     setTroops(troops: number): void {
@@ -56,8 +58,8 @@ export class BoatImpl implements MutableBoat {
     troops(): number {
         return this._troops
     }
-    cell(): Cell {
-        return this._cell
+    tile(): Tile {
+        return this._tile
     }
     owner(): PlayerImpl {
         return this._owner
@@ -77,8 +79,8 @@ export class PlayerImpl implements MutablePlayer {
     constructor(private gs: GameImpl, public readonly _id: PlayerID, public readonly playerInfo: PlayerInfo, private _troops) {
     }
 
-    addBoat(troops: number, cell: Cell, target: Player | TerraNullius): BoatImpl {
-        const b = new BoatImpl(this.gs, cell, troops, this, target as PlayerImpl | TerraNulliusImpl)
+    addBoat(troops: number, tile: Tile, target: Player | TerraNullius): BoatImpl {
+        const b = new BoatImpl(this.gs, tile, troops, this, target as PlayerImpl | TerraNulliusImpl)
         this._boats.push(b)
         this.gs.fireBoatUpdateEvent(b)
         return b
@@ -184,6 +186,7 @@ export class GameImpl implements MutableGame {
     private _height: number
     _terraNullius: TerraNulliusImpl
 
+
     constructor(terrainMap: TerrainMap, private eventBus: EventBus) {
         this._terraNullius = new TerraNulliusImpl(this)
         this._width = terrainMap.width();
@@ -281,19 +284,24 @@ export class GameImpl implements MutableGame {
             && cell.y < this._height
     }
 
-    neighbors(cell: Cell): Cell[] {
-        this.assertIsOnMap(cell)
-        const ns = [
-            new Cell(cell.x + 1, cell.y),
-            new Cell(cell.x - 1, cell.y),
-            new Cell(cell.x, cell.y + 1),
-            new Cell(cell.x, cell.y - 1)
-        ].filter(c => this.isOnMap(c))
+    neighbors(tile: Tile): Tile[] {
+        this.assertIsOnMap(tile.cell())
+        const x = tile.cell().x
+        const y = tile.cell().y
+        const ns: TileImpl[] = []
+        if (y > 0) {
+            ns.push(this.map[x][y - 1])
+        }
+        if (y < this._height - 1) {
+            ns.push(this.map[x][y + 1])
+        }
+        if (x > 0) {
+            ns.push(this.map[x - 1][y])
+        }
+        if (x < this._width - 1) {
+            ns.push(this.map[x + 1][y])
+        }
         return ns
-    }
-
-    tileNeighbors(tile: Tile): Tile[] {
-        return this.neighbors(tile.cell()).map(c => this.tile(c))
     }
 
     private assertIsOnMap(cell: Cell) {
@@ -318,35 +326,37 @@ export class GameImpl implements MutableGame {
             previousOwner.tiles.delete(cell.toString())
             previousOwner._borderTiles.delete(cell.toString())
             previousOwner._borderTileSet.delete(tile)
+            tile._isBorder = false
         }
         tile._owner = owner
         owner.tiles.set(cell.toString(), tile)
-        this.updateBorders(cell)
+        this.updateBorders(tile)
         this.eventBus.emit(new TileEvent(tile))
     }
 
-    private updateBorders(cell: Cell) {
-        const cells: Cell[] = []
-        cells.push(cell)
-        this.neighbors(cell).forEach(c => cells.push(c))
-        cells.map(c => this.tile(c)).filter(c => c.hasOwner()).forEach(t => {
+    private updateBorders(tile: Tile) {
+        const tiles: Tile[] = []
+        tiles.push(tile)
+        tile.neighbors().forEach(t => tiles.push(t))
+        tiles.filter(t => t.hasOwner()).forEach(t => {
             if (this.isBorder(t)) {
                 (t.owner() as PlayerImpl)._borderTiles.set(t.cell().toString(), t);
-                (t.owner() as PlayerImpl)._borderTileSet.add(t)
+                (t.owner() as PlayerImpl)._borderTileSet.add(t);
+                (t as TileImpl)._isBorder = true
             } else {
                 (t.owner() as PlayerImpl)._borderTiles.delete(t.cell().toString());
-                (t.owner() as PlayerImpl)._borderTileSet.delete(t)
+                (t.owner() as PlayerImpl)._borderTileSet.delete(t);
+                (t as TileImpl)._isBorder = false
             }
         })
     }
 
     isBorder(tile: Tile): boolean {
-        this.assertIsOnMap(tile.cell())
         if (!tile.hasOwner()) {
             return false
         }
-        for (const neighbor of this.neighbors(tile.cell())) {
-            let bordersEnemy = this.tile(neighbor).owner() != tile.owner()
+        for (const neighbor of tile.neighbors()) {
+            let bordersEnemy = tile.owner() != neighbor.owner()
             if (bordersEnemy) {
                 return true
             }

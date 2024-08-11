@@ -50,7 +50,7 @@ export class BoatAttackExecution implements Execution {
         this.path = this.computePath(this.src, this.dst)
         if (this.path != null) {
             console.log(`got path ${this.path.map(t => t.cell().toString())}`)
-            this.boat = this.attacker.addBoat(1000, this.src.cell(), this.target)
+            this.boat = this.attacker.addBoat(1000, this.src, this.target)
         } else {
             console.log('got null path')
             this.active = false
@@ -80,7 +80,7 @@ export class BoatAttackExecution implements Execution {
         }
 
         const nextTile = this.path[this.currTileIndex]
-        this.boat.move(nextTile.cell())
+        this.boat.move(nextTile)
     }
 
     owner(): MutablePlayer {

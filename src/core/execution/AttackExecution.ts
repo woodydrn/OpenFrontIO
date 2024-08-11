@@ -5,7 +5,7 @@ import {manhattanDist} from "../Util";
 
 export class AttackExecution implements Execution {
     private active: boolean = true;
-    private toConquer: PriorityQueue<TileContainer> = new PriorityQueue<TileContainer>(11, (a: TileContainer, b: TileContainer) => a.priority - b.priority);
+    private toConquer: PriorityQueue<TileContainer> = new PriorityQueue<TileContainer>(1000, (a: TileContainer, b: TileContainer) => a.priority - b.priority);
     private random = new PseudoRandom(123)
 
     private _owner: MutablePlayer
@@ -50,7 +50,7 @@ export class AttackExecution implements Execution {
                 return
             }
 
-            if (this.toConquer.size() < 10) {
+            if (this.toConquer.size() < 5) {
                 this.calculateToConquer()
             }
             if (this.toConquer.size() == 0) {
@@ -130,7 +130,7 @@ export class AttackExecution implements Execution {
                 //     .filter(t => t.terrain() == TerrainTypes.Land)
                 //     .filter(t => t.owner() == this._owner)
                 //     .length
-                this.toConquer.add(new TileContainer(neighbor, + this.random.nextInt(0, 4)))
+                this.toConquer.add(new TileContainer(neighbor, 1))
             }
         }
         // }

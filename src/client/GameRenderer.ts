@@ -193,15 +193,15 @@ export class GameRenderer {
 
 	tileUpdate(event: TileEvent) {
 		this.paintTile(event.tile)
-		this.gs.neighbors(event.tile.cell()).forEach(c => this.paintTile(this.gs.tile(c)))
+		event.tile.neighbors().forEach(t => this.paintTile(t))
 	}
 
 	playerEvent(event: PlayerEvent) {
 	}
 
 	boatEvent(event: BoatEvent) {
-		this.paintCell(event.boat.cell(), new Colord({r: 255, g: 255, b: 255}))
-		this.gs.neighbors(event.boat.cell()).map(c => this.gs.tile(c)).forEach(t => this.paintTile(t))
+		this.paintCell(event.boat.tile().cell(), new Colord({r: 255, g: 255, b: 255}))
+		this.gs.neighbors(event.boat.tile()).forEach(t => this.paintTile(t))
 	}
 
 	resize(width: number, height: number): void {

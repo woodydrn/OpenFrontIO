@@ -95,7 +95,7 @@ export class ClientGame {
 
         this.renderer.initialize()
         this.input.initialize()
-        this.executor.spawnBots(500)
+        this.executor.spawnBots(1000)
 
 
         setInterval(() => this.tick(), 10);
@@ -148,7 +148,7 @@ export class ClientGame {
         const owner = tile.owner()
         const targetID = owner.isPlayer() ? owner.id() : null
         if (tile.owner() != this.myPlayer) {
-             if (this.myPlayer.sharesBorderWith(tile.owner())) {
+            if (this.myPlayer.sharesBorderWith(tile.owner())) {
                 this.sendAttackIntent(targetID, cell)
             } else {
                 // TODO verify on ocean
