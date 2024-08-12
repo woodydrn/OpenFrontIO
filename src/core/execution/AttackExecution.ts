@@ -48,7 +48,7 @@ export class AttackExecution implements Execution {
                 return
             }
 
-            if (this.toConquer.size() < this.numTilesWithEnemy / 1.5) {
+            if (this.toConquer.size() < this.numTilesWithEnemy / 2) {
                 this.calculateToConquer()
             }
             if (this.toConquer.size() == 0 || badTiles > 100) {
@@ -65,8 +65,13 @@ export class AttackExecution implements Execution {
                 continue
             }
             this._owner.conquer(tileToConquer)
-            this.troops -= 1
-            numTilesPerTick -= 1
+            if (this.target.isPlayer()) {
+                this.troops -= Math.max(this.target.troops() / this._owner.troops(), 1)
+                numTilesPerTick -= Math.max(this.target.troops() / this._owner.troops(), .25)
+            } else {
+                this.troops -= 1
+                numTilesPerTick -= 1
+            }
         }
     }
 
@@ -93,6 +98,9 @@ export class AttackExecution implements Execution {
                 let dist = 0
                 if (this.targetCell != null) {
                     dist = manhattanDist(tile.cell(), this.targetCell)
+                }
+                if (numOwnedByMe > 2) {
+                    numOwnedByMe = 1000
                 }
                 this.toConquer.add(new TileContainer(neighbor, dist + -numOwnedByMe + (tile.cell().x * tile.cell().y) % 2))
             }
