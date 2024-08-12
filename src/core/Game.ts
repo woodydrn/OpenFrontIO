@@ -137,7 +137,7 @@ export interface Game {
 export interface MutableGame extends Game {
     player(id: PlayerID): MutablePlayer
     players(): MutablePlayer[]
-    addPlayer(playerInfo: PlayerInfo): MutablePlayer
+    addPlayer(playerInfo: PlayerInfo, troops: number): MutablePlayer
     executions(): Execution[]
     removeInactiveExecutions(): void
     removeExecution(exec: Execution)

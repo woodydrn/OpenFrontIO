@@ -22,7 +22,7 @@ export class SpawnExecution implements Execution {
         if (!this.isActive()) {
             return
         }
-        const player = this.gs.addPlayer(this.playerInfo)
+        const player = this.gs.addPlayer(this.playerInfo, 1000)
         getSpawnCells(this.gs, this.cell).forEach(c => {
             console.log('conquering cell')
             player.conquer(this.gs.tile(c))

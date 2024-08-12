@@ -1,8 +1,8 @@
 * fix conquer expansion DONE
 * perf improvements on graphics (only draw images to canvas on ticks) DONE
 * double join lobby bug DONE
-* render player info efficiently
-* better troop addition logic
+* render player info efficiently DONE 8/11/2024
+* better troop addition logic DONE 8/11/2024
 * better expansion, add back directed expansion
 * use pastel theme for territories
 * improve front page

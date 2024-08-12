@@ -204,7 +204,7 @@ export class ClientGame {
                     type: "attack",
                     attackerID: this.myPlayer.id(),
                     targetID: targetID,
-                    troops: 2000,
+                    troops: this.myPlayer.troops() / 5,
                     targetX: cell.x,
                     targetY: cell.y
                 }

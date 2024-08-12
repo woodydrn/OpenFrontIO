@@ -256,10 +256,10 @@ export class GameImpl implements MutableGame {
         return this.player(id)
     }
 
-    addPlayer(playerInfo: PlayerInfo): MutablePlayer {
+    addPlayer(playerInfo: PlayerInfo, troops: number): MutablePlayer {
         let id = this.idCounter
         this.idCounter++
-        let player = new PlayerImpl(this, id, playerInfo, 10000)
+        let player = new PlayerImpl(this, id, playerInfo, troops)
         this._players.set(id, player)
         this.eventBus.emit(new PlayerEvent(player))
         return player
