@@ -1,10 +1,11 @@
+import {PlayerConfig} from "../configuration/Config"
 import {Execution, MutableGame, MutablePlayer, PlayerID} from "../Game"
 
 export class PlayerExecution implements Execution {
 
     private player: MutablePlayer
 
-    constructor(private playerID: PlayerID) {
+    constructor(private playerID: PlayerID, private playerConfig: PlayerConfig) {
     }
 
     init(gs: MutableGame, ticks: number) {
@@ -12,15 +13,7 @@ export class PlayerExecution implements Execution {
     }
 
     tick(ticks: number) {
-        let toAdd = Math.sqrt(this.player.numTilesOwned() * this.player.troops()) / 5
-
-        const max = Math.sqrt(this.player.numTilesOwned()) * 100 + 1000
-        const ratio = 1 - this.player.troops() / max
-        toAdd *= ratio * ratio * ratio
-        this.player.addTroops(
-            Math.max(2, toAdd)
-        );
-        this.player.setTroops(Math.min(this.player.troops(), max))
+        this.player.setTroops(this.playerConfig.troopAdditionRate(this.player))
     }
 
     owner(): MutablePlayer {

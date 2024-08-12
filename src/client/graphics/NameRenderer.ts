@@ -1,7 +1,7 @@
 import PriorityQueue from "priority-queue-typescript"
 import {Cell, Game, Player} from "../../core/Game"
 import {PseudoRandom} from "../../core/PseudoRandom"
-import {Theme} from "../../core/Settings"
+import {Theme} from "../../core/configuration/Config"
 import {calculateBoundingBox} from "../NameBoxCalculator"
 
 class RenderInfo {

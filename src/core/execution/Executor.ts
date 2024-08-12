@@ -5,11 +5,12 @@ import {AttackExecution} from "./AttackExecution";
 import {SpawnExecution} from "./SpawnExecution";
 import {BotSpawner} from "./BotSpawner";
 import {BoatAttackExecution} from "./BoatAttackExecution";
+import {PlayerConfig} from "../configuration/Config";
 
 
 export class Executor {
 
-    constructor(private gs: Game) {
+    constructor(private gs: Game, private playerConfig: PlayerConfig) {
 
     }
 
@@ -32,6 +33,7 @@ export class Executor {
                 new SpawnExecution(
                     new PlayerInfo(intent.name, intent.isBot),
                     new Cell(intent.x, intent.y),
+                    this.playerConfig
                 )
             )
         } else if (intent.type == "boat") {

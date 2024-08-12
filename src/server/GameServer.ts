@@ -1,7 +1,7 @@
 import {EventBus} from "../core/EventBus";
 import {ClientID, GameID} from "../core/Game";
 import {ClientMessage, ClientMessageSchema, Intent, ServerStartGameMessage, ServerStartGameMessageSchema, ServerTurnMessageSchema, Turn} from "../core/Schemas";
-import {Settings} from "../core/Settings";
+import {Config} from "../core/configuration/Config";
 import {Ticker, TickEvent} from "../core/Ticker";
 import {Client} from "./Client";
 
@@ -13,7 +13,7 @@ export class GameServer {
     constructor(
         public readonly id: GameID,
         private clients: Map<ClientID, Client>,
-        private settings: Settings,
+        private settings: Config,
     ) {
     }
 

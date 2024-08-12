@@ -1,6 +1,6 @@
+import {defaultConfig} from "../core/configuration/DefaultConfig";
 import {TerrainMap} from "../core/Game";
 import {ServerMessage, ServerMessageSchema} from "../core/Schemas";
-import {defaultSettings} from "../core/Settings";
 import {loadTerrainMap} from "../core/TerrainMapLoader";
 import {generateUniqueID} from "../core/Util";
 import {ClientGame, createClientGame} from "./ClientGame";
@@ -84,7 +84,7 @@ class Client {
             if (this.game != null) {
                 return
             }
-            this.game = createClientGame(uuidv4().slice(0, 4), generateUniqueID(), lobbyID, defaultSettings, map)
+            this.game = createClientGame(uuidv4().slice(0, 4), generateUniqueID(), lobbyID, defaultConfig, map)
             this.game.joinLobby()
         })
     }

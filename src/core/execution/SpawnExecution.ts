@@ -1,3 +1,4 @@
+import {PlayerConfig} from "../configuration/Config"
 import {Cell, Execution, MutableGame, MutablePlayer, PlayerInfo} from "../Game"
 import {BotExecution} from "./BotExecution"
 import {PlayerExecution} from "./PlayerExecution"
@@ -11,6 +12,7 @@ export class SpawnExecution implements Execution {
     constructor(
         private playerInfo: PlayerInfo,
         private cell: Cell,
+        private playerConfig: PlayerConfig
     ) { }
 
 
@@ -22,12 +24,12 @@ export class SpawnExecution implements Execution {
         if (!this.isActive()) {
             return
         }
-        const player = this.gs.addPlayer(this.playerInfo, 1000)
+        const player = this.gs.addPlayer(this.playerInfo, this.playerConfig.startTroops(this.playerInfo))
         getSpawnCells(this.gs, this.cell).forEach(c => {
             console.log('conquering cell')
             player.conquer(this.gs.tile(c))
         })
-        this.gs.addExecution(new PlayerExecution(player.id()))
+        this.gs.addExecution(new PlayerExecution(player.id(), this.playerConfig))
         if (player.info().isBot) {
             this.gs.addExecution(new BotExecution(player))
         }

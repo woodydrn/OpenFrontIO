@@ -1,20 +1,20 @@
 import {Executor} from "../core/execution/Executor";
-import {Cell, ClientID, MutableGame, LobbyID, PlayerEvent, PlayerID, PlayerInfo, MutablePlayer, TerrainMap, TileEvent, Player, Game, BoatEvent} from "../core/Game";
+import {Cell, ClientID, MutableGame, LobbyID, PlayerEvent, PlayerID, PlayerInfo, MutablePlayer, TerrainMap, TileEvent, Player, Game, BoatEvent, TerrainTypes} from "../core/Game";
 import {createGame} from "../core/GameImpl";
 import {Ticker, TickEvent} from "../core/Ticker";
 import {EventBus} from "../core/EventBus";
-import {Settings} from "../core/Settings";
+import {Config} from "../core/configuration/Config";
 import {GameRenderer} from "./graphics/GameRenderer";
 import {InputHandler, MouseUpEvent, ZoomEvent, DragEvent, MouseDownEvent} from "./InputHandler"
 import {ClientIntentMessageSchema, ClientJoinMessageSchema, ClientMessageSchema, ServerMessage, ServerMessageSchema, ServerSyncMessage, Turn} from "../core/Schemas";
 
 
 
-export function createClientGame(name: string, clientID: ClientID, lobbyID: LobbyID, settings: Settings, terrainMap: TerrainMap): ClientGame {
+export function createClientGame(name: string, clientID: ClientID, lobbyID: LobbyID, config: Config, terrainMap: TerrainMap): ClientGame {
     let eventBus = new EventBus()
     let gs = createGame(terrainMap, eventBus)
-    let gameRenderer = new GameRenderer(gs, settings.theme(), document.createElement("canvas"))
-    let ticker = new Ticker(settings.tickIntervalMs(), eventBus)
+    let gameRenderer = new GameRenderer(gs, config.theme(), document.createElement("canvas"))
+    let ticker = new Ticker(config.tickIntervalMs(), eventBus)
 
     return new ClientGame(
         name,
@@ -25,7 +25,8 @@ export function createClientGame(name: string, clientID: ClientID, lobbyID: Lobb
         gs,
         gameRenderer,
         new InputHandler(eventBus),
-        new Executor(gs)
+        new Executor(gs, config.player()),
+        config
     )
 }
 
@@ -54,7 +55,8 @@ export class ClientGame {
         private gs: Game,
         private renderer: GameRenderer,
         private input: InputHandler,
-        private executor: Executor
+        private executor: Executor,
+        private config: Config
     ) { }
 
     public joinLobby() {
@@ -158,13 +160,13 @@ export class ClientGame {
 
         const owner = tile.owner()
         const targetID = owner.isPlayer() ? owner.id() : null
-        if (tile.owner() != this.myPlayer) {
+        if (tile.owner() != this.myPlayer && tile.terrain() == TerrainTypes.Land) {
             if (this.myPlayer.sharesBorderWith(tile.owner())) {
-                this.sendAttackIntent(targetID, cell)
+                this.sendAttackIntent(targetID, cell, this.config.player().attackAmount(this.myPlayer, owner))
             } else {
                 // TODO verify on ocean
                 console.log('going to send boat')
-                this.sendBoatAttackIntent(targetID, cell)
+                this.sendBoatAttackIntent(targetID, cell, this.config.player().boatAttackAmount(this.myPlayer, owner))
             }
         }
 
@@ -194,7 +196,7 @@ export class ClientGame {
         }
     }
 
-    private sendAttackIntent(targetID: PlayerID, cell: Cell) {
+    private sendAttackIntent(targetID: PlayerID, cell: Cell, troops: number) {
         const attack = JSON.stringify(
             ClientIntentMessageSchema.parse({
                 type: "intent",
@@ -204,7 +206,7 @@ export class ClientGame {
                     type: "attack",
                     attackerID: this.myPlayer.id(),
                     targetID: targetID,
-                    troops: this.myPlayer.troops() / 5,
+                    troops: troops,
                     targetX: cell.x,
                     targetY: cell.y
                 }
@@ -219,7 +221,7 @@ export class ClientGame {
         }
     }
 
-    private sendBoatAttackIntent(targetID: PlayerID, cell: Cell) {
+    private sendBoatAttackIntent(targetID: PlayerID, cell: Cell, troops: number) {
         const attack = JSON.stringify(
             ClientIntentMessageSchema.parse({
                 type: "intent",
@@ -229,7 +231,7 @@ export class ClientGame {
                     type: "boat",
                     attackerID: this.myPlayer.id(),
                     targetID: targetID,
-                    troops: 2000,
+                    troops: troops,
                     x: cell.x,
                     y: cell.y,
                 }

@@ -2,8 +2,9 @@ import {GameID, LobbyID} from "../core/Game";
 import {Client} from "./Client";
 import {Lobby} from "./Lobby";
 import {GameServer} from "./GameServer";
-import {defaultSettings, Settings} from "../core/Settings";
+import {Config} from "../core/configuration/Config";
 import {generateUniqueID} from "../core/Util";
+import {defaultConfig} from "../core/configuration/DefaultConfig";
 
 export class GameManager {
 
@@ -13,7 +14,7 @@ export class GameManager {
 
     private games: Map<GameID, GameServer> = new Map()
 
-    constructor(private settings: Settings) { }
+    constructor(private settings: Config) { }
 
 
     public hasLobby(lobbyID: LobbyID): boolean {
@@ -41,7 +42,7 @@ export class GameManager {
     }
 
     startGame(lobby: Lobby) {
-        const gs = new GameServer(generateUniqueID(), lobby.clients, defaultSettings)
+        const gs = new GameServer(generateUniqueID(), lobby.clients, defaultConfig)
         this.games.set(gs.id, gs)
         gs.start()
     }

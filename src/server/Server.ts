@@ -7,7 +7,7 @@ import {GameManager} from './GameManager';
 import {Client} from './Client';
 import {ClientMessage, ClientMessageSchema} from '../core/Schemas';
 import {Lobby} from './Lobby';
-import {defaultSettings} from '../core/Settings';
+import {defaultConfig} from '../core/configuration/DefaultConfig';
 
 
 
@@ -23,7 +23,7 @@ const wss = new WebSocketServer({server});
 app.use(express.static(path.join(__dirname, '../../out')));
 app.use(express.json())
 
-const gm = new GameManager(defaultSettings)
+const gm = new GameManager(defaultConfig)
 
 // New GET endpoint to list lobbies
 app.get('/lobbies', (req, res) => {
