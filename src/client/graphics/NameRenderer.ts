@@ -85,13 +85,11 @@ export class NameRenderer {
         const centerX = box.min.x + ((box.max.x - box.min.x) / 2)
         const centerY = box.min.y + ((box.max.y - box.min.y) / 2)
         render.location = new Cell(centerX, centerY)
-        render.fontSize = Math.max(Math.min(box.max.x - box.min.x, box.max.y - box.min.y) / render.player.info().name.length / 2, 2)
+        render.fontSize = Math.max(Math.min(box.max.x - box.min.x, box.max.y - box.min.y) / render.player.info().name.length / 2, 1.5)
         return wasUpdated
     }
 
     renderPlayerInfo(render: RenderInfo, context: CanvasRenderingContext2D, scale: number, uppperLeft: Cell, bottomRight: Cell) {
-
-        // console.log(`scale: ${scale}, fontSize: ${render.fontSize}, mult: ${scale * render.fontSize}`)
         if (render.fontSize * scale < 10) {
             return
         }
@@ -103,17 +101,13 @@ export class NameRenderer {
             return
         }
 
-        // if (nameCenterX, ) {
-
-        // }
 
         context.textRendering = "optimizeSpeed";
 
-        context.font = `${render.fontSize}px Arial`;
+        context.font = `bold ${render.fontSize}px ${this.theme.font()}`;
         context.fillStyle = this.theme.playerInfoColor(render.player.id()).toHex();
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-
 
         context.fillText(render.player.info().name, nameCenterX, nameCenterY - render.fontSize / 2);
         context.fillText(String(Math.floor(render.player.troops())), nameCenterX, nameCenterY + render.fontSize);

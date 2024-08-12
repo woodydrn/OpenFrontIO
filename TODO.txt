@@ -4,8 +4,11 @@
 * render player info efficiently DONE 8/11/2024
 * better troop addition logic DONE 8/11/2024
 * better expansion, add back directed expansion DONE 8/11/2024
-* use pastel theme for territories
+* use pastel theme for territories DONE 8/11/2024
+* cache border in AttackExecution for perf
 * harder to expand on other players (defense)
+* lose troops when attacked
+* fix boat bugs
 * add username in front page
 * improve front page
 * upload and start server
