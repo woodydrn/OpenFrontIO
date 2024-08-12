@@ -4,6 +4,7 @@
 * render player info efficiently DONE 8/11/2024
 * better troop addition logic DONE 8/11/2024
 * better expansion, add back directed expansion
+* harder to expand on other players (defense)
 * use pastel theme for territories
 * improve front page
 * add username in front page

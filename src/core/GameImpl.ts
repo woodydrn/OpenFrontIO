@@ -10,6 +10,7 @@ type CellString = string
 class TileImpl implements Tile {
 
     public _isBorder = false
+    private _neighbors: Tile[] = null
 
     constructor(
         private readonly gs: GameImpl,
@@ -32,7 +33,10 @@ class TileImpl implements Tile {
     terrain(): TerrainType {return this._terrain}
 
     neighbors(): Tile[] {
-        return this.gs.neighbors(this)
+        if (this._neighbors == null) {
+            this._neighbors = this.gs.neighbors(this)
+        }
+        return this._neighbors
     }
 
     game(): Game {return this.gs}
@@ -285,7 +289,6 @@ export class GameImpl implements MutableGame {
     }
 
     neighbors(tile: Tile): Tile[] {
-        this.assertIsOnMap(tile.cell())
         const x = tile.cell().x
         const y = tile.cell().y
         const ns: TileImpl[] = []
@@ -338,7 +341,11 @@ export class GameImpl implements MutableGame {
         const tiles: Tile[] = []
         tiles.push(tile)
         tile.neighbors().forEach(t => tiles.push(t))
-        tiles.filter(t => t.hasOwner()).forEach(t => {
+
+        for (const t of tiles) {
+            if (!t.hasOwner()) {
+                continue
+            }
             if (this.isBorder(t)) {
                 (t.owner() as PlayerImpl)._borderTiles.set(t.cell().toString(), t);
                 (t.owner() as PlayerImpl)._borderTileSet.add(t);
@@ -348,7 +355,7 @@ export class GameImpl implements MutableGame {
                 (t.owner() as PlayerImpl)._borderTileSet.delete(t);
                 (t as TileImpl)._isBorder = false
             }
-        })
+        }
     }
 
     isBorder(tile: Tile): boolean {
