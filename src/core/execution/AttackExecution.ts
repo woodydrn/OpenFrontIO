@@ -13,6 +13,8 @@ export class AttackExecution implements Execution {
 
     private mg: MutableGame
 
+    private numTilesWithEnemy = 0
+
     constructor(
         private troops: number,
         private _ownerID: PlayerID,
@@ -26,6 +28,7 @@ export class AttackExecution implements Execution {
         this.troops = Math.min(this._owner.troops(), this.troops)
         this._owner.setTroops(this._owner.troops() - this.troops)
         this.mg = gs
+        this.calculateToConquer()
     }
 
     tick(ticks: number) {
@@ -43,14 +46,17 @@ export class AttackExecution implements Execution {
         // }
 
 
-        let numTilesPerTick = this._owner.borderTiles().size / 5
+        let numTilesPerTick = this.numTilesWithEnemy / 2
+        if (this.targetCell != null) {
+            numTilesPerTick /= 2
+        }
         while (numTilesPerTick > 0) {
             if (this.troops < 1) {
                 this.active = false
                 return
             }
 
-            if (this.toConquer.size() < 5) {
+            if (this.toConquer.size() < this.numTilesWithEnemy / 2) {
                 this.calculateToConquer()
             }
             if (this.toConquer.size() == 0) {
@@ -72,6 +78,7 @@ export class AttackExecution implements Execution {
     }
 
     private calculateToConquer() {
+        this.numTilesWithEnemy = 0
         // console.profile('calc_to_conquer')
 
 
@@ -126,11 +133,16 @@ export class AttackExecution implements Execution {
                 if (neighbor.terrain() == TerrainTypes.Water || neighbor.owner() != this.target) {
                     continue
                 }
+                this.numTilesWithEnemy += 1
                 const numOwnedByMe = tile.neighbors()
                     .filter(t => t.terrain() == TerrainTypes.Land)
                     .filter(t => t.owner() == this._owner)
                     .length
-                this.toConquer.add(new TileContainer(neighbor, -numOwnedByMe))
+                let dist = 0
+                if (this.targetCell != null) {
+                    dist = manhattanDist(tile.cell(), this.targetCell)
+                }
+                this.toConquer.add(new TileContainer(neighbor, dist + -numOwnedByMe + (tile.cell().x * tile.cell().y) % 2))
             }
         }
         // }
