@@ -7,7 +7,6 @@
     "start:client": "webpack serve --open --node-env development",
     "start:server": "node --loader ts-node/esm --experimental-specifier-resolution=node src/server/Server.ts",
     "dev": "concurrently \"npm run start:client\" \"npm run start:server\"",
-    "build": "tsc",
     "test": "jest"
   },
   "devDependencies": {
