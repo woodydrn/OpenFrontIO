@@ -169,7 +169,6 @@ export class ClientGame {
                 this.sendBoatAttackIntent(targetID, cell, this.config.player().boatAttackAmount(this.myPlayer, owner))
             }
         }
-
     }
 
     private sendSpawnIntent(cell: Cell) {

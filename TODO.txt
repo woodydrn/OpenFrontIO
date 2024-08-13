@@ -10,8 +10,8 @@
 * lose troops when attacked DONE 8/12/2024
 * slower to attack stronger players DONE 8/12/2024
 * move all attack related config to Settings DONE 8/12/2024
-* fix boat bugs
-* add username in front page
+* fix boat bugs DONE 8/12/2024
+* add username in front page DONE 8/12/2024
 * improve front page
 * upload and start server
 * fix enemy islands when attacking 
@@ -20,3 +20,4 @@
 * better algorithm for name render placement
 * make coasts look better
 * add shader to dim border
+* remove player.info()

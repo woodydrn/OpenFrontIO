@@ -5,16 +5,78 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Warfront</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+			background-color: #f0f0f0;
+		}
+
+		h1 {
+			text-align: center;
+			color: #333;
+		}
+
+		#username-container {
+			margin-bottom: 20px;
+		}
+
+		#username {
+			width: 100%;
+			padding: 10px;
+			font-size: 16px;
+			border: 2px solid #007bff;
+			border-radius: 5px;
+		}
+
+		#lobbies-container {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+			gap: 15px;
+		}
+
+		.lobby-button {
+			height: 100px;
+			font-size: 18px;
+			font-weight: bold;
+			border: 2px solid #007bff;
+			background-color: #ffffff;
+			color: #007bff;
+			cursor: pointer;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			transition: background-color 0.3s, color 0.3s;
+			border-radius: 5px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
+
+		.lobby-button:hover {
+			background-color: #007bff;
+			color: #ffffff;
+		}
+
+		.player-count {
+			font-size: 14px;
+			margin-top: 5px;
+		}
+	</style>
 </head>
 
 <body>
 	<h1>Warfront</h1>
-	<div id="game-setup">
-		<div id="lobbies-container">
-			<h2>Available Lobbies</h2>
-			<!-- Lobby buttons will be inserted here -->
-		</div>
+	<div id="username-container">
+		<input type="text" id="username" placeholder="Enter your username">
 	</div>
+	<div id="lobbies-container">
+		<!-- Lobby buttons will be inserted here by your existing JavaScript -->
+	</div>
+
+	<!-- Your existing script file -->
+	<script src="your-existing-script.js"></script>
 </body>
 
 </html>

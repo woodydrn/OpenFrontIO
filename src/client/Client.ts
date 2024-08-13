@@ -84,10 +84,19 @@ class Client {
             if (this.game != null) {
                 return
             }
-            this.game = createClientGame(uuidv4().slice(0, 4), generateUniqueID(), lobbyID, defaultConfig, map)
+            this.game = createClientGame(getUsername(), generateUniqueID(), lobbyID, defaultConfig, map)
             this.game.joinLobby()
         })
     }
+}
+
+function getUsername(): string {
+    const usernameInput = document.getElementById('username') as HTMLInputElement | null;
+    if (usernameInput) {
+        const trimmedValue = usernameInput.value.trim();
+        return trimmedValue || 'Anon'; // Return 'Anon' if the trimmed value is empty
+    }
+    return 'Anon'; // Return 'Anon' if the input element is not found
 }
 
 // Initialize the client when the DOM is loaded
