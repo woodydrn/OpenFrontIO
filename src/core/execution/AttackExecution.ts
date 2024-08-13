@@ -23,12 +23,33 @@ export class AttackExecution implements Execution {
         private targetCell: Cell | null
     ) { }
 
-    init(gs: MutableGame, ticks: number) {
-        this._owner = gs.player(this._ownerID)
-        this.target = this.targetID == null ? gs.terraNullius() : gs.player(this.targetID)
+    init(mg: MutableGame, ticks: number) {
+
+        this._owner = mg.player(this._ownerID)
+        this.target = this.targetID == null ? mg.terraNullius() : mg.player(this.targetID)
         this.troops = Math.min(this._owner.troops(), this.troops)
         this._owner.setTroops(this._owner.troops() - this.troops)
-        this.mg = gs
+        this.mg = mg
+
+        if (this.target.isPlayer()) {
+            for (const exec of mg.executions()) {
+                if (exec instanceof AttackExecution) {
+                    const otherAttack = exec as AttackExecution
+                    if (otherAttack.target == this._owner && this.target == otherAttack._owner) {
+                        if (otherAttack.troops > this.troops) {
+                            otherAttack.troops -= this.troops
+                            otherAttack.calculateToConquer()
+                            this.active = false
+                            return
+                        } else {
+                            this.troops -= otherAttack.troops
+                            otherAttack.active = false
+                        }
+                    }
+                }
+            }
+        }
+
         this.calculateToConquer()
     }
 
@@ -92,7 +113,7 @@ export class AttackExecution implements Execution {
                 }
                 newBorder.add(neighbor)
                 this.numTilesWithEnemy += 1
-                let numOwnedByMe = tile.neighbors()
+                let numOwnedByMe = neighbor.neighbors()
                     .filter(t => t.terrain() == TerrainTypes.Land)
                     .filter(t => t.owner() == this._owner)
                     .length

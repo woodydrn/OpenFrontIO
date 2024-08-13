@@ -13,6 +13,7 @@
 * fix boat bugs DONE 8/12/2024
 * add username in front page DONE 8/12/2024
 * improve front page DONE 8/12/2024
+* attacks cancel out DONE 8/13/2024
 * upload and start server
 * fix enemy islands when attacking 
 * better algorithm for name render placement
