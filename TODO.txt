@@ -12,12 +12,12 @@
 * move all attack related config to Settings DONE 8/12/2024
 * fix boat bugs DONE 8/12/2024
 * add username in front page DONE 8/12/2024
-* improve front page
+* improve front page DONE 8/12/2024
 * upload and start server
 * fix enemy islands when attacking 
+* better algorithm for name render placement
 * make boats larger
 * have boats not get close to shore
-* better algorithm for name render placement
 * make coasts look better
 * add shader to dim border
 * remove player.info()
