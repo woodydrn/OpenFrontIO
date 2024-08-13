@@ -64,6 +64,7 @@ export class AttackExecution implements Execution {
                 badTiles++
                 continue
             }
+            // TODO: move this to configs
             this._owner.conquer(tileToConquer)
             if (this.target.isPlayer()) {
                 this.troops -= Math.max(this.target.troops() / this._owner.troops(), 1)

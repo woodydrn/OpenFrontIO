@@ -163,7 +163,7 @@ export class ClientGame {
         if (tile.owner() != this.myPlayer && tile.terrain() == TerrainTypes.Land) {
             if (this.myPlayer.sharesBorderWith(tile.owner())) {
                 this.sendAttackIntent(targetID, cell, this.config.player().attackAmount(this.myPlayer, owner))
-            } else {
+            } else if (owner.isPlayer()) {
                 // TODO verify on ocean
                 console.log('going to send boat')
                 this.sendBoatAttackIntent(targetID, cell, this.config.player().boatAttackAmount(this.myPlayer, owner))

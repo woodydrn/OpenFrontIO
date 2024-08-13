@@ -4,7 +4,7 @@ import {pastelTheme} from "./PastelTheme";
 
 export const defaultConfig = new class implements Config {
     player(): PlayerConfig {
-        throw new Error("Method not implemented.");
+        return defaultPlayerConfig
     }
 
     ticksPerTurn(): number {
@@ -49,7 +49,7 @@ export const defaultPlayerConfig = new class implements PlayerConfig {
         const ratio = 1 - player.troops() / max
         toAdd *= ratio * ratio * ratio
         toAdd = Math.max(2, toAdd)
-        return Math.min(player.troops(), max)
+        return Math.min(player.troops() + toAdd, max)
     }
 
     attackLogic(attack: Player, defender: Player | TerraNullius): number {

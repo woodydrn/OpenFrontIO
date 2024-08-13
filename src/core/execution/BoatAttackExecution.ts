@@ -47,6 +47,12 @@ export class BoatAttackExecution implements Execution {
 
         this.src = this.closestShoreTileToTarget(this.attacker, this.cell)
         this.dst = this.closestShoreTileToTarget(this.target, this.cell)
+
+        if(this.src == null || this.dst == null) {
+            this.active = false
+            return
+        }
+
         this.path = this.computePath(this.src, this.dst)
         if (this.path != null) {
             console.log(`got path ${this.path.map(t => t.cell().toString())}`)
@@ -91,8 +97,11 @@ export class BoatAttackExecution implements Execution {
         return this.active
     }
 
-    private closestShoreTileToTarget(player: Player, target: Cell): Tile {
+    private closestShoreTileToTarget(player: Player, target: Cell): Tile | null {
         const shoreTiles = Array.from(player.borderTiles()).filter(t => t.onShore())
+        if (shoreTiles.length == 0) {
+            return null
+        }
 
         return shoreTiles.reduce((closest, current) => {
             const closestDistance = manhattanDist(target, closest.cell());
