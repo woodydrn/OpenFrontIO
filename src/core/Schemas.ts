@@ -23,6 +23,7 @@ export type ClientJoinMessage = z.infer<typeof ClientJoinMessageSchema>
 // Zod schemas
 const BaseIntentSchema = z.object({
     type: z.enum(['attack', 'spawn', 'boat']),
+    clientID: z.string(),
 });
 
 export const AttackIntentSchema = BaseIntentSchema.extend({

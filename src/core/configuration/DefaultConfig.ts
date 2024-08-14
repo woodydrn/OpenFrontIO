@@ -6,10 +6,6 @@ export const defaultConfig = new class implements Config {
     player(): PlayerConfig {
         return defaultPlayerConfig
     }
-
-    ticksPerTurn(): number {
-        return 1
-    }
     turnIntervalMs(): number {
         return 100
     }
@@ -17,13 +13,9 @@ export const defaultConfig = new class implements Config {
         return 2 * 1000
     }
     lobbyLifetime(): number {
-        return 3 * 1000
+        return 10 * 1000
     }
     theme(): Theme {return pastelTheme;}
-
-    tickIntervalMs(): number {
-        return 1000 / 20; // 50ms
-    }
 }
 
 export const defaultPlayerConfig = new class implements PlayerConfig {

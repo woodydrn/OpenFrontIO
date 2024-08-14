@@ -31,7 +31,7 @@ export class Executor {
         } else if (intent.type == "spawn") {
             this.gs.addExecution(
                 new SpawnExecution(
-                    new PlayerInfo(intent.name, intent.isBot),
+                    new PlayerInfo(intent.name, intent.isBot, intent.clientID),
                     new Cell(intent.x, intent.y),
                     this.playerConfig
                 )

@@ -14,7 +14,8 @@
 * add username in front page DONE 8/12/2024
 * improve front page DONE 8/12/2024
 * attacks cancel out DONE 8/13/2024
-* upload and start server
+* upload and start server DONE 8/13/2024
+* fix multiplayer
 * better algorithm for name render placement
 * make boats larger
 * have boats not get close to shore

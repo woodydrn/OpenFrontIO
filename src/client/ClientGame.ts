@@ -14,13 +14,11 @@ export function createClientGame(name: string, clientID: ClientID, lobbyID: Lobb
     let eventBus = new EventBus()
     let gs = createGame(terrainMap, eventBus)
     let gameRenderer = new GameRenderer(gs, config.theme(), document.createElement("canvas"))
-    let ticker = new Ticker(config.tickIntervalMs(), eventBus)
 
     return new ClientGame(
         name,
         clientID,
         lobbyID,
-        ticker,
         eventBus,
         gs,
         gameRenderer,
@@ -50,7 +48,6 @@ export class ClientGame {
         private playerName: string,
         private id: ClientID,
         private gameID: LobbyID,
-        private ticker: Ticker,
         private eventBus: EventBus,
         private gs: Game,
         private renderer: GameRenderer,
@@ -81,8 +78,7 @@ export class ClientGame {
                 this.start()
             }
             if (message.type == "turn") {
-                if (message.turn.intents)
-                    this.addTurn(message.turn)
+                this.addTurn(message.turn)
             }
         };
     }
@@ -126,15 +122,13 @@ export class ClientGame {
             this.ticksThisTurn = 0
         }
         this.ticksThisTurn++
-        console.log('client ticking')
         this.gs.tick()
         this.renderer.tick()
     }
 
     private playerEvent(event: PlayerEvent) {
         console.log('received new player event!')
-        // TODO: what if multiple players has same name
-        if (event.player.info().name == this.playerName) {
+        if (event.player.info().clientID == this.id) {
             console.log('setting name')
             this.myPlayer = event.player
         }
@@ -180,6 +174,7 @@ export class ClientGame {
                 gameID: this.gameID,
                 intent: {
                     type: "spawn",
+                    clientID: this.id,
                     name: this.playerName,
                     isBot: false,
                     x: cell.x,
@@ -204,6 +199,7 @@ export class ClientGame {
                 gameID: this.gameID,
                 intent: {
                     type: "attack",
+                    clientID: this.id,
                     attackerID: this.myPlayer.id(),
                     targetID: targetID,
                     troops: troops,
@@ -229,6 +225,7 @@ export class ClientGame {
                 gameID: this.gameID,
                 intent: {
                     type: "boat",
+                    clientID: this.id,
                     attackerID: this.myPlayer.id(),
                     targetID: targetID,
                     troops: troops,

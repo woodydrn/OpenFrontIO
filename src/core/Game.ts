@@ -36,7 +36,9 @@ export interface Execution extends ExecutionView {
 export class PlayerInfo {
     constructor(
         public readonly name: string,
-        public readonly isBot: boolean
+        public readonly isBot: boolean,
+        // null if bot.
+        public readonly clientID: ClientID | null
     ) { }
 }
 

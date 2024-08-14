@@ -6,8 +6,6 @@ export interface Config {
 	theme(): Theme;
 	player(): PlayerConfig
 	turnIntervalMs(): number
-	tickIntervalMs(): number
-	ticksPerTurn(): number
 	lobbyCreationRate(): number
 	lobbyLifetime(): number
 }

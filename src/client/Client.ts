@@ -86,7 +86,8 @@ class Client {
             if (this.game != null) {
                 return
             }
-            this.game = createClientGame(getUsername(), this.random.nextID(), lobbyID, defaultConfig, map)
+            // TODO make id more random, if two player join same millisecond get same id.
+            this.game = createClientGame(getUsername(), new PseudoRandom(Date.now()).nextID(), lobbyID, defaultConfig, map)
             this.game.joinLobby()
         })
     }
