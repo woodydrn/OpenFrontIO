@@ -15,10 +15,10 @@
 * improve front page DONE 8/12/2024
 * attacks cancel out DONE 8/13/2024
 * upload and start server
-* fix enemy islands when attacking 
 * better algorithm for name render placement
 * make boats larger
 * have boats not get close to shore
 * make coasts look better
 * add shader to dim border
 * remove player.info()
+* fix enemy islands when attacking 

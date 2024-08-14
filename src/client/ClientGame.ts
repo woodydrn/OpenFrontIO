@@ -60,7 +60,8 @@ export class ClientGame {
     ) { }
 
     public joinLobby() {
-        this.socket = new WebSocket(`ws://localhost:3000`)
+        const wsHost = process.env.WEBSOCKET_URL || window.location.host;
+        this.socket = new WebSocket(`ws://${wsHost}`)
         this.socket.onopen = () => {
             console.log('Connected to game server!');
             this.socket.send(

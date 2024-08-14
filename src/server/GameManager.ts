@@ -3,8 +3,8 @@ import {Client} from "./Client";
 import {Lobby} from "./Lobby";
 import {GameServer} from "./GameServer";
 import {Config} from "../core/configuration/Config";
-import {generateUniqueID} from "../core/Util";
 import {defaultConfig} from "../core/configuration/DefaultConfig";
+import {PseudoRandom} from "../core/PseudoRandom";
 
 export class GameManager {
 
@@ -13,6 +13,8 @@ export class GameManager {
     private _lobbies: Map<LobbyID, Lobby> = new Map()
 
     private games: Map<GameID, GameServer> = new Map()
+
+    private random = new PseudoRandom(123)
 
     constructor(private settings: Config) { }
 
@@ -42,7 +44,7 @@ export class GameManager {
     }
 
     startGame(lobby: Lobby) {
-        const gs = new GameServer(generateUniqueID(), lobby.clients, defaultConfig)
+        const gs = new GameServer(this.random.nextID(), lobby.clients, defaultConfig)
         this.games.set(gs.id, gs)
         gs.start()
     }
@@ -61,7 +63,7 @@ export class GameManager {
 
         if (now > this.lastNewLobby + this.settings.lobbyCreationRate()) {
             this.lastNewLobby = now
-            this.addLobby(new Lobby(generateUniqueID(), this.settings.lobbyLifetime()))
+            this.addLobby(new Lobby(this.random.nextID(), this.settings.lobbyLifetime()))
         }
     }
 }

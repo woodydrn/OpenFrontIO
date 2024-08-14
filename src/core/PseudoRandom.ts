@@ -30,4 +30,8 @@ export class PseudoRandom {
     nextFloat(min: number, max: number): number {
         return this.next() * (max - min) + min;
     }
+
+    nextID(): string {
+        return this.nextInt(0, 1000000).toString(36).padStart(5, '0');
+    }
 }

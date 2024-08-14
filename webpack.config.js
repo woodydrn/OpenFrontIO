@@ -1,59 +1,67 @@
 import path from 'path';
 import {fileURLToPath} from 'url';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import webpack from 'webpack';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default {
-	entry: './src/client/Client.ts',
-	output: {
-		filename: 'bundle.js',
-		path: path.resolve(__dirname, 'out'),
-	},
-	module: {
-		rules: [
-			{
-				test: /\.ts$/,
-				use: 'ts-loader',
-				exclude: /node_modules/,
-			},
-			{
-				test: /\.(png|jpe?g|gif)$/i,
-				type: 'asset/resource',
-				generator: {
-					filename: 'images/[hash][ext][query]'
-				}
-			}
-		],
-	},
-	resolve: {
-		extensions: ['.ts', '.js'],
-	},
-	plugins: [
-		new HtmlWebpackPlugin({
-			template: './src/client/index.html',
-			filename: 'index.html'
-		}),
-	],
-	devServer: {
-		static: {
-			directory: path.join(__dirname, 'out'),
+export default (env, argv) => {
+	const isProduction = argv.mode === 'production';
+
+	return {
+		entry: './src/client/Client.ts',
+		output: {
+			filename: 'bundle.js',
+			path: path.resolve(__dirname, 'out'),
 		},
-		compress: true,
-		port: 9000,
-		proxy: [
-			{
-				context: ['/socket'],
-				target: 'ws://localhost:3000',
-				ws: true,
-			},
-			{
-				context: ['/lobbies', '/join_game', '/join_lobby'], // Add any other API endpoints here
-				target: 'http://localhost:3000',
-				secure: false,
-				changeOrigin: true,
-			}
+		module: {
+			rules: [
+				{
+					test: /\.ts$/,
+					use: 'ts-loader',
+					exclude: /node_modules/,
+				},
+				{
+					test: /\.(png|jpe?g|gif)$/i,
+					type: 'asset/resource',
+					generator: {
+						filename: 'images/[hash][ext][query]'
+					}
+				}
+			],
+		},
+		resolve: {
+			extensions: ['.ts', '.js'],
+		},
+		plugins: [
+			new HtmlWebpackPlugin({
+				template: './src/client/index.html',
+				filename: 'index.html'
+			}),
+			new webpack.DefinePlugin({
+				'process.env.WEBSOCKET_URL': JSON.stringify(isProduction ? '' : 'localhost:3000')
+			}),
 		],
-	},
+		devServer: isProduction ? {} : {
+			static: {
+				directory: path.join(__dirname, 'out'),
+			},
+			compress: true,
+			port: 9000,
+			proxy: [
+				{
+					context: ['/socket'],
+					target: 'ws://localhost:3000',
+					ws: true,
+				},
+				{
+					context: ['/lobbies', '/join_game', '/join_lobby'],
+					target: 'http://localhost:3000',
+					secure: false,
+					changeOrigin: true,
+				}
+			],
+		},
+	};
 };

@@ -1,8 +1,8 @@
 import {defaultConfig} from "../core/configuration/DefaultConfig";
 import {TerrainMap} from "../core/Game";
+import {PseudoRandom} from "../core/PseudoRandom";
 import {ServerMessage, ServerMessageSchema} from "../core/Schemas";
 import {loadTerrainMap} from "../core/TerrainMapLoader";
-import {generateUniqueID} from "../core/Util";
 import {ClientGame, createClientGame} from "./ClientGame";
 import {v4 as uuidv4} from 'uuid';
 
@@ -17,6 +17,8 @@ class Client {
 
     private lobbiesContainer: HTMLElement | null;
     private lobbiesInterval: NodeJS.Timeout | null = null;
+
+    private random = new PseudoRandom(1234)
 
     constructor() {
         this.lobbiesContainer = document.getElementById('lobbies-container');
@@ -84,7 +86,7 @@ class Client {
             if (this.game != null) {
                 return
             }
-            this.game = createClientGame(getUsername(), generateUniqueID(), lobbyID, defaultConfig, map)
+            this.game = createClientGame(getUsername(), this.random.nextID(), lobbyID, defaultConfig, map)
             this.game.joinLobby()
         })
     }
