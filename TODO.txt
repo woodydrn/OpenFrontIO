@@ -16,8 +16,9 @@
 * attacks cancel out DONE 8/13/2024
 * upload and start server DONE 8/13/2024
 * fix multiplayer DONE 8/14/2024
-* fix server resource leak
+* fix server resource leak DONE 8/14/2024
 * balance attacks/expansions better
+* delete players when territories too small
 * better algorithm for name render placement
 * make boats larger
 * have boats not get close to shore

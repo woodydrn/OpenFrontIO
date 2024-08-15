@@ -25,6 +25,9 @@ export class AttackExecution implements Execution {
 
     init(mg: MutableGame, ticks: number) {
 
+        // TODO: remove this and fix directed expansion.
+        this.targetCell = null
+
         this._owner = mg.player(this._ownerID)
         this.target = this.targetID == null ? mg.terraNullius() : mg.player(this.targetID)
         this.troops = Math.min(this._owner.troops(), this.troops)
