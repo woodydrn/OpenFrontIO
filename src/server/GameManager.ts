@@ -43,12 +43,6 @@ export class GameManager {
         this.games.set(game.id, game)
     }
 
-    startGame(lobby: Lobby) {
-        const gs = new GameServer(this.random.nextID(), lobby.clients, defaultConfig)
-        this.games.set(gs.id, gs)
-        gs.start()
-    }
-
     tick() {
         const now = Date.now()
 
@@ -56,7 +50,7 @@ export class GameManager {
         const expired = this.lobbies().filter(l => l.isExpired(now - 2000))
         this._lobbies = new Map(active.map(lobby => [lobby.id, lobby]));
         expired.forEach(lobby => {
-            const game = new GameServer(lobby.id, lobby.clients, this.settings)
+            const game = new GameServer(lobby.id, now, lobby.clients, this.settings)
             this.games.set(game.id, game)
             game.start()
         })
@@ -65,5 +59,15 @@ export class GameManager {
             this.lastNewLobby = now
             this.addLobby(new Lobby(this.random.nextID(), this.settings.lobbyLifetime()))
         }
+
+        const activeGames: Map<GameID, GameServer> = new Map()
+        for (const [id, game] of this.games) {
+            if (game.isActive()) {
+                activeGames.set(id, game)
+            } else {
+                game.endGame()
+            }
+        }
+        //this.games = activeGames
     }
 }

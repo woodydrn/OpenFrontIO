@@ -12,6 +12,7 @@ export class GameServer {
 
     constructor(
         public readonly id: GameID,
+        private startTime: number,
         private clients: Map<ClientID, Client>,
         private settings: Config,
     ) {
@@ -67,8 +68,18 @@ export class GameServer {
         })
     }
 
-    private tick(event: TickEvent) {
+    public isActive(): boolean {
+        return Date.now() - this.startTime < 1000 * 60 * 60  // 1 hour
+    }
 
+    endGame() {
+        // Close all WebSocket connections
+        this.clients.forEach(client => {
+            client.ws.removeAllListeners('message');
+            if (client.ws.readyState === WebSocket.OPEN) {
+                client.ws.close();
+            }
+        });
     }
 
 }
