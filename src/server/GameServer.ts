@@ -9,6 +9,7 @@ export class GameServer {
 
     private turns: Turn[] = []
     private intents: Intent[] = []
+    private lastUpdate = 0;
 
     constructor(
         public readonly id: GameID,
@@ -16,11 +17,13 @@ export class GameServer {
         private clients: Map<ClientID, Client>,
         private settings: Config,
     ) {
+        this.lastUpdate = Date.now()
     }
 
     public start() {
         this.clients.forEach(c => {
             c.ws.on('message', (message: string) => {
+                this.lastUpdate = Date.now()
                 const clientMsg: ClientMessage = ClientMessageSchema.parse(JSON.parse(message))
                 if (clientMsg.type == "intent") {
                     if (clientMsg.gameID == this.id) {
@@ -69,7 +72,7 @@ export class GameServer {
     }
 
     public isActive(): boolean {
-        return Date.now() - this.startTime < 1000 * 60 * 60  // 1 hour
+        return Date.now() - this.lastUpdate < 1000 * 60 * 5 // 5 minutes
     }
 
     endGame() {
