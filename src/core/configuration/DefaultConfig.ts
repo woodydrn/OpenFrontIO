@@ -1,8 +1,12 @@
 import {Player, PlayerInfo, TerraNullius, Tile} from "../Game";
+import {within} from "../Util";
 import {Config, PlayerConfig, Theme} from "./Config";
 import {pastelTheme} from "./PastelTheme";
 
 export const defaultConfig = new class implements Config {
+    numBots(): number {
+        return 1000
+    }
     player(): PlayerConfig {
         return defaultPlayerConfig
     }
@@ -23,9 +27,9 @@ export const defaultPlayerConfig = new class implements PlayerConfig {
     attackLogic(attacker: Player, defender: Player | TerraNullius, tileToConquer: Tile): {attackerTroopLoss: number; defenderTroopLoss: number; tilesPerTickUsed: number} {
         if (defender.isPlayer()) {
             return {
-                attackerTroopLoss: Math.max(defender.troops() / attacker.troops(), 1),
-                defenderTroopLoss: 0,
-                tilesPerTickUsed: Math.max(defender.troops() / attacker.troops(), .25)
+                attackerTroopLoss: Math.min(defender.troops() / 1000, 10),
+                defenderTroopLoss: Math.min(attacker.troops() / 2000, 5),
+                tilesPerTickUsed: 1
             }
         } else {
             return {attackerTroopLoss: 1, defenderTroopLoss: 0, tilesPerTickUsed: 1}
@@ -34,7 +38,11 @@ export const defaultPlayerConfig = new class implements PlayerConfig {
     }
 
     attackTilesPerTick(attacker: Player, defender: Player | TerraNullius, numAdjacentTilesWithEnemy: number): number {
-        return numAdjacentTilesWithEnemy / 4
+        if (defender.isPlayer()) {
+            return within(attacker.numTilesOwned() / defender.numTilesOwned(), .01, .5) * numAdjacentTilesWithEnemy
+        } else {
+            return numAdjacentTilesWithEnemy / 4
+        }
     }
 
     boatAttackAmount(attacker: Player, defender: Player | TerraNullius): number {
@@ -50,16 +58,17 @@ export const defaultPlayerConfig = new class implements PlayerConfig {
     }
 
     startTroops(playerInfo: PlayerInfo): number {
-        return 1000
+        if (playerInfo.isBot) {
+            return 1000
+        }
+        return 5000
     }
 
     troopAdditionRate(player: Player): number {
-        let toAdd = Math.sqrt(player.numTilesOwned() * player.troops()) / 5
+        const max = Math.sqrt(player.numTilesOwned()) * 1000 + 1000
 
-        const max = Math.sqrt(player.numTilesOwned()) * 100 + 1000
-        const ratio = 1 - player.troops() / max
-        toAdd *= ratio * ratio * ratio
-        toAdd = Math.max(2, toAdd)
+        let toAdd = 10 + (player.troops() + Math.sqrt(player.troops() * player.numTilesOwned())) / 250
+
         return Math.min(player.troops() + toAdd, max)
     }
 

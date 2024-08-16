@@ -13,7 +13,7 @@ export enum GamePhase {
 export class GameServer {
 
 
-    private gameDuration = 5 * 60 * 1000 // TODO!!! fix this
+    private gameDuration = 20 * 60 * 1000 // TODO!!! fix this
 
     private turns: Turn[] = []
     private intents: Intent[] = []

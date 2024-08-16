@@ -32,4 +32,5 @@
 * make coasts look better
 * add shader to dim border
 * remove player.info()
-* fix enemy islands when attacking 
+* fix enemy islands when attacking
+* BUG: ocean is considered TerraNullius

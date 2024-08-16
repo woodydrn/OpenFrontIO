@@ -1,5 +1,5 @@
 import {PlayerConfig} from "../configuration/Config";
-import {Cell, Execution, MutableGame, MutablePlayer, Player, PlayerID, PlayerInfo, TerraNullius} from "../Game"
+import {Cell, Execution, MutableGame, MutablePlayer, Player, PlayerID, PlayerInfo, TerrainTypes, TerraNullius} from "../Game"
 import {PseudoRandom} from "../PseudoRandom"
 import {AttackExecution} from "./AttackExecution";
 
@@ -33,7 +33,7 @@ export class BotExecution implements Execution {
             if (this.neighborsTerra) {
                 for (const b of this.bot.borderTiles()) {
                     for (const n of b.neighbors()) {
-                        if (n.owner() == this.gs.terraNullius()) {
+                        if (n.owner() == this.gs.terraNullius() && n.terrain() == TerrainTypes.Land) {
                             this.sendAttack(this.gs.terraNullius())
                             return
                         }

@@ -110,7 +110,7 @@ export class ClientGame {
 
         this.renderer.initialize()
         this.input.initialize()
-        this.executor.spawnBots(1000)
+        this.executor.spawnBots(this.config.numBots())
 
 
         this.intervalID = setInterval(() => this.tick(), 10);

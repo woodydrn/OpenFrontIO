@@ -36,21 +36,27 @@ export class AttackExecution implements Execution {
         this._owner.setTroops(this._owner.troops() - this.troops)
         this.mg = mg
 
-        if (this.target.isPlayer()) {
-            for (const exec of mg.executions()) {
-                if (exec instanceof AttackExecution) {
-                    const otherAttack = exec as AttackExecution
-                    if (otherAttack.target == this._owner && this.target == otherAttack._owner) {
-                        if (otherAttack.troops > this.troops) {
-                            otherAttack.troops -= this.troops
-                            otherAttack.calculateToConquer()
-                            this.active = false
-                            return
-                        } else {
-                            this.troops -= otherAttack.troops
-                            otherAttack.active = false
-                        }
+        for (const exec of mg.executions()) {
+            if (exec.isActive() && exec instanceof AttackExecution) {
+                const otherAttack = exec as AttackExecution
+                // Target has opposing attack, cancel them out
+                if (this.target.isPlayer() && otherAttack.target == this._owner && this.target == otherAttack._owner) {
+                    if (otherAttack.troops > this.troops) {
+                        otherAttack.troops -= this.troops
+                        otherAttack.calculateToConquer()
+                        this.active = false
+                        return
+                    } else {
+                        this.troops -= otherAttack.troops
+                        otherAttack.active = false
                     }
+                }
+                // Existing attack on same target, add troops
+                if (otherAttack._owner == this._owner && otherAttack.target == this.target) {
+                    otherAttack.troops += this.troops
+                    otherAttack.calculateToConquer()
+                    this.active = false
+                    return
                 }
             }
         }
@@ -77,7 +83,15 @@ export class AttackExecution implements Execution {
             if (this.toConquer.size() < this.numTilesWithEnemy / 2) {
                 this.calculateToConquer()
             }
-            if (this.toConquer.size() == 0 || badTiles > 100) {
+            if (badTiles > 1000) {
+                console.log('bad tiles')
+                this.borderTiles.clear()
+                this.calculateToConquer()
+                badTiles = 0
+                continue
+            }
+            if (this.toConquer.size() == 0) {
+                badTiles = 0
                 this.active = false
                 this._owner.addTroops(this.troops)
                 return

@@ -1,6 +1,5 @@
 import {Player, PlayerID, PlayerInfo, TerrainType, TerrainTypes, TerraNullius, Tile} from "../Game";
 import {Colord, colord} from "colord";
-import {pastelTheme} from "./PastelTheme";
 
 
 export interface Config {
@@ -9,6 +8,7 @@ export interface Config {
 	turnIntervalMs(): number
 	gameCreationRate(): number
 	lobbyLifetime(): number
+	numBots(): number
 }
 
 export interface PlayerConfig {
