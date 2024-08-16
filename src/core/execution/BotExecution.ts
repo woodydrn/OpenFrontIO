@@ -35,7 +35,6 @@ export class BotExecution implements Execution {
             return
         }
 
-
         if (ticks % this.attackRate == 0) {
             if (this.neighborsTerra) {
                 for (const b of this.bot.borderTiles()) {
@@ -55,7 +54,6 @@ export class BotExecution implements Execution {
             }
             const toAttack = ns[this.random.nextInt(0, ns.length)]
             this.sendAttack(toAttack)
-
         }
     }
 

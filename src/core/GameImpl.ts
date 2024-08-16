@@ -123,16 +123,16 @@ export class PlayerImpl implements MutablePlayer {
     }
 
     addTroops(troops: number): void {
-        this._troops += troops
+        this._troops += Math.floor(troops)
     }
     removeTroops(troops: number): void {
-        this._troops -= troops
+        this._troops -= Math.floor(troops)
         this._troops = Math.max(this._troops, 0)
     }
 
     isPlayer(): this is MutablePlayer {return true as const}
     ownsTile(cell: Cell): boolean {return this.tiles.has(cell.toString())}
-    setTroops(troops: number) {this._troops = troops}
+    setTroops(troops: number) {this._troops = Math.floor(troops)}
     conquer(tile: Tile) {this.gs.conquer(this, tile)}
     info(): PlayerInfo {return this.playerInfo}
     id(): PlayerID {return this._id}
@@ -141,6 +141,9 @@ export class PlayerImpl implements MutablePlayer {
     gameState(): MutableGame {return this.gs}
     executions(): Execution[] {
         return this.gs.executions().filter(exec => exec.owner().id() == this.id())
+    }
+    hash(): number {
+        return this.id() * (this.troops() + this.numTilesOwned())
     }
 }
 
@@ -191,7 +194,6 @@ export class GameImpl implements MutableGame {
     private _height: number
     _terraNullius: TerraNulliusImpl
 
-
     constructor(terrainMap: TerrainMap, private eventBus: EventBus) {
         this._terraNullius = new TerraNulliusImpl(this)
         this._width = terrainMap.width();
@@ -215,6 +217,13 @@ export class GameImpl implements MutableGame {
         this.execs.push(...this.unInitExecs)
         this.unInitExecs = []
         this.ticks++
+        if (this.ticks % 10) {
+            let hash = 1;
+            this._players.forEach(p => {
+                hash += p.hash()
+            })
+            console.log(`tick ${this.ticks}: hash ${hash}`)
+        }
     }
 
     terraNullius(): TerraNullius {
