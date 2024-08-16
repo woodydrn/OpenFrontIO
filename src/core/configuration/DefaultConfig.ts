@@ -9,7 +9,7 @@ export const defaultConfig = new class implements Config {
     turnIntervalMs(): number {
         return 100
     }
-    lobbyCreationRate(): number {
+    gameCreationRate(): number {
         return 2 * 1000
     }
     lobbyLifetime(): number {

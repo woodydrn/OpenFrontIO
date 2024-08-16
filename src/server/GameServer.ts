@@ -1,50 +1,64 @@
-import {EventBus} from "../core/EventBus";
-import {ClientID, GameID} from "../core/Game";
 import {ClientMessage, ClientMessageSchema, Intent, ServerStartGameMessage, ServerStartGameMessageSchema, ServerTurnMessageSchema, Turn} from "../core/Schemas";
 import {Config} from "../core/configuration/Config";
-import {Ticker, TickEvent} from "../core/Ticker";
 import {Client} from "./Client";
+
+export enum GamePhase {
+    Lobby = 'LOBBY',
+    Active = 'ACTIVE',
+    Finished = 'FINISHED'
+}
 
 export class GameServer {
 
+
+    private gameDuration = 5 * 60 * 1000 // TODO!!! fix this
+
     private turns: Turn[] = []
     private intents: Intent[] = []
-    private lastUpdate = 0;
+    private clients: Client[] = []
+    private _hasStarted = false
 
     constructor(
-        public readonly id: GameID,
-        private startTime: number,
-        private clients: Map<ClientID, Client>,
+        public readonly id: string,
+        public readonly createdAt: number,
         private settings: Config,
-    ) {
-        this.lastUpdate = Date.now()
+    ) { }
+
+    public addClient(client: Client) {
+        console.log(`game ${this.id} adding client ${client.id}`)
+        // Remove stale client if this is a reconnect
+        this.clients = this.clients.filter(c => c.id != client.id)
+        this.clients.push(client)
+        client.ws.on('message', (message: string) => {
+            const clientMsg: ClientMessage = ClientMessageSchema.parse(JSON.parse(message))
+            if (clientMsg.type == "intent") {
+                if (clientMsg.gameID == this.id) {
+                    this.addIntent(clientMsg.intent)
+                } else {
+                    console.warn(`client ${clientMsg.clientID} sent to wrong game`)
+                }
+            }
+        })
     }
 
     public start() {
-        this.clients.forEach(c => {
-            c.ws.on('message', (message: string) => {
-                this.lastUpdate = Date.now()
-                const clientMsg: ClientMessage = ClientMessageSchema.parse(JSON.parse(message))
-                if (clientMsg.type == "intent") {
-                    if (clientMsg.gameID == this.id) {
-                        this.addIntent(clientMsg.intent)
-                    } else {
-                        console.warn(`client ${clientMsg.clientID} sent to wrong game`)
-                    }
-                }
-            })
-        })
-
-
+        this._hasStarted = true
         const startGame = JSON.stringify(ServerStartGameMessageSchema.parse(
             {
                 type: "start"
             }
         ))
         this.clients.forEach(c => {
+            console.log(`game ${this.id} sending start message to ${c.id}`)
             c.ws.send(startGame)
         })
         setInterval(() => this.endTurn(), this.settings.turnIntervalMs());
+
+        // setInterval(() => {
+        //     this.clients.forEach(c => {
+        //         c.ws.close(1011, 'Intentional error for testing');
+        //     })
+        // }, 1000)
     }
 
     private addIntent(intent: Intent) {
@@ -69,10 +83,7 @@ export class GameServer {
         this.clients.forEach(c => {
             c.ws.send(msg)
         })
-    }
 
-    public isActive(): boolean {
-        return Date.now() - this.lastUpdate < 1000 * 60 * 5 // 5 minutes
     }
 
     endGame() {
@@ -83,6 +94,20 @@ export class GameServer {
                 client.ws.close();
             }
         });
+    }
+
+    phase(): GamePhase {
+        if (Date.now() - this.createdAt < this.settings.lobbyLifetime()) {
+            return GamePhase.Lobby
+        }
+        if (Date.now() - this.createdAt < this.settings.lobbyLifetime() + this.gameDuration) {
+            return GamePhase.Active
+        }
+        return GamePhase.Finished
+    }
+
+    hasStarted(): boolean {
+        return this._hasStarted
     }
 
 }

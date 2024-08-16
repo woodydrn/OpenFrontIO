@@ -6,8 +6,8 @@ import {fileURLToPath} from 'url';
 import {GameManager} from './GameManager';
 import {Client} from './Client';
 import {ClientMessage, ClientMessageSchema} from '../core/Schemas';
-import {Lobby} from './Lobby';
 import {defaultConfig} from '../core/configuration/DefaultConfig';
+import {GamePhase} from './GameServer';
 
 
 
@@ -27,12 +27,8 @@ const gm = new GameManager(defaultConfig)
 
 // New GET endpoint to list lobbies
 app.get('/lobbies', (req, res) => {
-    const lobbyList = Array.from(gm.lobbies()).filter(l => !l.isExpired(Date.now())).map(lobby => ({
-        id: lobby.id,
-    }));
-
     res.json({
-        lobbies: lobbyList,
+        lobbies: gm.gamesByPhase(GamePhase.Lobby).map(g => g.id),
     });
 });
 
@@ -43,12 +39,7 @@ wss.on('connection', (ws) => {
         const clientMsg: ClientMessage = ClientMessageSchema.parse(JSON.parse(message))
         if (clientMsg.type == "join") {
             console.log('got join request')
-            if (gm.hasLobby(clientMsg.lobbyID)) {
-                console.log('client joining lobby')
-                gm.addClientToLobby(new Client(clientMsg.clientID, ws), clientMsg.lobbyID)
-            } else {
-                console.log('lobby not found')
-            }
+            gm.addClient(new Client(clientMsg.clientID, ws), clientMsg.gameID)
         }
         // TODO: send error message
     })

@@ -1,12 +1,7 @@
 import {GameEvent} from "./EventBus"
-
-export type ClientID = string
+import {GameID} from "./Schemas"
 
 export type PlayerID = number // TODO: make string?
-
-export type GameID = string
-
-export type LobbyID = string
 
 export class Cell {
 
@@ -38,7 +33,7 @@ export class PlayerInfo {
         public readonly name: string,
         public readonly isBot: boolean,
         // null if bot.
-        public readonly clientID: ClientID | null
+        public readonly gameID: GameID | null
     ) { }
 }
 
@@ -133,8 +128,8 @@ export interface Game {
     forEachTile(fn: (tile: Tile) => void): void
     executions(): ExecutionView[]
     terraNullius(): TerraNullius
-    tick()
-    addExecution(...exec: Execution[])
+    tick(): void
+    addExecution(...exec: Execution[]): void
 }
 
 export interface MutableGame extends Game {

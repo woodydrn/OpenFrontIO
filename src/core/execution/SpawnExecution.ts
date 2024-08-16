@@ -26,7 +26,6 @@ export class SpawnExecution implements Execution {
         }
         const player = this.gs.addPlayer(this.playerInfo, this.playerConfig.startTroops(this.playerInfo))
         getSpawnCells(this.gs, this.cell).forEach(c => {
-            console.log('conquering cell')
             player.conquer(this.gs.tile(c))
         })
         this.gs.addExecution(new PlayerExecution(player.id(), this.playerConfig))

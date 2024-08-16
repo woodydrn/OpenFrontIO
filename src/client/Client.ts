@@ -1,7 +1,7 @@
 import {defaultConfig} from "../core/configuration/DefaultConfig";
 import {TerrainMap} from "../core/Game";
 import {PseudoRandom} from "../core/PseudoRandom";
-import {ServerMessage, ServerMessageSchema} from "../core/Schemas";
+import {GameID, ServerMessage, ServerMessageSchema} from "../core/Schemas";
 import {loadTerrainMap} from "../core/TerrainMapLoader";
 import {ClientGame, createClientGame} from "./ClientGame";
 import {v4 as uuidv4} from 'uuid';
@@ -44,15 +44,15 @@ class Client {
         }
     }
 
-    private updateLobbiesDisplay(lobbies: Array<{id: string}>): void {
+    private updateLobbiesDisplay(lobbies: GameID[]): void {
         if (!this.lobbiesContainer) return;
 
         this.lobbiesContainer.innerHTML = ''; // Clear existing lobbies
 
         lobbies.forEach(lobby => {
             const button = document.createElement('button');
-            button.textContent = `Join Lobby ${lobby.id}`;
-            button.onclick = () => this.joinLobby(lobby.id);
+            button.textContent = `Join Lobby ${lobby}`;
+            button.onclick = () => this.joinLobby(lobby);
             this.lobbiesContainer.appendChild(button);
         });
 
@@ -88,7 +88,7 @@ class Client {
             }
             // TODO make id more random, if two player join same millisecond get same id.
             this.game = createClientGame(getUsername(), new PseudoRandom(Date.now()).nextID(), lobbyID, defaultConfig, map)
-            this.game.joinLobby()
+            this.game.join()
         })
     }
 }

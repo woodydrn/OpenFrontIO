@@ -17,8 +17,12 @@
 * upload and start server DONE 8/13/2024
 * fix multiplayer DONE 8/14/2024
 * fix server resource leak DONE 8/14/2024
+* fix bug where game stops after 10s (websocket disconnection) DONE 8/16/2024
 * fix server memory leak
 * balance attacks/expansions better
+* Bug: boats not going to destination, coast not being recognized
+* double attack add troops
+* Have some time for spawning before game starts
 * delete players when territories too small
 * better algorithm for name render placement
 * make boats larger

@@ -1,5 +1,8 @@
 import {z} from 'zod';
 
+export type GameID = string
+export type ClientID = string
+
 export type Intent = SpawnIntent | AttackIntent | BoatAttackIntent
 
 export type AttackIntent = z.infer<typeof AttackIntentSchema>
@@ -96,7 +99,7 @@ export const ClientIntentMessageSchema = ClientBaseMessageSchema.extend({
 export const ClientJoinMessageSchema = ClientBaseMessageSchema.extend({
     type: z.literal('join'),
     clientID: z.string(),
-    lobbyID: z.string()
+    gameID: z.string()
 })
 
 export const ClientMessageSchema = z.union([ClientIntentMessageSchema, ClientJoinMessageSchema]);

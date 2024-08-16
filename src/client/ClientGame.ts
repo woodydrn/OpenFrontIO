@@ -1,16 +1,16 @@
 import {Executor} from "../core/execution/Executor";
-import {Cell, ClientID, MutableGame, LobbyID, PlayerEvent, PlayerID, PlayerInfo, MutablePlayer, TerrainMap, TileEvent, Player, Game, BoatEvent, TerrainTypes} from "../core/Game";
+import {Cell, MutableGame, PlayerEvent, PlayerID, PlayerInfo, MutablePlayer, TerrainMap, TileEvent, Player, Game, BoatEvent, TerrainTypes} from "../core/Game";
 import {createGame} from "../core/GameImpl";
 import {Ticker, TickEvent} from "../core/Ticker";
 import {EventBus} from "../core/EventBus";
 import {Config} from "../core/configuration/Config";
 import {GameRenderer} from "./graphics/GameRenderer";
 import {InputHandler, MouseUpEvent, ZoomEvent, DragEvent, MouseDownEvent} from "./InputHandler"
-import {ClientIntentMessageSchema, ClientJoinMessageSchema, ClientMessageSchema, ServerMessage, ServerMessageSchema, ServerSyncMessage, Turn} from "../core/Schemas";
+import {ClientID, ClientIntentMessageSchema, ClientJoinMessageSchema, ClientMessageSchema, GameID, Intent, ServerMessage, ServerMessageSchema, ServerSyncMessage, Turn} from "../core/Schemas";
 
 
 
-export function createClientGame(name: string, clientID: ClientID, lobbyID: LobbyID, config: Config, terrainMap: TerrainMap): ClientGame {
+export function createClientGame(name: string, clientID: ClientID, gameID: GameID, config: Config, terrainMap: TerrainMap): ClientGame {
     let eventBus = new EventBus()
     let gs = createGame(terrainMap, eventBus)
     let gameRenderer = new GameRenderer(gs, config.theme(), document.createElement("canvas"))
@@ -18,7 +18,7 @@ export function createClientGame(name: string, clientID: ClientID, lobbyID: Lobb
     return new ClientGame(
         name,
         clientID,
-        lobbyID,
+        gameID,
         eventBus,
         gs,
         gameRenderer,
@@ -47,7 +47,7 @@ export class ClientGame {
     constructor(
         private playerName: string,
         private id: ClientID,
-        private gameID: LobbyID,
+        private gameID: GameID,
         private eventBus: EventBus,
         private gs: Game,
         private renderer: GameRenderer,
@@ -56,16 +56,17 @@ export class ClientGame {
         private config: Config
     ) { }
 
-    public joinLobby() {
+    public join() {
         const wsHost = process.env.WEBSOCKET_URL || window.location.host;
-        this.socket = new WebSocket(`ws://${wsHost}`)
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        this.socket = new WebSocket(`${wsProtocol}//${wsHost}`)
         this.socket.onopen = () => {
             console.log('Connected to game server!');
             this.socket.send(
                 JSON.stringify(
                     ClientJoinMessageSchema.parse({
                         type: "join",
-                        lobbyID: this.gameID,
+                        gameID: this.gameID,
                         clientID: this.id
                     })
                 )
@@ -81,6 +82,15 @@ export class ClientGame {
                 this.addTurn(message.turn)
             }
         };
+        this.socket.onerror = (err) => {
+            console.error('Socket encountered error: ', err, 'Closing socket');
+            this.socket.close();
+        };
+        this.socket.onclose = (event: CloseEvent) => {
+            console.log(`WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
+            this.join()
+        };
+
     }
 
     public start() {
@@ -128,7 +138,7 @@ export class ClientGame {
 
     private playerEvent(event: PlayerEvent) {
         console.log('received new player event!')
-        if (event.player.info().clientID == this.id) {
+        if (event.player.info().gameID == this.id) {
             console.log('setting name')
             this.myPlayer = event.player
         }
@@ -167,79 +177,52 @@ export class ClientGame {
     }
 
     private sendSpawnIntent(cell: Cell) {
-        const spawn = JSON.stringify(
-            ClientIntentMessageSchema.parse({
-                type: "intent",
-                clientID: this.id,
-                gameID: this.gameID,
-                intent: {
-                    type: "spawn",
-                    clientID: this.id,
-                    name: this.playerName,
-                    isBot: false,
-                    x: cell.x,
-                    y: cell.y
-                }
-            })
-        )
-        console.log(spawn)
-        if (this.socket.readyState === WebSocket.OPEN) {
-            console.log(`seding spawn intent: ${spawn}`)
-            this.socket.send(spawn)
-        } else {
-            console.log('WebSocket is not open. Current state:', this.socket.readyState);
-        }
+        this.sendIntent({
+            type: "spawn",
+            clientID: this.id,
+            name: this.playerName,
+            isBot: false,
+            x: cell.x,
+            y: cell.y
+        })
     }
 
     private sendAttackIntent(targetID: PlayerID, cell: Cell, troops: number) {
-        const attack = JSON.stringify(
-            ClientIntentMessageSchema.parse({
-                type: "intent",
-                clientID: this.id,
-                gameID: this.gameID,
-                intent: {
-                    type: "attack",
-                    clientID: this.id,
-                    attackerID: this.myPlayer.id(),
-                    targetID: targetID,
-                    troops: troops,
-                    targetX: cell.x,
-                    targetY: cell.y
-                }
-            })
-        )
-        console.log(attack)
-        if (this.socket.readyState === WebSocket.OPEN) {
-            console.log(`sending attack intent: ${attack}`)
-            this.socket.send(attack)
-        } else {
-            console.log('WebSocket is not open. Current state:', this.socket.readyState);
-        }
+        this.sendIntent({
+            type: "attack",
+            clientID: this.id,
+            attackerID: this.myPlayer.id(),
+            targetID: targetID,
+            troops: troops,
+            targetX: cell.x,
+            targetY: cell.y
+        })
     }
 
     private sendBoatAttackIntent(targetID: PlayerID, cell: Cell, troops: number) {
-        const attack = JSON.stringify(
-            ClientIntentMessageSchema.parse({
+        this.sendIntent({
+            type: "boat",
+            clientID: this.id,
+            attackerID: this.myPlayer.id(),
+            targetID: targetID,
+            troops: troops,
+            x: cell.x,
+            y: cell.y,
+        })
+    }
+
+    private sendIntent(intent: Intent) {
+        if (this.socket.readyState === WebSocket.OPEN) {
+            const msg = ClientIntentMessageSchema.parse({
                 type: "intent",
                 clientID: this.id,
                 gameID: this.gameID,
-                intent: {
-                    type: "boat",
-                    clientID: this.id,
-                    attackerID: this.myPlayer.id(),
-                    targetID: targetID,
-                    troops: troops,
-                    x: cell.x,
-                    y: cell.y,
-                }
+                intent: intent
             })
-        )
-        console.log(attack)
-        if (this.socket.readyState === WebSocket.OPEN) {
-            console.log(`sending boat attack intent: ${attack}`)
-            this.socket.send(attack)
+            this.socket.send(JSON.stringify(msg))
         } else {
             console.log('WebSocket is not open. Current state:', this.socket.readyState);
+            console.log('attempting reconnect')
         }
     }
 

@@ -1,5 +1,5 @@
-import {ClientID} from "../core/Game";
 import WebSocket from 'ws';
+import {ClientID} from '../core/Schemas';
 
 
 export class Client {

@@ -1,73 +1,53 @@
-import {GameID, LobbyID} from "../core/Game";
-import {Client} from "./Client";
-import {Lobby} from "./Lobby";
-import {GameServer} from "./GameServer";
+import {GamePhase, GameServer} from "./GameServer";
 import {Config} from "../core/configuration/Config";
-import {defaultConfig} from "../core/configuration/DefaultConfig";
 import {PseudoRandom} from "../core/PseudoRandom";
+import WebSocket from 'ws';
+import {ClientID, GameID} from "../core/Schemas";
+import {Client} from "./Client";
+
 
 export class GameManager {
 
     private lastNewLobby: number = 0
 
-    private _lobbies: Map<LobbyID, Lobby> = new Map()
-
-    private games: Map<GameID, GameServer> = new Map()
+    private games: GameServer[] = []
 
     private random = new PseudoRandom(123)
 
-    constructor(private settings: Config) { }
+    constructor(private config: Config) { }
 
-
-    public hasLobby(lobbyID: LobbyID): boolean {
-        return this._lobbies.has(lobbyID)
+    gamesByPhase(phase: GamePhase): GameServer[] {
+        return this.games.filter(g => g.phase() == phase)
     }
 
-    public addClientToLobby(client: Client, lobbyID: LobbyID) {
-        this._lobbies.get(lobbyID).addClient(client)
-    }
-
-    addLobby(lobby: Lobby) {
-        this._lobbies.set(lobby.id, lobby)
-    }
-
-    lobby(id: LobbyID): Lobby {
-        return this._lobbies.get(id)
-    }
-
-    lobbies(): Lobby[] {
-        return Array.from(this._lobbies.values())
-    }
-
-    addGame(game: GameServer) {
-        this.games.set(game.id, game)
+    addClient(client: Client, gameID: GameID) {
+        const game = this.games.find(g => g.id == gameID)
+        if (!game) {
+            console.log(`game id ${gameID} not found`)
+            return
+        }
+        game.addClient(client)
     }
 
     tick() {
+        const lobbies = this.gamesByPhase(GamePhase.Lobby)
+        const active = this.gamesByPhase(GamePhase.Active)
+        const finished = this.gamesByPhase(GamePhase.Finished)
+
         const now = Date.now()
-
-        const active = this.lobbies().filter(l => !l.isExpired(now - 2000))
-        const expired = this.lobbies().filter(l => l.isExpired(now - 2000))
-        this._lobbies = new Map(active.map(lobby => [lobby.id, lobby]));
-        expired.forEach(lobby => {
-            const game = new GameServer(lobby.id, now, lobby.clients, this.settings)
-            this.games.set(game.id, game)
-            game.start()
-        })
-
-        if (now > this.lastNewLobby + this.settings.lobbyCreationRate()) {
+        if (now > this.lastNewLobby + this.config.gameCreationRate()) {
             this.lastNewLobby = now
-            this.addLobby(new Lobby(this.random.nextID(), this.settings.lobbyLifetime()))
+            const id = this.random.nextID()
+            console.log(`creating game ${id}`)
+            lobbies.push(new GameServer(id, now, this.config))
         }
 
-        const activeGames: Map<GameID, GameServer> = new Map()
-        for (const [id, game] of this.games) {
-            if (game.isActive()) {
-                activeGames.set(id, game)
-            } else {
-                game.endGame()
-            }
-        }
-        //this.games = activeGames
+        active.filter(g => !g.hasStarted()).forEach(g => {
+            g.start()
+        })
+        finished.forEach(g => {
+            g.endGame()
+        })
+        this.games = [...lobbies, ...active]
     }
 }
