@@ -11,6 +11,8 @@ export class BotExecution implements Execution {
     private gs: MutableGame
     private neighborsTerra = true
 
+    private ticksUntilStart = 50
+
     constructor(private bot: MutablePlayer, private playerConfig: PlayerConfig) {
 
         this.random = new PseudoRandom(bot.id())
@@ -23,6 +25,11 @@ export class BotExecution implements Execution {
     }
 
     tick(ticks: number) {
+
+        if (ticks < this.ticksUntilStart) {
+            return
+        }
+
         if (!this.bot.isAlive()) {
             this.active = false
             return
@@ -41,7 +48,6 @@ export class BotExecution implements Execution {
                 }
                 this.neighborsTerra = false
             }
-
 
             const ns = this.bot.neighbors()
             if (ns.length == 0) {
