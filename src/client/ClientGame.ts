@@ -76,7 +76,9 @@ export class ClientGame {
             const message: ServerMessage = ServerMessageSchema.parse(JSON.parse(event.data))
             if (message.type == "start") {
                 console.log("starting game!")
-                this.start()
+                if (!this.isActive) {
+                    this.start()
+                }
             }
             if (message.type == "turn") {
                 this.addTurn(message.turn)
@@ -88,14 +90,15 @@ export class ClientGame {
         };
         this.socket.onclose = (event: CloseEvent) => {
             console.log(`WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
-            this.join()
+            if (event.code != 1000) {
+                this.join()
+            }
         };
 
     }
 
     public start() {
         this.isActive = true
-        console.log('starting game!')
         // TODO: make each class do this, or maybe have client intercept all requests?
         //this.eventBus.on(TickEvent, (e) => this.tick(e))
         this.eventBus.on(TileEvent, (e) => this.renderer.tileUpdate(e))

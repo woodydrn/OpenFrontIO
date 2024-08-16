@@ -1,6 +1,8 @@
 import {ClientMessage, ClientMessageSchema, Intent, ServerStartGameMessage, ServerStartGameMessageSchema, ServerTurnMessageSchema, Turn} from "../core/Schemas";
 import {Config} from "../core/configuration/Config";
 import {Client} from "./Client";
+import WebSocket from 'ws';
+
 
 export enum GamePhase {
     Lobby = 'LOBBY',
@@ -17,6 +19,8 @@ export class GameServer {
     private intents: Intent[] = []
     private clients: Client[] = []
     private _hasStarted = false
+
+    private endTurnIntervalID
 
     constructor(
         public readonly id: string,
@@ -39,30 +43,32 @@ export class GameServer {
                 }
             }
         })
+
+        // In case a client joined the game late and missed the start message.
+        if (this._hasStarted) {
+            this.sendStartGameMsg(client.ws)
+        }
     }
 
     public start() {
         this._hasStarted = true
-        const startGame = JSON.stringify(ServerStartGameMessageSchema.parse(
-            {
-                type: "start"
-            }
-        ))
         this.clients.forEach(c => {
             console.log(`game ${this.id} sending start message to ${c.id}`)
-            c.ws.send(startGame)
+            this.sendStartGameMsg(c.ws)
         })
-        setInterval(() => this.endTurn(), this.settings.turnIntervalMs());
-
-        // setInterval(() => {
-        //     this.clients.forEach(c => {
-        //         c.ws.close(1011, 'Intentional error for testing');
-        //     })
-        // }, 1000)
+        this.endTurnIntervalID = setInterval(() => this.endTurn(), this.settings.turnIntervalMs());
     }
 
     private addIntent(intent: Intent) {
         this.intents.push(intent)
+    }
+
+    private sendStartGameMsg(ws: WebSocket) {
+        ws.send(JSON.stringify(ServerStartGameMessageSchema.parse(
+            {
+                type: "start"
+            }
+        )))
     }
 
     private endTurn() {
@@ -88,6 +94,7 @@ export class GameServer {
 
     endGame() {
         // Close all WebSocket connections
+        clearInterval(this.endTurnIntervalID);
         this.clients.forEach(client => {
             client.ws.removeAllListeners('message');
             if (client.ws.readyState === WebSocket.OPEN) {

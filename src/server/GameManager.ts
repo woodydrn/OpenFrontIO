@@ -38,7 +38,6 @@ export class GameManager {
         if (now > this.lastNewLobby + this.config.gameCreationRate()) {
             this.lastNewLobby = now
             const id = this.random.nextID()
-            console.log(`creating game ${id}`)
             lobbies.push(new GameServer(id, now, this.config))
         }
 

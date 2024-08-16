@@ -20,8 +20,10 @@
 * fix bug where game stops after 10s (websocket disconnection) DONE 8/16/2024
 * fix server memory leak
 * balance attacks/expansions better
-* Bug: boats not going to destination, coast not being recognized
+* BUG: boats not going to destination, coast not being recognized
+* BUG: boats freeze game on path calculation
 * double attack add troops
+* Create separate game config dev vs prod
 * Have some time for spawning before game starts
 * delete players when territories too small
 * better algorithm for name render placement
