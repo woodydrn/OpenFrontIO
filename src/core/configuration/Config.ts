@@ -1,6 +1,7 @@
-import {Player, PlayerID, PlayerInfo, TerrainType, TerrainTypes, TerraNullius} from "../Game";
+import {Player, PlayerID, PlayerInfo, TerrainType, TerrainTypes, TerraNullius, Tile} from "../Game";
 import {Colord, colord} from "colord";
 import {pastelTheme} from "./PastelTheme";
+
 
 export interface Config {
 	theme(): Theme;
@@ -13,7 +14,12 @@ export interface Config {
 export interface PlayerConfig {
 	startTroops(playerInfo: PlayerInfo): number
 	troopAdditionRate(player: Player): number
-	attackLogic(attack: Player, defender: Player | TerraNullius): number
+	attackTilesPerTick(attacker: Player, defender: Player | TerraNullius, numAdjacentTilesWithEnemy: number): number
+	attackLogic(attacker: Player, defender: Player | TerraNullius, tileToConquer: Tile): {
+		attackerTroopLoss: number,
+		defenderTroopLoss: number,
+		tilesPerTickUsed: number
+	}
 	attackAmount(attacker: Player, defender: Player | TerraNullius): number
 	boatAttackAmount(attacker: Player, defender: Player | TerraNullius): number
 }

@@ -127,6 +127,7 @@ export class PlayerImpl implements MutablePlayer {
     }
     removeTroops(troops: number): void {
         this._troops -= troops
+        this._troops = Math.max(this._troops, 0)
     }
 
     isPlayer(): this is MutablePlayer {return true as const}

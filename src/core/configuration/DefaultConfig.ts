@@ -1,4 +1,4 @@
-import {Player, PlayerInfo, TerraNullius} from "../Game";
+import {Player, PlayerInfo, TerraNullius, Tile} from "../Game";
 import {Config, PlayerConfig, Theme} from "./Config";
 import {pastelTheme} from "./PastelTheme";
 
@@ -19,9 +19,28 @@ export const defaultConfig = new class implements Config {
 }
 
 export const defaultPlayerConfig = new class implements PlayerConfig {
+
+    attackLogic(attacker: Player, defender: Player | TerraNullius, tileToConquer: Tile): {attackerTroopLoss: number; defenderTroopLoss: number; tilesPerTickUsed: number} {
+        if (defender.isPlayer()) {
+            return {
+                attackerTroopLoss: Math.max(defender.troops() / attacker.troops(), 1),
+                defenderTroopLoss: 0,
+                tilesPerTickUsed: Math.max(defender.troops() / attacker.troops(), .25)
+            }
+        } else {
+            return {attackerTroopLoss: 1, defenderTroopLoss: 0, tilesPerTickUsed: 1}
+        }
+
+    }
+
+    attackTilesPerTick(attacker: Player, defender: Player | TerraNullius, numAdjacentTilesWithEnemy: number): number {
+        return numAdjacentTilesWithEnemy / 4
+    }
+
     boatAttackAmount(attacker: Player, defender: Player | TerraNullius): number {
         return attacker.troops() / 5
     }
+
     attackAmount(attacker: Player, defender: Player | TerraNullius) {
         if (attacker.info().isBot) {
             return attacker.troops() / 20
@@ -42,10 +61,6 @@ export const defaultPlayerConfig = new class implements PlayerConfig {
         toAdd *= ratio * ratio * ratio
         toAdd = Math.max(2, toAdd)
         return Math.min(player.troops() + toAdd, max)
-    }
-
-    attackLogic(attack: Player, defender: Player | TerraNullius): number {
-        throw new Error("Method not implemented.");
     }
 
 }

@@ -2,6 +2,7 @@ import PriorityQueue from "priority-queue-typescript";
 import {Cell, Execution, MutableGame, MutablePlayer, PlayerID, Player, TerrainTypes, TerraNullius, Tile} from "../Game";
 import {PseudoRandom} from "../PseudoRandom";
 import {manhattanDist} from "../Util";
+import {PlayerConfig} from "../configuration/Config";
 
 export class AttackExecution implements Execution {
     private active: boolean = true;
@@ -20,7 +21,8 @@ export class AttackExecution implements Execution {
         private troops: number,
         private _ownerID: PlayerID,
         private targetID: PlayerID | null,
-        private targetCell: Cell | null
+        private targetCell: Cell | null,
+        private playerConfig: PlayerConfig
     ) { }
 
     init(mg: MutableGame, ticks: number) {
@@ -61,7 +63,7 @@ export class AttackExecution implements Execution {
             return
         }
 
-        let numTilesPerTick = this.numTilesWithEnemy / 4
+        let numTilesPerTick = this.playerConfig.attackTilesPerTick(this._owner, this.target, this.numTilesWithEnemy)
         if (this.targetCell != null) {
             numTilesPerTick /= 2
         }
@@ -88,15 +90,13 @@ export class AttackExecution implements Execution {
                 badTiles++
                 continue
             }
-            // TODO: move this to configs
-            this._owner.conquer(tileToConquer)
+            const {attackerTroopLoss, defenderTroopLoss, tilesPerTickUsed} = this.playerConfig.attackLogic(this._owner, this.target, tileToConquer)
+            numTilesPerTick -= tilesPerTickUsed
+            this.troops -= attackerTroopLoss
             if (this.target.isPlayer()) {
-                this.troops -= Math.max(this.target.troops() / this._owner.troops(), 1)
-                numTilesPerTick -= Math.max(this.target.troops() / this._owner.troops(), .25)
-            } else {
-                this.troops -= 1
-                numTilesPerTick -= 1
+                this.target.removeTroops(defenderTroopLoss)
             }
+            this._owner.conquer(tileToConquer)
         }
     }
 

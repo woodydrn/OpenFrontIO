@@ -30,7 +30,7 @@ export class SpawnExecution implements Execution {
         })
         this.gs.addExecution(new PlayerExecution(player.id(), this.playerConfig))
         if (player.info().isBot) {
-            this.gs.addExecution(new BotExecution(player))
+            this.gs.addExecution(new BotExecution(player, this.playerConfig))
         }
         this.active = false
     }

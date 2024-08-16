@@ -25,7 +25,8 @@ export class Executor {
                     intent.troops,
                     intent.attackerID,
                     intent.targetID,
-                    new Cell(intent.targetX, intent.targetY)
+                    new Cell(intent.targetX, intent.targetY),
+                    this.playerConfig
                 )
             )
         } else if (intent.type == "spawn") {
@@ -43,6 +44,7 @@ export class Executor {
                     intent.targetID,
                     new Cell(intent.x, intent.y),
                     intent.troops,
+                    this.playerConfig
                 )
             )
         } else {

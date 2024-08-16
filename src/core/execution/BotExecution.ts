@@ -1,3 +1,4 @@
+import {PlayerConfig} from "../configuration/Config";
 import {Cell, Execution, MutableGame, MutablePlayer, Player, PlayerID, PlayerInfo, TerraNullius} from "../Game"
 import {PseudoRandom} from "../PseudoRandom"
 import {AttackExecution} from "./AttackExecution";
@@ -10,7 +11,7 @@ export class BotExecution implements Execution {
     private gs: MutableGame
     private neighborsTerra = true
 
-    constructor(private bot: MutablePlayer) {
+    constructor(private bot: MutablePlayer, private playerConfig: PlayerConfig) {
 
         this.random = new PseudoRandom(bot.id())
         this.attackRate = this.random.nextInt(10, 50)
@@ -57,7 +58,8 @@ export class BotExecution implements Execution {
             this.bot.troops() / 20,
             this.bot.id(),
             toAttack.isPlayer() ? toAttack.id() : null,
-            null
+            null,
+            this.playerConfig
         ))
     }
 

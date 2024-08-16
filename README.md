@@ -11,7 +11,6 @@ To build the project, you will need to have Node.js and npm installed. You can d
 Before building the project, you will need to install the dependencies. You can do this by running the following command in the project directory:
 
 ```bash
-git submodule update --init --recursive
 npm install
 ```
 
