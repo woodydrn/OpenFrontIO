@@ -2,7 +2,7 @@ import PriorityQueue from "priority-queue-typescript";
 import {Cell, Execution, MutableGame, MutablePlayer, PlayerID, Player, TerrainTypes, TerraNullius, Tile} from "../Game";
 import {PseudoRandom} from "../PseudoRandom";
 import {manhattanDist} from "../Util";
-import {PlayerConfig} from "../configuration/Config";
+import {Config, PlayerConfig} from "../configuration/Config";
 
 export class AttackExecution implements Execution {
     private active: boolean = true;
@@ -22,7 +22,7 @@ export class AttackExecution implements Execution {
         private _ownerID: PlayerID,
         private targetID: PlayerID | null,
         private targetCell: Cell | null,
-        private playerConfig: PlayerConfig
+        private config: Config
     ) { }
 
     init(mg: MutableGame, ticks: number) {
@@ -68,8 +68,11 @@ export class AttackExecution implements Execution {
         if (!this.active) {
             return
         }
+        if (ticks < this.config.turnsUntilGameStart()) {
+            return
+        }
 
-        let numTilesPerTick = this.playerConfig.attackTilesPerTick(this._owner, this.target, this.numTilesWithEnemy)
+        let numTilesPerTick = this.config.player().attackTilesPerTick(this._owner, this.target, this.numTilesWithEnemy)
         if (this.targetCell != null) {
             numTilesPerTick /= 2
         }
@@ -104,7 +107,7 @@ export class AttackExecution implements Execution {
                 badTiles++
                 continue
             }
-            const {attackerTroopLoss, defenderTroopLoss, tilesPerTickUsed} = this.playerConfig.attackLogic(this._owner, this.target, tileToConquer)
+            const {attackerTroopLoss, defenderTroopLoss, tilesPerTickUsed} = this.config.player().attackLogic(this._owner, this.target, tileToConquer)
             numTilesPerTick -= tilesPerTickUsed
             this.troops -= attackerTroopLoss
             if (this.target.isPlayer()) {

@@ -2,7 +2,7 @@ import PriorityQueue from "priority-queue-typescript";
 import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, Tile} from "../Game";
 import {manhattanDist} from "../Util";
 import {AttackExecution} from "./AttackExecution";
-import {PlayerConfig} from "../configuration/Config";
+import {Config, PlayerConfig} from "../configuration/Config";
 
 export class BoatAttackExecution implements Execution {
 
@@ -31,7 +31,7 @@ export class BoatAttackExecution implements Execution {
         private targetID: PlayerID | null,
         private cell: Cell,
         private troops: number,
-        private playerConfig: PlayerConfig
+        private config: Config
     ) { }
 
     init(mg: MutableGame, ticks: number) {
@@ -82,7 +82,7 @@ export class BoatAttackExecution implements Execution {
                 return
             }
             this.attacker.conquer(this.dst)
-            this.mg.addExecution(new AttackExecution(this.troops, this.attacker.id(), this.targetID, null, this.playerConfig))
+            this.mg.addExecution(new AttackExecution(this.troops, this.attacker.id(), this.targetID, null, this.config))
             this.active = false
             return
         }

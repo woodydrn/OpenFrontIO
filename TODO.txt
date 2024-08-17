@@ -18,8 +18,9 @@
 * fix multiplayer DONE 8/14/2024
 * fix server resource leak DONE 8/14/2024
 * fix bug where game stops after 10s (websocket disconnection) DONE 8/16/2024
+* balance attacks/expansions better DONE 8/16/2024
+* fix desync
 * fix server memory leak
-* balance attacks/expansions better
 * BUG: boats not going to destination, coast not being recognized
 * BUG: boats freeze game on path calculation
 * double attack add troops
@@ -34,3 +35,4 @@
 * remove player.info()
 * fix enemy islands when attacking
 * BUG: ocean is considered TerraNullius
+* on websocket connect server only send missing turns not all turns

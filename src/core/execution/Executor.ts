@@ -5,12 +5,12 @@ import {AttackExecution} from "./AttackExecution";
 import {SpawnExecution} from "./SpawnExecution";
 import {BotSpawner} from "./BotSpawner";
 import {BoatAttackExecution} from "./BoatAttackExecution";
-import {PlayerConfig} from "../configuration/Config";
+import {Config, PlayerConfig} from "../configuration/Config";
 
 
 export class Executor {
 
-    constructor(private gs: Game, private playerConfig: PlayerConfig) {
+    constructor(private gs: Game, private config: Config) {
 
     }
 
@@ -18,20 +18,20 @@ export class Executor {
         return turn.intents.map(i => this.createExec(i))
     }
 
-    createExec(intent: Intent) {
+    createExec(intent: Intent): Execution {
         if (intent.type == "attack") {
             return new AttackExecution(
                 intent.troops,
                 intent.attackerID,
                 intent.targetID,
                 new Cell(intent.targetX, intent.targetY),
-                this.playerConfig
+                this.config
             )
         } else if (intent.type == "spawn") {
             return new SpawnExecution(
                 new PlayerInfo(intent.name, intent.isBot, intent.clientID),
                 new Cell(intent.x, intent.y),
-                this.playerConfig
+                this.config
             )
         } else if (intent.type == "boat") {
             return new BoatAttackExecution(
@@ -39,7 +39,7 @@ export class Executor {
                 intent.targetID,
                 new Cell(intent.x, intent.y),
                 intent.troops,
-                this.playerConfig
+                this.config
             )
         } else {
             throw new Error(`intent type ${intent} not found`)
@@ -47,7 +47,7 @@ export class Executor {
     }
 
 
-    spawnBots(numBots: number): void {
-        new BotSpawner(this.gs).spawnBots(numBots).forEach(i => this.createExec(i))
+    spawnBots(numBots: number): Execution[] {
+        return new BotSpawner(this.gs).spawnBots(numBots).map(i => this.createExec(i))
     }
 }

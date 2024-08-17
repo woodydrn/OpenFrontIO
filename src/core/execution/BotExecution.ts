@@ -1,4 +1,4 @@
-import {PlayerConfig} from "../configuration/Config";
+import {Config, PlayerConfig} from "../configuration/Config";
 import {Cell, Execution, MutableGame, MutablePlayer, Player, PlayerID, PlayerInfo, TerrainTypes, TerraNullius} from "../Game"
 import {PseudoRandom} from "../PseudoRandom"
 import {AttackExecution} from "./AttackExecution";
@@ -11,9 +11,8 @@ export class BotExecution implements Execution {
     private gs: MutableGame
     private neighborsTerra = true
 
-    private ticksUntilStart = 50
 
-    constructor(private bot: MutablePlayer, private playerConfig: PlayerConfig) {
+    constructor(private bot: MutablePlayer, private config: Config) {
 
         this.random = new PseudoRandom(bot.id())
         this.attackRate = this.random.nextInt(10, 50)
@@ -26,10 +25,9 @@ export class BotExecution implements Execution {
 
     tick(ticks: number) {
 
-        if (ticks < this.ticksUntilStart) {
+        if (ticks < this.config.turnsUntilGameStart()) {
             return
         }
-        return
 
         if (!this.bot.isAlive()) {
             this.active = false
@@ -64,7 +62,7 @@ export class BotExecution implements Execution {
             this.bot.id(),
             toAttack.isPlayer() ? toAttack.id() : null,
             null,
-            this.playerConfig
+            this.config
         ))
     }
 

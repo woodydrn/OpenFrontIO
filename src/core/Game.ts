@@ -1,5 +1,5 @@
 import {GameEvent} from "./EventBus"
-import {GameID} from "./Schemas"
+import {ClientID, GameID} from "./Schemas"
 
 export type PlayerID = number // TODO: make string?
 
@@ -33,7 +33,7 @@ export class PlayerInfo {
         public readonly name: string,
         public readonly isBot: boolean,
         // null if bot.
-        public readonly gameID: GameID | null
+        public readonly clientID: ClientID | null
     ) { }
 }
 
@@ -103,6 +103,7 @@ export interface Player {
     neighbors(): (Player | TerraNullius)[]
     numTilesOwned(): number
     sharesBorderWith(other: Player | TerraNullius): boolean
+    toString(): string
 }
 
 export interface MutablePlayer extends Player {

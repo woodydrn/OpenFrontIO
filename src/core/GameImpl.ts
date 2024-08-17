@@ -145,6 +145,9 @@ export class PlayerImpl implements MutablePlayer {
     hash(): number {
         return this.id() * (this.troops() + this.numTilesOwned())
     }
+    toString(): string {
+        return `Player:{name:${this.info().name},clientID:${this.info().clientID},isAlive:${this.isAlive()},troops:${this._troops},numTileOwned:${this.numTilesOwned()}}]`
+    }
 }
 
 class TerraNulliusImpl implements TerraNullius {
@@ -220,6 +223,9 @@ export class GameImpl implements MutableGame {
         if (this.ticks % 100 == 0) {
             let hash = 1;
             this._players.forEach(p => {
+                if (!p.info().isBot) {
+                    console.log(`${p.toString()}`)
+                }
                 hash += p.hash()
             })
             console.log(`tick ${this.ticks}: hash ${hash}`)

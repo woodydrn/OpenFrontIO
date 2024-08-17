@@ -4,8 +4,11 @@ import {Config, PlayerConfig, Theme} from "./Config";
 import {pastelTheme} from "./PastelTheme";
 
 export const defaultConfig = new class implements Config {
+    turnsUntilGameStart(): number {
+        return 50
+    }
     numBots(): number {
-        return 1000
+        return 20
     }
     player(): PlayerConfig {
         return defaultPlayerConfig

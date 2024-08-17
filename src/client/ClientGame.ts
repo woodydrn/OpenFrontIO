@@ -1,7 +1,6 @@
 import {Executor} from "../core/execution/Executor";
-import {Cell, MutableGame, PlayerEvent, PlayerID, PlayerInfo, MutablePlayer, TerrainMap, TileEvent, Player, Game, BoatEvent, TerrainTypes} from "../core/Game";
+import {Cell, MutableGame, PlayerEvent, PlayerID, MutablePlayer, TerrainMap, TileEvent, Player, Game, BoatEvent, TerrainTypes} from "../core/Game";
 import {createGame} from "../core/GameImpl";
-import {Ticker, TickEvent} from "../core/Ticker";
 import {EventBus} from "../core/EventBus";
 import {Config} from "../core/configuration/Config";
 import {GameRenderer} from "./graphics/GameRenderer";
@@ -23,7 +22,7 @@ export function createClientGame(name: string, clientID: ClientID, gameID: GameI
         gs,
         gameRenderer,
         new InputHandler(eventBus),
-        new Executor(gs, config.player()),
+        new Executor(gs, config),
         config
     )
 }
@@ -110,8 +109,7 @@ export class ClientGame {
 
         this.renderer.initialize()
         this.input.initialize()
-        this.executor.spawnBots(this.config.numBots())
-
+        this.gs.addExecution(...this.executor.spawnBots(this.config.numBots()))
 
         this.intervalID = setInterval(() => this.tick(), 10);
     }
@@ -142,7 +140,7 @@ export class ClientGame {
 
     private playerEvent(event: PlayerEvent) {
         console.log('received new player event!')
-        if (event.player.info().gameID == this.id) {
+        if (event.player.info().clientID == this.id) {
             console.log('setting name')
             this.myPlayer = event.player
         }
