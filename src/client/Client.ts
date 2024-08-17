@@ -22,7 +22,6 @@ class Client {
 
     constructor() {
         this.lobbiesContainer = document.getElementById('lobbies-container');
-
     }
 
     initialize(): void {

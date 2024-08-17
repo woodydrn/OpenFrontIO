@@ -29,6 +29,7 @@ export class BotExecution implements Execution {
         if (ticks < this.ticksUntilStart) {
             return
         }
+        return
 
         if (!this.bot.isAlive()) {
             this.active = false

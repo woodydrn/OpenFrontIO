@@ -66,7 +66,9 @@ export class GameServer {
     private sendStartGameMsg(ws: WebSocket) {
         ws.send(JSON.stringify(ServerStartGameMessageSchema.parse(
             {
-                type: "start"
+                type: "start",
+                // TODO: this could get large
+                turns: this.turns
             }
         )))
     }

@@ -77,6 +77,8 @@ export const ServerTurnMessageSchema = ServerBaseMessageSchema.extend({
 
 export const ServerStartGameMessageSchema = ServerBaseMessageSchema.extend({
     type: z.literal('start'),
+    // Turns the client missed if they are late to the game.
+    turns: z.array(TurnSchema)
 })
 
 

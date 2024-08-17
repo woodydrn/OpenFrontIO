@@ -35,14 +35,13 @@ export class ClientGame {
     private socket: WebSocket
     private isActive = false
 
-    private ticksPerTurn = 1
-
-    private ticksThisTurn = 0
     private currTurn = 0
 
     private spawned = false
 
     private intervalID: NodeJS.Timeout
+
+    private isProcessingTurn = false
 
     constructor(
         private playerName: string,
@@ -76,6 +75,7 @@ export class ClientGame {
             const message: ServerMessage = ServerMessageSchema.parse(JSON.parse(event.data))
             if (message.type == "start") {
                 console.log("starting game!")
+                this.turns = message.turns
                 if (!this.isActive) {
                     this.start()
                 }
@@ -122,21 +122,22 @@ export class ClientGame {
     }
 
     public addTurn(turn: Turn): void {
+        if (this.turns.length != turn.turnNumber) {
+            console.error(`got wrong turn have turns ${this.turns.length}, received turn ${turn.turnNumber}`)
+        }
         this.turns.push(turn)
     }
 
     public tick() {
-        if (this.ticksThisTurn >= this.ticksPerTurn) {
-            if (this.currTurn >= this.turns.length) {
-                return
-            }
-            this.executor.addTurn(this.turns[this.currTurn])
-            this.currTurn++
-            this.ticksThisTurn = 0
+        if (this.currTurn >= this.turns.length || this.isProcessingTurn) {
+            return
         }
-        this.ticksThisTurn++
+        this.isProcessingTurn = true
+        this.gs.addExecution(...this.executor.createExecs(this.turns[this.currTurn]))
         this.gs.tick()
         this.renderer.tick()
+        this.currTurn++
+        this.isProcessingTurn = false
     }
 
     private playerEvent(event: PlayerEvent) {

@@ -217,7 +217,7 @@ export class GameImpl implements MutableGame {
         this.execs.push(...this.unInitExecs)
         this.unInitExecs = []
         this.ticks++
-        if (this.ticks % 10) {
+        if (this.ticks % 100 == 0) {
             let hash = 1;
             this._players.forEach(p => {
                 hash += p.hash()

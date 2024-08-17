@@ -14,38 +14,32 @@ export class Executor {
 
     }
 
-    addTurn(turn: Turn) {
-        turn.intents.forEach(i => this.addIntent(i))
+    createExecs(turn: Turn): Execution[] {
+        return turn.intents.map(i => this.createExec(i))
     }
 
-    addIntent(intent: Intent) {
+    createExec(intent: Intent) {
         if (intent.type == "attack") {
-            this.gs.addExecution(
-                new AttackExecution(
-                    intent.troops,
-                    intent.attackerID,
-                    intent.targetID,
-                    new Cell(intent.targetX, intent.targetY),
-                    this.playerConfig
-                )
+            return new AttackExecution(
+                intent.troops,
+                intent.attackerID,
+                intent.targetID,
+                new Cell(intent.targetX, intent.targetY),
+                this.playerConfig
             )
         } else if (intent.type == "spawn") {
-            this.gs.addExecution(
-                new SpawnExecution(
-                    new PlayerInfo(intent.name, intent.isBot, intent.clientID),
-                    new Cell(intent.x, intent.y),
-                    this.playerConfig
-                )
+            return new SpawnExecution(
+                new PlayerInfo(intent.name, intent.isBot, intent.clientID),
+                new Cell(intent.x, intent.y),
+                this.playerConfig
             )
         } else if (intent.type == "boat") {
-            this.gs.addExecution(
-                new BoatAttackExecution(
-                    intent.attackerID,
-                    intent.targetID,
-                    new Cell(intent.x, intent.y),
-                    intent.troops,
-                    this.playerConfig
-                )
+            return new BoatAttackExecution(
+                intent.attackerID,
+                intent.targetID,
+                new Cell(intent.x, intent.y),
+                intent.troops,
+                this.playerConfig
             )
         } else {
             throw new Error(`intent type ${intent} not found`)
@@ -54,6 +48,6 @@ export class Executor {
 
 
     spawnBots(numBots: number): void {
-        new BotSpawner(this.gs).spawnBots(numBots).forEach(i => this.addIntent(i))
+        new BotSpawner(this.gs).spawnBots(numBots).forEach(i => this.createExec(i))
     }
 }
