@@ -3,9 +3,11 @@ import {within} from "../Util";
 import {Config, PlayerConfig, Theme} from "./Config";
 import {pastelTheme} from "./PastelTheme";
 
-export const defaultConfig = new class implements Config {
+
+
+export class DefaultConfig implements Config {
     turnsUntilGameStart(): number {
-        return 50
+        return 25
     }
     numBots(): number {
         return 500
@@ -17,10 +19,10 @@ export const defaultConfig = new class implements Config {
         return 100
     }
     gameCreationRate(): number {
-        return 2 * 1000
+        return 31.5 * 1000
     }
     lobbyLifetime(): number {
-        return 10 * 1000
+        return 30 * 1000
     }
     theme(): Theme {return pastelTheme;}
 }
@@ -76,3 +78,5 @@ export const defaultPlayerConfig = new class implements PlayerConfig {
     }
 
 }
+
+export const defaultConfig = new DefaultConfig()

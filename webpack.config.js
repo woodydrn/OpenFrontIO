@@ -42,6 +42,9 @@ export default (env, argv) => {
 			new webpack.DefinePlugin({
 				'process.env.WEBSOCKET_URL': JSON.stringify(isProduction ? '' : 'localhost:3000')
 			}),
+			new webpack.DefinePlugin({
+				'process.env.GAME_ENV': JSON.stringify(isProduction ? 'prod' : 'dev')
+			}),
 		],
 		devServer: isProduction ? {} : {
 			static: {

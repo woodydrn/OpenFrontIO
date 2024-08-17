@@ -65,7 +65,8 @@ export class ClientGame {
                     ClientJoinMessageSchema.parse({
                         type: "join",
                         gameID: this.gameID,
-                        clientID: this.id
+                        clientID: this.id,
+                        lastTurn: this.turns.length
                     })
                 )
             )
@@ -74,7 +75,12 @@ export class ClientGame {
             const message: ServerMessage = ServerMessageSchema.parse(JSON.parse(event.data))
             if (message.type == "start") {
                 console.log("starting game!")
-                this.turns = message.turns
+                for (const turn of message.turns) {
+                    if (turn.turnNumber < this.turns.length) {
+                        continue
+                    }
+                    this.turns.push(turn)
+                }
                 if (!this.isActive) {
                     this.start()
                 }
@@ -148,6 +154,9 @@ export class ClientGame {
     }
 
     private inputEvent(event: MouseDownEvent) {
+        if (this.turns.length < this.config.turnsUntilGameStart()) {
+            return
+        }
         if (!this.isActive) {
             return
         }

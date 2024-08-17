@@ -1,7 +1,9 @@
+import {getConfig} from "../core/configuration/Config";
 import {defaultConfig} from "../core/configuration/DefaultConfig";
+import {devConfig} from "../core/configuration/DevConfig";
 import {TerrainMap} from "../core/Game";
 import {PseudoRandom} from "../core/PseudoRandom";
-import {GameID, ServerMessage, ServerMessageSchema} from "../core/Schemas";
+import {GameID, Lobby, ServerMessage, ServerMessageSchema} from "../core/Schemas";
 import {loadTerrainMap} from "../core/TerrainMapLoader";
 import {ClientGame, createClientGame} from "./ClientGame";
 import {v4 as uuidv4} from 'uuid';
@@ -36,21 +38,21 @@ class Client {
 
     private async fetchAndUpdateLobbies(): Promise<void> {
         try {
-            const data = await this.fetchLobbies();
-            this.updateLobbiesDisplay(data.lobbies);
+            const lobbies = await this.fetchLobbies();
+            this.updateLobbiesDisplay(lobbies);
         } catch (error) {
             console.error('Error fetching and updating lobbies:', error);
         }
     }
 
-    private updateLobbiesDisplay(lobbies: GameID[]): void {
+    private updateLobbiesDisplay(lobbies: Lobby[]): void {
         if (!this.lobbiesContainer) return;
 
         this.lobbiesContainer.innerHTML = ''; // Clear existing lobbies
 
         lobbies.forEach(lobby => {
             const button = document.createElement('button');
-            button.textContent = `Join Lobby ${lobby}`;
+            button.textContent = `Join Lobby ${lobby.id} (${Math.floor((lobby.startTime - Date.now()) / 1000)}s)`;
             button.onclick = () => this.joinLobby(lobby);
             this.lobbiesContainer.appendChild(button);
         });
@@ -63,7 +65,7 @@ class Client {
         // }
     }
 
-    async fetchLobbies() {
+    async fetchLobbies(): Promise<Lobby[]> {
         const url = '/lobbies';
         try {
             const response = await fetch(url);
@@ -71,22 +73,22 @@ class Client {
                 throw new Error(`HTTP error! status: ${response.status}, statusText: ${response.statusText}`);
             }
             const data = await response.json();
-            return data;
+            return data.lobbies;
         } catch (error) {
             console.error('Error fetching lobbies:', error);
             throw error;
         }
     }
 
-    private async joinLobby(lobbyID: string) {
+    private async joinLobby(lobby: Lobby) {
         clearInterval(this.lobbiesInterval)
-        this.lobbiesContainer.innerHTML = 'Joining'; // Clear existing lobbies
+        this.lobbiesContainer.innerHTML = `Joining: ${lobby.id}`; // Clear existing lobbies
         this.terrainMap.then((map) => {
             if (this.game != null) {
                 return
             }
             // TODO make id more random, if two player join same millisecond get same id.
-            this.game = createClientGame(getUsername(), new PseudoRandom(Date.now()).nextID(), lobbyID, defaultConfig, map)
+            this.game = createClientGame(getUsername(), new PseudoRandom(Date.now()).nextID(), lobby.id, getConfig(), map)
             this.game.join()
         })
     }

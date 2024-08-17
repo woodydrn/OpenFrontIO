@@ -21,7 +21,10 @@ export type ServerStartGameMessage = z.infer<typeof ServerStartGameMessageSchema
 export type ClientIntentMessage = z.infer<typeof ClientIntentMessageSchema>
 export type ClientJoinMessage = z.infer<typeof ClientJoinMessageSchema>
 
-
+export interface Lobby {
+    id: string;
+    startTime: number;
+}
 
 // Zod schemas
 const BaseIntentSchema = z.object({
@@ -101,7 +104,9 @@ export const ClientIntentMessageSchema = ClientBaseMessageSchema.extend({
 export const ClientJoinMessageSchema = ClientBaseMessageSchema.extend({
     type: z.literal('join'),
     clientID: z.string(),
-    gameID: z.string()
+    gameID: z.string(),
+    // The last turn the client saw.
+    lastTurn: z.number()
 })
 
 export const ClientMessageSchema = z.union([ClientIntentMessageSchema, ClientJoinMessageSchema]);

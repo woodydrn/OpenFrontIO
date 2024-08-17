@@ -8,6 +8,7 @@ import {Client} from './Client';
 import {ClientMessage, ClientMessageSchema} from '../core/Schemas';
 import {defaultConfig} from '../core/configuration/DefaultConfig';
 import {GamePhase} from './GameServer';
+import {getConfig} from '../core/configuration/Config';
 
 
 
@@ -23,12 +24,12 @@ const wss = new WebSocketServer({server});
 app.use(express.static(path.join(__dirname, '../../out')));
 app.use(express.json())
 
-const gm = new GameManager(defaultConfig)
+const gm = new GameManager(getConfig())
 
 // New GET endpoint to list lobbies
 app.get('/lobbies', (req, res) => {
     res.json({
-        lobbies: gm.gamesByPhase(GamePhase.Lobby).map(g => g.id),
+        lobbies: gm.gamesByPhase(GamePhase.Lobby).map(g => ({id: g.id, startTime: g.startTime()})),
     });
 });
 
@@ -39,7 +40,7 @@ wss.on('connection', (ws) => {
         const clientMsg: ClientMessage = ClientMessageSchema.parse(JSON.parse(message))
         if (clientMsg.type == "join") {
             console.log('got join request')
-            gm.addClient(new Client(clientMsg.clientID, ws), clientMsg.gameID)
+            gm.addClient(new Client(clientMsg.clientID, ws), clientMsg.gameID, clientMsg.lastTurn)
         }
         // TODO: send error message
     })

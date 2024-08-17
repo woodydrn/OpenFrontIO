@@ -25,10 +25,10 @@ export class GameServer {
     constructor(
         public readonly id: string,
         public readonly createdAt: number,
-        private settings: Config,
+        private config: Config,
     ) { }
 
-    public addClient(client: Client) {
+    public addClient(client: Client, lastTurn: number) {
         console.log(`game ${this.id} adding client ${client.id}`)
         // Remove stale client if this is a reconnect
         this.clients = this.clients.filter(c => c.id != client.id)
@@ -46,29 +46,32 @@ export class GameServer {
 
         // In case a client joined the game late and missed the start message.
         if (this._hasStarted) {
-            this.sendStartGameMsg(client.ws)
+            this.sendStartGameMsg(client.ws, lastTurn)
         }
+    }
+
+    public startTime(): number {
+        return this.createdAt + this.config.lobbyLifetime()
     }
 
     public start() {
         this._hasStarted = true
         this.clients.forEach(c => {
             console.log(`game ${this.id} sending start message to ${c.id}`)
-            this.sendStartGameMsg(c.ws)
+            this.sendStartGameMsg(c.ws, 0)
         })
-        this.endTurnIntervalID = setInterval(() => this.endTurn(), this.settings.turnIntervalMs());
+        this.endTurnIntervalID = setInterval(() => this.endTurn(), this.config.turnIntervalMs());
     }
 
     private addIntent(intent: Intent) {
         this.intents.push(intent)
     }
 
-    private sendStartGameMsg(ws: WebSocket) {
+    private sendStartGameMsg(ws: WebSocket, lastTurn: number) {
         ws.send(JSON.stringify(ServerStartGameMessageSchema.parse(
             {
                 type: "start",
-                // TODO: this could get large
-                turns: this.turns
+                turns: this.turns.slice(lastTurn)
             }
         )))
     }
@@ -106,10 +109,10 @@ export class GameServer {
     }
 
     phase(): GamePhase {
-        if (Date.now() - this.createdAt < this.settings.lobbyLifetime()) {
+        if (Date.now() - this.createdAt < this.config.lobbyLifetime()) {
             return GamePhase.Lobby
         }
-        if (Date.now() - this.createdAt < this.settings.lobbyLifetime() + this.gameDuration) {
+        if (Date.now() - this.createdAt < this.config.lobbyLifetime() + this.gameDuration) {
             return GamePhase.Active
         }
         return GamePhase.Finished

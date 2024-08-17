@@ -1,10 +1,7 @@
 import {Colord} from "colord";
-import {Cell, MutableGame, Game, PlayerEvent, Tile, TileEvent, Player, Execution, BoatEvent} from "../../core/Game";
+import {Cell, Game, PlayerEvent, Tile, TileEvent, Player, Execution, BoatEvent} from "../../core/Game";
 import {Theme} from "../../core/configuration/Config";
 import {DragEvent, ZoomEvent} from "../InputHandler";
-import {calculateBoundingBox, placeName} from "../NameBoxCalculator";
-import {PseudoRandom} from "../../core/PseudoRandom";
-import {BoatAttackExecution} from "../../core/execution/BoatAttackExecution";
 import {NameRenderer} from "./NameRenderer";
 
 

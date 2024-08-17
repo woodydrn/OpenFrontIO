@@ -1,6 +1,17 @@
 import {Player, PlayerID, PlayerInfo, TerrainType, TerrainTypes, TerraNullius, Tile} from "../Game";
 import {Colord, colord} from "colord";
+import {devConfig} from "./DevConfig";
+import {defaultConfig} from "./DefaultConfig";
 
+export function getConfig(): Config {
+	if (process.env.GAME_ENV == 'prod') {
+		console.log('Using prod config')
+		return defaultConfig
+	} else {
+		console.log('Using dev config')
+		return devConfig
+	}
+}
 
 export interface Config {
 	theme(): Theme;

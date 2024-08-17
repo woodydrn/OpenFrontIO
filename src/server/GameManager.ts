@@ -20,13 +20,13 @@ export class GameManager {
         return this.games.filter(g => g.phase() == phase)
     }
 
-    addClient(client: Client, gameID: GameID) {
+    addClient(client: Client, gameID: GameID, lastTurn: number) {
         const game = this.games.find(g => g.id == gameID)
         if (!game) {
             console.log(`game id ${gameID} not found`)
             return
         }
-        game.addClient(client)
+        game.addClient(client, lastTurn)
     }
 
     tick() {
