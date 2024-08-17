@@ -19,6 +19,15 @@ class TileImpl implements Tile {
         private readonly _terrain: TerrainType
     ) { }
 
+    borders(other: Player | TerraNullius): boolean {
+        for (const n of this.neighbors()) {
+            if (n.owner() == other) {
+                return true
+            }
+        }
+        return false
+    }
+
     onShore(): boolean {
         return this.neighbors()
             .filter(t => t.terrain() == TerrainTypes.Water)
@@ -78,7 +87,7 @@ export class PlayerImpl implements MutablePlayer {
     public _borderTileSet: Set<Tile> = new Set()
 
     public _boats: BoatImpl[] = []
-    public tiles: Map<CellString, Tile> = new Map<CellString, Tile>()
+    public _tiles: Map<CellString, Tile> = new Map<CellString, Tile>()
 
     constructor(private gs: GameImpl, public readonly _id: PlayerID, public readonly playerInfo: PlayerInfo, private _troops) {
     }
@@ -103,7 +112,11 @@ export class PlayerImpl implements MutablePlayer {
         return false
     }
     numTilesOwned(): number {
-        return this.tiles.size
+        return this._tiles.size
+    }
+
+    tiles(): ReadonlySet<Tile> {
+        return new Set(this._tiles.values())
     }
 
     borderTiles(): ReadonlySet<Tile> {
@@ -114,7 +127,7 @@ export class PlayerImpl implements MutablePlayer {
         const ns: Set<(MutablePlayer | TerraNullius)> = new Set()
         for (const border of this.borderTiles()) {
             for (const neighbor of border.neighbors()) {
-                if (neighbor.owner() != this) {
+                if (neighbor.terrain() == TerrainTypes.Land && neighbor.owner() != this) {
                     ns.add((neighbor as TileImpl)._owner)
                 }
             }
@@ -131,13 +144,13 @@ export class PlayerImpl implements MutablePlayer {
     }
 
     isPlayer(): this is MutablePlayer {return true as const}
-    ownsTile(cell: Cell): boolean {return this.tiles.has(cell.toString())}
+    ownsTile(cell: Cell): boolean {return this._tiles.has(cell.toString())}
     setTroops(troops: number) {this._troops = Math.floor(troops)}
     conquer(tile: Tile) {this.gs.conquer(this, tile)}
     info(): PlayerInfo {return this.playerInfo}
     id(): PlayerID {return this._id}
     troops(): number {return this._troops}
-    isAlive(): boolean {return this.tiles.size > 0}
+    isAlive(): boolean {return this._tiles.size > 0}
     gameState(): MutableGame {return this.gs}
     executions(): Execution[] {
         return this.gs.executions().filter(exec => exec.owner().id() == this.id())
@@ -342,13 +355,13 @@ export class GameImpl implements MutableGame {
         const tileImpl = tile as TileImpl
         let previousOwner = tileImpl._owner
         if (previousOwner.isPlayer()) {
-            previousOwner.tiles.delete(tile.cell().toString())
+            previousOwner._tiles.delete(tile.cell().toString())
             previousOwner._borderTiles.delete(tile.cell().toString())
             previousOwner._borderTileSet.delete(tile)
             tileImpl._isBorder = false
         }
         tileImpl._owner = owner
-        owner.tiles.set(tile.cell().toString(), tile)
+        owner._tiles.set(tile.cell().toString(), tile)
         this.updateBorders(tile)
         this.eventBus.emit(new TileEvent(tile))
     }

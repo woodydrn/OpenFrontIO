@@ -8,7 +8,7 @@ export const defaultConfig = new class implements Config {
         return 50
     }
     numBots(): number {
-        return 20
+        return 500
     }
     player(): PlayerConfig {
         return defaultPlayerConfig

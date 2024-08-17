@@ -114,6 +114,23 @@ export class AttackExecution implements Execution {
                 this.target.removeTroops(defenderTroopLoss)
             }
             this._owner.conquer(tileToConquer)
+            if (this.target.isPlayer() && this.target.numTilesOwned() < 100) {
+                for (let i = 0; i < 10; i++) {
+                    for (const tile of this.target.tiles()) {
+                        if (tile.borders(this._owner)) {
+                            this._owner.conquer(tile)
+                        } else {
+                            for (const neighbor of tile.neighbors()) {
+                                const no = neighbor.owner()
+                                if (no.isPlayer() && no != this.target) {
+                                    this.mg.player(no.id()).conquer(tile)
+                                    break
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -144,7 +161,7 @@ export class AttackExecution implements Execution {
                 if (numOwnedByMe > 2) {
                     numOwnedByMe = 1000
                 }
-                this.toConquer.add(new TileContainer(neighbor, dist + -numOwnedByMe + (tile.cell().x * tile.cell().y) % 2))
+                this.toConquer.add(new TileContainer(neighbor, dist + -numOwnedByMe))
             }
         }
         this.borderTiles = newBorder

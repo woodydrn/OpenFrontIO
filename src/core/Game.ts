@@ -62,6 +62,7 @@ export interface Tile {
     owner(): Player | TerraNullius
     hasOwner(): boolean
     isBorder(): boolean
+    borders(other: Player | TerraNullius): boolean
     isInterior(): boolean
     cell(): Cell
     terrain(): Terrain
@@ -102,6 +103,7 @@ export interface Player {
     isPlayer(): this is Player
     neighbors(): (Player | TerraNullius)[]
     numTilesOwned(): number
+    tiles(): ReadonlySet<Tile>
     sharesBorderWith(other: Player | TerraNullius): boolean
     toString(): string
 }
