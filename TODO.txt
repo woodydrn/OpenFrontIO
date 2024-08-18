@@ -27,11 +27,13 @@
 * only send delta turns on connect/reconnect DONE 8/17/2024
 * Create separate game config dev vs prod DONE 8/17/2024
 * improve front page, only one game at a time every 30s DONE 8/17/2024
+* create dev server DONE 8/18/2024
 * BUG: boats not going to destination, coast not being recognized
 * BUG: boats freeze game on path calculation
 * better algorithm for name render placement
 * make boats larger
 * have boats not get close to shore
+* Allow boats to attack TerraNullius
 * make coasts look better
 * add shader to dim border
 * remove player.info()
