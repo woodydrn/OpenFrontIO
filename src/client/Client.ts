@@ -7,6 +7,8 @@ import {GameID, Lobby, ServerMessage, ServerMessageSchema} from "../core/Schemas
 import {loadTerrainMap} from "../core/TerrainMapLoader";
 import {ClientGame, createClientGame} from "./ClientGame";
 import {v4 as uuidv4} from 'uuid';
+import backgroundImage from '../../resources/images/World.png';
+
 
 // import WebSocket from 'ws';
 
@@ -52,17 +54,27 @@ class Client {
 
         lobbies.forEach(lobby => {
             const button = document.createElement('button');
-            button.textContent = `Join Lobby ${lobby.id} (${Math.floor((lobby.startTime - Date.now()) / 1000)}s)`;
+            button.className = 'lobby-button';
+
+            const nameElement = document.createElement('div');
+            nameElement.className = 'lobby-name';
+            nameElement.textContent = `Lobby ${lobby.id}`;
+
+            const timerElement = document.createElement('div');
+            timerElement.className = 'lobby-timer';
+            const timeRemaining = Math.max(0, Math.floor((lobby.startTime - Date.now()) / 1000));
+            timerElement.textContent = `Starts in: ${timeRemaining}s`;
+
+            const playerCountElement = document.createElement('div');
+            playerCountElement.className = 'player-count';
+
+            button.appendChild(nameElement);
+            button.appendChild(timerElement);
+            button.appendChild(playerCountElement);
+
             button.onclick = () => this.joinLobby(lobby);
             this.lobbiesContainer.appendChild(button);
         });
-
-        // // Join first lobby
-        // if (!this.hasJoined && lobbies.length > 0) {
-        //     this.hasJoined = true
-        //     console.log(`joining lobby ${lobbies[0].id}`)
-        //     this.joinLobby(lobbies[0].id)
-        // }
     }
 
     async fetchLobbies(): Promise<Lobby[]> {
@@ -81,16 +93,33 @@ class Client {
     }
 
     private async joinLobby(lobby: Lobby) {
-        clearInterval(this.lobbiesInterval)
-        this.lobbiesContainer.innerHTML = `Joining: ${lobby.id}`; // Clear existing lobbies
+        clearInterval(this.lobbiesInterval);
+
+        if (this.lobbiesContainer) {
+            // Clear existing content
+            this.lobbiesContainer.innerHTML = '';
+
+            // Ensure the container takes up the full height of the viewport
+            this.lobbiesContainer.style.display = 'flex';
+            this.lobbiesContainer.style.justifyContent = 'center';
+            this.lobbiesContainer.style.alignItems = 'center';
+            this.lobbiesContainer.style.minHeight = '100vh';
+
+            // Create and add the joining message
+            const joiningMessage = document.createElement('div');
+            joiningMessage.textContent = `Joining: ${lobby.id}`;
+            joiningMessage.className = 'joining-message';
+
+            this.lobbiesContainer.appendChild(joiningMessage);
+        }
+
         this.terrainMap.then((map) => {
             if (this.game != null) {
-                return
+                return;
             }
-            // TODO make id more random, if two player join same millisecond get same id.
-            this.game = createClientGame(getUsername(), new PseudoRandom(Date.now()).nextID(), lobby.id, getConfig(), map)
-            this.game.join()
-        })
+            this.game = createClientGame(getUsername(), new PseudoRandom(Date.now()).nextID(), lobby.id, getConfig(), map);
+            this.game.join();
+        });
     }
 }
 
@@ -107,3 +136,6 @@ function getUsername(): string {
 document.addEventListener('DOMContentLoaded', () => {
     new Client().initialize();
 });
+
+document.body.style.backgroundImage = `url(${backgroundImage})`;
+

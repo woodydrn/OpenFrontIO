@@ -22,11 +22,11 @@
 * delete players when territories too small DONE 8/16/2024
 * double attack add troops DONE 8/16/2024
 * Have some time for spawning before game starts DONE 8/16/2024
+* fix desync DONE 8/16/2024
+* fix server memory leak DONE 8/16/2024
 * only send delta turns on connect/reconnect DONE 8/17/2024
-* Create separate game config dev vs prod
-* improve front page, only one game at a time every 30s
-* fix desync
-* fix server memory leak
+* Create separate game config dev vs prod DONE 8/17/2024
+* improve front page, only one game at a time every 30s DONE 8/17/2024
 * BUG: boats not going to destination, coast not being recognized
 * BUG: boats freeze game on path calculation
 * better algorithm for name render placement

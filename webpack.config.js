@@ -28,6 +28,10 @@ export default (env, argv) => {
 					generator: {
 						filename: 'images/[hash][ext][query]'
 					}
+				},
+				{
+					test: /\.svg$/,
+					type: 'asset/inline',
 				}
 			],
 		},

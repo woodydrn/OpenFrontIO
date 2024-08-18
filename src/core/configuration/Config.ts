@@ -4,12 +4,13 @@ import {devConfig} from "./DevConfig";
 import {defaultConfig} from "./DefaultConfig";
 
 export function getConfig(): Config {
-	if (process.env.GAME_ENV == 'prod') {
-		console.log('Using prod config')
-		return defaultConfig
-	} else {
+	// TODO: 'prod' not found in prod env
+	if (process.env.GAME_ENV == 'dev') {
 		console.log('Using dev config')
 		return devConfig
+	} else {
+		console.log('Using prod config')
+		return defaultConfig
 	}
 }
 

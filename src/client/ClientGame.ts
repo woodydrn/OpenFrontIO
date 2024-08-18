@@ -154,9 +154,9 @@ export class ClientGame {
     }
 
     private inputEvent(event: MouseDownEvent) {
-        if (this.turns.length < this.config.turnsUntilGameStart()) {
-            return
-        }
+        // if (this.turns.length < this.config.turnsUntilGameStart()) {
+        //     return
+        // }
         if (!this.isActive) {
             return
         }

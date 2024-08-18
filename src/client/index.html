@@ -8,71 +8,126 @@
 	<style>
 		body {
 			font-family: Arial, sans-serif;
-			max-width: 800px;
+			margin: 0;
+			padding: 0;
+			min-height: 100vh;
+			background-color: #404040;
+			/* Dark grey background */
+			background-image: url('/resources/images/watercolor_worldmap.jpg');
+			background-size: cover;
+			background-position: center;
+			background-attachment: fixed;
+			background-blend-mode: overlay;
+		}
+
+		.content {
+			max-width: 1020px;
+			/* Allows for two 500px buttons side by side with some margin */
 			margin: 0 auto;
 			padding: 20px;
-			background-color: #f0f0f0;
+			position: relative;
 		}
 
 		h1 {
 			text-align: center;
-			color: #333;
+			color: #ffffff;
+			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+			font-size: 2.5em;
+			margin-bottom: 30px;
 		}
 
 		#username-container {
-			margin-bottom: 20px;
+			margin-bottom: 30px;
 		}
 
 		#username {
 			width: 100%;
-			padding: 10px;
-			font-size: 16px;
+			padding: 15px;
+			font-size: 18px;
 			border: 2px solid #007bff;
 			border-radius: 5px;
+			background-color: rgba(255, 255, 255, 0.8);
+		}
+
+		.lobby-button:hover {
+			background-color: rgba(0, 123, 255, 0.4);
+			transform: translateY(-5px);
+			box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+		}
+
+		.player-count {
+			font-size: 24px;
+			margin-top: 20px;
+			color: #aaddff;
 		}
 
 		#lobbies-container {
-			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-			gap: 15px;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 20px;
 		}
 
 		.lobby-button {
-			height: 100px;
-			font-size: 18px;
+			width: 500px;
+			height: 500px;
+			font-size: 24px;
 			font-weight: bold;
-			border: 2px solid #007bff;
-			background-color: #ffffff;
-			color: #007bff;
+			border: 3px solid #007bff;
+			background-color: rgba(0, 123, 255, 0.2);
+			color: #ffffff;
 			cursor: pointer;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-			transition: background-color 0.3s, color 0.3s;
-			border-radius: 5px;
-			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			transition: all 0.3s ease;
+			border-radius: 10px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+			padding: 20px;
+			text-align: center;
+			box-sizing: border-box;
 		}
 
 		.lobby-button:hover {
-			background-color: #007bff;
-			color: #ffffff;
+			background-color: rgba(0, 123, 255, 0.4);
+			transform: translateY(-5px);
+			box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+		}
+
+		.lobby-name {
+			font-size: 36px;
+			margin-bottom: 20px;
+		}
+
+		.lobby-timer {
+			font-size: 28px;
+			margin-bottom: 20px;
 		}
 
 		.player-count {
-			font-size: 14px;
-			margin-top: 5px;
+			font-size: 24px;
+			color: #aaddff;
+		}
+
+		.joining-message {
+			font-size: 48px;
+			color: white;
+			text-align: center;
+			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 		}
 	</style>
 </head>
 
 <body>
-	<h1>OpenFront (ALPHA)</h1>
-	<div id="username-container">
-		<input type="text" id="username" placeholder="Enter your username">
-	</div>
-	<div id="lobbies-container">
-		<!-- Lobby buttons will be inserted here by your existing JavaScript -->
+	<div class="content">
+		<h1>OpenFront (ALPHA)</h1>
+		<div id="username-container">
+			<input type="text" id="username" placeholder="Enter your username">
+		</div>
+		<div id="lobbies-container">
+			<!-- Lobby buttons will be inserted here by your existing JavaScript -->
+		</div>
 	</div>
 
 	<!-- Your existing script file -->
