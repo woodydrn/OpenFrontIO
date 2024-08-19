@@ -154,5 +154,5 @@ export class PlayerEvent implements GameEvent {
 }
 
 export class BoatEvent implements GameEvent {
-    constructor(public readonly boat: Boat) { }
+    constructor(public readonly boat: Boat, public oldTile: Tile) { }
 }

@@ -62,8 +62,9 @@ export class BoatImpl implements MutableBoat {
     ) { }
 
     move(tile: Tile): void {
+        const oldTile = this._tile
         this._tile = tile
-        this.g.fireBoatUpdateEvent(this)
+        this.g.fireBoatUpdateEvent(this, oldTile)
     }
     setTroops(troops: number): void {
         this._troops = troops
@@ -95,12 +96,15 @@ export class PlayerImpl implements MutablePlayer {
     addBoat(troops: number, tile: Tile, target: Player | TerraNullius): BoatImpl {
         const b = new BoatImpl(this.gs, tile, troops, this, target as PlayerImpl | TerraNulliusImpl)
         this._boats.push(b)
-        this.gs.fireBoatUpdateEvent(b)
+        this.gs.fireBoatUpdateEvent(b, b.tile())
         return b
     }
+
     boats(): BoatImpl[] {
         return this._boats
+
     }
+
     sharesBorderWith(other: Player | TerraNullius): boolean {
         for (const border of this._borderTileSet) {
             for (const neighbor of border.neighbors()) {
@@ -400,8 +404,8 @@ export class GameImpl implements MutableGame {
         return false
     }
 
-    public fireBoatUpdateEvent(boat: Boat) {
-        this.eventBus.emit(new BoatEvent(boat))
+    public fireBoatUpdateEvent(boat: Boat, oldTile: Tile) {
+        this.eventBus.emit(new BoatEvent(boat, oldTile))
     }
 
 }

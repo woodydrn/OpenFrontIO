@@ -3,6 +3,8 @@ import {Cell, Game, PlayerEvent, Tile, TileEvent, Player, Execution, BoatEvent} 
 import {Theme} from "../../core/configuration/Config";
 import {DragEvent, ZoomEvent} from "../InputHandler";
 import {NameRenderer} from "./NameRenderer";
+import {manhattanDist} from "../../core/Util";
+import {PseudoRandom} from "../../core/PseudoRandom";
 
 
 
@@ -19,6 +21,7 @@ export class GameRenderer {
 
 	private nameRenderer: NameRenderer;
 
+	private random = new PseudoRandom(123)
 
 	constructor(private gs: Game, private theme: Theme, private canvas: HTMLCanvasElement) {
 		this.context = canvas.getContext("2d")
@@ -132,8 +135,26 @@ export class GameRenderer {
 	}
 
 	boatEvent(event: BoatEvent) {
-		this.paintCell(event.boat.tile().cell(), new Colord({r: 255, g: 255, b: 255}))
-		this.gs.neighbors(event.boat.tile()).forEach(t => this.paintTile(t))
+		this.bfs(event.oldTile, 2).forEach(t => this.paintTile(t))
+
+		this.bfs(event.boat.tile(), 2).forEach(t => this.paintCell(t.cell(), this.theme.borderColor(event.boat.owner().id())))
+		this.bfs(event.boat.tile(), 1).forEach(t => this.paintCell(t.cell(), this.theme.territoryColor(event.boat.owner().id())))
+	}
+
+	private bfs(tile: Tile, dist: number): Set<Tile> {
+		const seen = new Set<Tile>
+		const q: Tile[] = []
+		q.push(tile)
+		while (q.length > 0) {
+			const curr = q.pop()
+			seen.add(curr)
+			for (const n of curr.neighbors()) {
+				if (!seen.has(n) && manhattanDist(tile.cell(), n.cell()) <= dist) {
+					q.push(n)
+				}
+			}
+		}
+		return seen
 	}
 
 	resize(width: number, height: number): void {

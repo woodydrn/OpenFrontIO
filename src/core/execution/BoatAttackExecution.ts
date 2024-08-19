@@ -60,7 +60,7 @@ export class BoatAttackExecution implements Execution {
             return
         }
         this.aStarPre = new AStar(this.src, this.dst)
-        this.aStarPre.compute(10000)
+        this.aStarPre.compute(10)
         this.path = this.aStarPre.reconstructPath()
         if (this.path != null) {
             console.log(`got path ${this.path.map(t => t.cell().toString())}`)
