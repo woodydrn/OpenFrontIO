@@ -1,4 +1,5 @@
-import {Game, Player, Tile, Cell} from '../core/Game';
+import {Game, Player, Tile, Cell, TerrainTypes} from '../../core/Game';
+import {within} from '../../core/Util';
 
 export interface Point {
     x: number;
@@ -12,14 +13,23 @@ export interface Rectangle {
     height: number;
 }
 
+
 export function placeName(game: Game, player: Player): [position: Cell, fontSize: number] {
     const boundingBox = calculateBoundingBox(player);
-    const grid = createGrid(game, player, boundingBox);
+
+    const rawScalingFactor = (boundingBox.max.x - boundingBox.min.x) / 50
+    const scalingFactor = within(Math.floor(rawScalingFactor), 1, 100)
+
+    const grid = createGrid(game, player, boundingBox, scalingFactor);
     const largestRectangle = findLargestInscribedRectangle(grid);
+    largestRectangle.x = largestRectangle.x * scalingFactor
+    largestRectangle.y = largestRectangle.y * scalingFactor
+    largestRectangle.width = largestRectangle.width * scalingFactor
+    largestRectangle.height = largestRectangle.height * scalingFactor
 
     const center = new Cell(
-        largestRectangle.x + largestRectangle.width / 2,
-        largestRectangle.y + largestRectangle.height / 2,
+        Math.floor(largestRectangle.x + largestRectangle.width / 2 + boundingBox.min.x),
+        Math.floor(largestRectangle.y + largestRectangle.height / 2 + boundingBox.min.y),
     )
 
     const fontSize = calculateFontSize(largestRectangle, player.info().name);
@@ -27,7 +37,7 @@ export function placeName(game: Game, player: Player): [position: Cell, fontSize
     return [center, fontSize]
 }
 
-export function calculateBoundingBox(player: Player): {min: Point; max: Point} {
+export function calculateBoundingBox(player: Player): {min: Cell; max: Cell} {
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
     player.borderTiles().forEach((tile: Tile) => {
@@ -38,20 +48,33 @@ export function calculateBoundingBox(player: Player): {min: Point; max: Point} {
         maxY = Math.max(maxY, cell.y);
     });
 
-    return {min: {x: minX, y: minY}, max: {x: maxX, y: maxY}};
+    return {min: new Cell(minX, minY), max: new Cell(maxX, maxY)}
 }
 
-export function createGrid(game: Game, player: Player, boundingBox: {min: Point; max: Point}): boolean[][] {
-    const width = boundingBox.max.x - boundingBox.min.x + 1;
-    const height = boundingBox.max.y - boundingBox.min.y + 1;
+export function createGrid(game: Game, player: Player, boundingBox: {min: Point; max: Point}, scalingFactor: number): boolean[][] {
+    const scaledBoundingBox: {min: Point; max: Point} = {
+        min: {
+            x: Math.floor(boundingBox.min.x / scalingFactor),
+            y: Math.floor(boundingBox.min.y / scalingFactor)
+        },
+        max: {
+            x: Math.floor(boundingBox.max.x / scalingFactor),
+            y: Math.floor(boundingBox.max.y / scalingFactor)
+        }
+    }
+
+
+    const width = scaledBoundingBox.max.x - scaledBoundingBox.min.x + 1;
+    const height = scaledBoundingBox.max.y - scaledBoundingBox.min.y + 1;
     const grid: boolean[][] = Array(width).fill(null).map(() => Array(height).fill(false));
 
-    for (let y = boundingBox.min.y; y <= boundingBox.max.y; y++) {
-        for (let x = boundingBox.min.x; x <= boundingBox.max.x; x++) {
-            const cell = new Cell(x, y);
+
+    for (let x = scaledBoundingBox.min.x; x <= scaledBoundingBox.max.x; x++) {
+        for (let y = scaledBoundingBox.min.y; y <= scaledBoundingBox.max.y; y++) {
+            const cell = new Cell(x * scalingFactor, y * scalingFactor);
             if (game.isOnMap(cell)) {
                 const tile = game.tile(cell);
-                grid[x - boundingBox.min.x][y - boundingBox.min.y] = tile.owner() === player;
+                grid[x - scaledBoundingBox.min.x][y - scaledBoundingBox.min.y] = tile.owner() === player; // TODO: okay if lake
             }
         }
     }
@@ -68,9 +91,9 @@ export function findLargestInscribedRectangle(grid: boolean[][]): Rectangle {
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
             if (grid[col][row]) {
-                heights[row]++;
+                heights[col]++;
             } else {
-                heights[row] = 0;
+                heights[col] = 0;
             }
         }
 
@@ -120,8 +143,7 @@ export function largestRectangleInHistogram(widths: number[]): Rectangle {
 
 export function calculateFontSize(rectangle: Rectangle, name: string): number {
     // This is a simplified calculation. You might want to adjust it based on your specific font and rendering system.
-    const aspectRatio = name.length; // Assuming width:height ratio of 2:1 for each character
     const widthConstrained = rectangle.width / name.length;
-    const heightConstrained = rectangle.height / 2;
+    const heightConstrained = rectangle.height / name.length;
     return Math.min(widthConstrained, heightConstrained);
 }

@@ -2,10 +2,18 @@ import PriorityQueue from "priority-queue-typescript"
 import {Cell, Game, Player} from "../../core/Game"
 import {PseudoRandom} from "../../core/PseudoRandom"
 import {Theme} from "../../core/configuration/Config"
-import {calculateBoundingBox} from "../NameBoxCalculator"
+import {calculateBoundingBox, placeName} from "./NameBoxCalculator"
 
 class RenderInfo {
-    constructor(public player: Player, public lastRendered: number, public location: Cell, public fontSize: number) { }
+    public isVisible = true
+    constructor(
+        public player: Player,
+        public lastRenderCalc: number,
+        public lastBoundingCalculated: number,
+        public boundingBox: {min: Cell, max: Cell},
+        public location: Cell,
+        public fontSize: number
+    ) { }
 }
 
 export class NameRenderer {
@@ -17,7 +25,7 @@ export class NameRenderer {
     private renderInfo: Map<Player, RenderInfo> = new Map()
     private context: CanvasRenderingContext2D
     private canvas: HTMLCanvasElement
-    private toRender: PriorityQueue<RenderInfo> = new PriorityQueue<RenderInfo>(1000, (a: RenderInfo, b: RenderInfo) => a.lastRendered - b.lastRendered);
+    private renders: RenderInfo[] = []
     private seenPlayers: Set<Player> = new Set()
 
     constructor(private game: Game, private theme: Theme) {
@@ -36,62 +44,75 @@ export class NameRenderer {
         this.canvas.height = this.game.height();
     }
 
+    public tick() {
+        const now = Date.now()
+        if (now - this.lastChecked > this.refreshRate) {
+            this.lastChecked = now
+            this.renders = this.renders.filter(r => r.player.isAlive())
+            for (const player of this.game.players()) {
+                if (player.isAlive()) {
+                    if (!this.seenPlayers.has(player)) {
+                        this.seenPlayers.add(player)
+                        this.renders.push(new RenderInfo(player, 0, 0, null, null, 0))
+                    }
+                } else {
+                    this.seenPlayers.delete(player)
+                }
+            }
+        }
+        for (const render of this.renders) {
+            const now = Date.now()
+            if (now - render.lastBoundingCalculated > this.refreshRate) {
+                render.boundingBox = calculateBoundingBox(render.player);
+                render.lastBoundingCalculated = now
+            }
+            if (render.isVisible && now - render.lastRenderCalc > this.refreshRate) {
+                this.calculateRenderInfo(render)
+                render.lastRenderCalc = now + this.rand.nextInt(-50, 50)
+            }
+        }
+    }
+
     public render(mainContex: CanvasRenderingContext2D, scale: number, uppperLeft: Cell, bottomRight: Cell) {
-        for (const render of this.toRender) {
-            if (render.player.isAlive()) {
+        for (const render of this.renders) {
+            render.isVisible = this.isVisible(render, uppperLeft, bottomRight)
+            if (render.player.isAlive() && render.isVisible && render.fontSize * scale > 10) {
                 this.renderPlayerInfo(render, mainContex, scale, uppperLeft, bottomRight)
             }
         }
     }
 
-    public tick() {
-        const now = Date.now()
-        if (now - this.lastChecked > this.refreshRate) {
-            this.lastChecked = now
-            for (const player of this.game.players()) {
-                if (!this.seenPlayers.has(player)) {
-                    this.toRender.add(new RenderInfo(player, 0, null, null))
-                    this.seenPlayers.add(player)
-                }
+    isVisible(render: RenderInfo, min: Cell, max: Cell): boolean {
+        const ratio = (max.x - min.x) / Math.max(20, (render.boundingBox.max.x - render.boundingBox.min.x))
+        if (render.player.info().isBot) {
+            if (ratio > 15) {
+                return false
+            }
+        } else {
+            if (ratio > 30) {
+                return false
             }
         }
-
-        while (!this.toRender.empty() && now - this.toRender.peek().lastRendered > this.refreshRate) {
-            const renderInfo = this.toRender.poll()
-            this.calculateRenderInfo(renderInfo)
-            renderInfo.lastRendered = now + this.rand.nextInt(-50, 50)
-            this.toRender.add(renderInfo)
+        if (render.boundingBox.max.x < min.x || render.boundingBox.max.y < min.y || render.boundingBox.min.x > max.x || render.boundingBox.max.y > max.y) {
+            return false
         }
-
+        return true
     }
 
-    calculateRenderInfo(render: RenderInfo): boolean {
-
-        let wasUpdated = false
-
-        render.lastRendered = Date.now() + this.rand.nextInt(0, 100)
-        wasUpdated = true
-
-        const box = calculateBoundingBox(render.player)
-        const centerX = box.min.x + ((box.max.x - box.min.x) / 2)
-        const centerY = box.min.y + ((box.max.y - box.min.y) / 2)
-        render.location = new Cell(centerX, centerY)
-        render.fontSize = Math.max(Math.min(box.max.x - box.min.x, box.max.y - box.min.y) / render.player.info().name.length / 2, 1.5)
-        return wasUpdated
+    calculateRenderInfo(render: RenderInfo) {
+        if (render.player.numTilesOwned() == 0) {
+            render.fontSize = 0
+            return
+        }
+        render.lastRenderCalc = Date.now() + this.rand.nextInt(0, 100)
+        const [cell, size] = placeName(this.game, render.player)
+        render.location = cell
+        render.fontSize = Math.max(1, Math.floor(size))
     }
 
     renderPlayerInfo(render: RenderInfo, context: CanvasRenderingContext2D, scale: number, uppperLeft: Cell, bottomRight: Cell) {
-        if (render.fontSize * scale < 10) {
-            return
-        }
-
         const nameCenterX = Math.floor(render.location.x - this.game.width() / 2)
         const nameCenterY = Math.floor(render.location.y - this.game.height() / 2)
-
-        if (render.location.x < uppperLeft.x || render.location.x > bottomRight.x || render.location.y < uppperLeft.y || render.location.y > bottomRight.y) {
-            return
-        }
-
 
         context.textRendering = "optimizeSpeed";
 

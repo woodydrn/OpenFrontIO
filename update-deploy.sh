@@ -17,7 +17,7 @@ fi
 
 # Set the instance name based on the environment
 if [[ "$ENV" == "dev" ]]; then
-    INSTANCE_NAME="openfrontio-dev"
+    INSTANCE_NAME="openfrontio-dev-instance"
     echo "[DEV] Deploying to openfront.dev"
 else
     INSTANCE_NAME="openfrontio-instance"

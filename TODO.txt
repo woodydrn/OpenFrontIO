@@ -31,14 +31,14 @@
 * BUG: boats freeze game on path calculation DONE 8/18/2024
 * use analyitics DONE 8/18/2024
 * Use Overpass font DONE 8/18/2024
-* BUG: invert zoom
+* BUG: invert zoom DONE 8/19/2024
 * better algorithm for name render placement
 * show how many players in each lobby
 * make boats larger
+* make coasts look better
 * have boats not get close to shore
 * BUG: boat doesn't work if on lake on other player not on lake
 * Allow boats to attack TerraNullius
-* make coasts look better
 * add shader to dim border
 * remove player.info()
 * fix enemy islands when attacking

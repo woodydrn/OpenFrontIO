@@ -10,15 +10,12 @@ import {defaultConfig} from '../core/configuration/DefaultConfig';
 import {GamePhase} from './GameServer';
 import {getConfig} from '../core/configuration/Config';
 
-
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({server});
-
 
 // Serve static files from the 'out' directory
 app.use(express.static(path.join(__dirname, '../../out')));

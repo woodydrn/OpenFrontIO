@@ -15,12 +15,15 @@ export const devConfig = new class extends DefaultConfig {
     player(): PlayerConfig {
         return devPlayerConfig
     }
+    numBots(): number {
+        return 500
+    }
 }
 
 export const devPlayerConfig = new class extends DefaultPlayerConfig {
     startTroops(playerInfo: PlayerInfo): number {
         if (playerInfo.isBot) {
-            return 10
+            return 5000
         }
         return 5000
     }
