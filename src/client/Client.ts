@@ -8,6 +8,8 @@ import {loadTerrainMap} from "../core/TerrainMapLoader";
 import {ClientGame, createClientGame} from "./ClientGame";
 import {v4 as uuidv4} from 'uuid';
 import backgroundImage from '../../resources/images/empty_map.png';
+import './styles.css';
+
 
 
 // import WebSocket from 'ws';

@@ -87,6 +87,6 @@ export const pastelTheme = new class implements Theme {
     }
 
     font(): string {
-        return "Arial";
+        return "Overpass, sans-serif";
     }
 }

@@ -11,6 +11,8 @@
   "include": [
     "src/**/*",
     "resources/**/*",
+    "src/**/*.ts",
+    "src/**/*.css",
     "test/core/GameImpl.test.ts"
   ],
   "exclude": [

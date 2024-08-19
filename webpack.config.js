@@ -23,6 +23,10 @@ export default (env, argv) => {
 					exclude: /node_modules/,
 				},
 				{
+					test: /\.css$/,
+					use: ['style-loader', 'css-loader']
+				},
+				{
 					test: /\.(png|jpe?g|gif)$/i,
 					type: 'asset/resource',
 					generator: {
@@ -32,6 +36,19 @@ export default (env, argv) => {
 				{
 					test: /\.svg$/,
 					type: 'asset/inline',
+				},
+				{
+					test: /\.(woff|woff2|eot|ttf|otf)$/,
+					use: [
+						{
+							loader: 'file-loader',
+							options: {
+								name: '[name].[ext]',
+								outputPath: 'fonts/',
+								publicPath: '../fonts/', // This is important
+							}
+						}
+					]
 				}
 			],
 		},

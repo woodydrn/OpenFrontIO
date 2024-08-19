@@ -39,13 +39,6 @@ export class NameRenderer {
     }
 
     public render(mainContex: CanvasRenderingContext2D, scale: number, uppperLeft: Cell, bottomRight: Cell) {
-        // mainContex.drawImage(
-        //     this.canvas,
-        //     -this.game.width() / 2,
-        //     -this.game.height() / 2,
-        //     this.game.width(),
-        //     this.game.height()
-        // )
         for (const render of this.toRender) {
             if (render.player.isAlive()) {
                 this.renderPlayerInfo(render, mainContex, scale, uppperLeft, bottomRight)
@@ -104,12 +97,13 @@ export class NameRenderer {
 
         context.textRendering = "optimizeSpeed";
 
-        context.font = `bold ${render.fontSize}px ${this.theme.font()}`;
+        context.font = `${render.fontSize}px ${this.theme.font()}`;
         context.fillStyle = this.theme.playerInfoColor(render.player.id()).toHex();
         context.textAlign = 'center';
         context.textBaseline = 'middle';
 
         context.fillText(render.player.info().name, nameCenterX, nameCenterY - render.fontSize / 2);
+        context.font = `bold ${render.fontSize}px ${this.theme.font()}`;
         context.fillText(String(Math.floor(render.player.troops())), nameCenterX, nameCenterY + render.fontSize);
     }
 }

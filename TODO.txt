@@ -29,6 +29,7 @@
 * improve front page, only one game at a time every 30s DONE 8/17/2024
 * create dev server DONE 8/18/2024
 * BUG: boats freeze game on path calculation DONE 8/18/2024
+* Use Overpass font
 * better algorithm for name render placement
 * make boats larger
 * have boats not get close to shore
