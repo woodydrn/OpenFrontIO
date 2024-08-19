@@ -166,7 +166,7 @@ export class GameRenderer {
 	onZoom(event: ZoomEvent) {
 		const oldScale = this.scale;
 		const zoomFactor = 1 + event.delta / 600;
-		this.scale *= zoomFactor;
+		this.scale /= zoomFactor;
 
 		// Clamp the scale to prevent extreme zooming
 		this.scale = Math.max(0.1, Math.min(10, this.scale));

@@ -29,18 +29,19 @@
 * improve front page, only one game at a time every 30s DONE 8/17/2024
 * create dev server DONE 8/18/2024
 * BUG: boats freeze game on path calculation DONE 8/18/2024
-* Use Overpass font
+* use analyitics DONE 8/18/2024
+* Use Overpass font DONE 8/18/2024
+* BUG: invert zoom
 * better algorithm for name render placement
+* show how many players in each lobby
 * make boats larger
 * have boats not get close to shore
-* use analyitics
+* BUG: boat doesn't work if on lake on other player not on lake
 * Allow boats to attack TerraNullius
 * make coasts look better
 * add shader to dim border
 * remove player.info()
 * fix enemy islands when attacking
 * BUG: ocean is considered TerraNullius
-* on websocket connect server only send missing turns not all turns
 * BUG: fix hotreload (priority queue breaks it)
-* BUG: boat doesn't work if on lake on other player not on lake
 * PERF: use hierarchical a* search for boats

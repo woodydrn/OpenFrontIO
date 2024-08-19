@@ -20,8 +20,6 @@ export class NameRenderer {
     private toRender: PriorityQueue<RenderInfo> = new PriorityQueue<RenderInfo>(1000, (a: RenderInfo, b: RenderInfo) => a.lastRendered - b.lastRendered);
     private seenPlayers: Set<Player> = new Set()
 
-
-
     constructor(private game: Game, private theme: Theme) {
 
     }
