@@ -5,7 +5,7 @@ import {EventBus} from "../core/EventBus";
 import {Config} from "../core/configuration/Config";
 import {GameRenderer} from "./graphics/GameRenderer";
 import {InputHandler, MouseUpEvent, ZoomEvent, DragEvent, MouseDownEvent} from "./InputHandler"
-import {ClientID, ClientIntentMessageSchema, ClientJoinMessageSchema, ClientMessageSchema, GameID, Intent, ServerMessage, ServerMessageSchema, ServerSyncMessage, Turn} from "../core/Schemas";
+import {ClientID, ClientIntentMessageSchema, ClientJoinMessageSchema, ClientLeaveMessageSchema, ClientMessageSchema, GameID, Intent, ServerMessage, ServerMessageSchema, ServerSyncMessage, Turn} from "../core/Schemas";
 
 
 
@@ -123,6 +123,17 @@ export class ClientGame {
     public stop() {
         clearInterval(this.intervalID)
         this.isActive = false
+        if (this.socket.readyState === WebSocket.OPEN) {
+            const msg = ClientLeaveMessageSchema.parse({
+                type: "leave",
+                clientID: this.id,
+                gameID: this.gameID,
+            })
+            this.socket.send(JSON.stringify(msg))
+        } else {
+            console.log('WebSocket is not open. Current state:', this.socket.readyState);
+            console.log('attempting reconnect')
+        }
     }
 
     public addTurn(turn: Turn): void {

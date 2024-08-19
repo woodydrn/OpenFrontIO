@@ -69,6 +69,7 @@ class Client {
 
             const playerCountElement = document.createElement('div');
             playerCountElement.className = 'player-count';
+            playerCountElement.textContent = `Players: ${lobby.numClients}`
 
             button.appendChild(nameElement);
             button.appendChild(timerElement);
@@ -121,6 +122,12 @@ class Client {
             }
             this.game = createClientGame(getUsername(), new PseudoRandom(Date.now()).nextID(), lobby.id, getConfig(), map);
             this.game.join();
+            const g = this.game
+            window.addEventListener('beforeunload', function (event) {
+                // Your function logic here
+                console.log('Browser is closing');
+                g.stop()
+            });
         });
     }
 }

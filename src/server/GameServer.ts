@@ -42,12 +42,25 @@ export class GameServer {
                     console.warn(`client ${clientMsg.clientID} sent to wrong game`)
                 }
             }
+            if (clientMsg.type == "leave") {
+                const toRemove = this.clients.filter(c => c.id)
+                if (toRemove.length == 0) {
+                    return
+                }
+                toRemove[0].ws.close()
+                console.log(`client ${toRemove[0].id} left game`)
+                this.clients = this.clients.filter(c => c.id != clientMsg.clientID)
+            }
         })
 
         // In case a client joined the game late and missed the start message.
         if (this._hasStarted) {
             this.sendStartGameMsg(client.ws, lastTurn)
         }
+    }
+
+    public numClients(): number {
+        return this.clients.length
     }
 
     public startTime(): number {

@@ -18,9 +18,11 @@ fi
 # Set the instance name based on the environment
 if [[ "$ENV" == "dev" ]]; then
     INSTANCE_NAME="openfrontio-dev-instance"
+    TAG="dev"
     echo "[DEV] Deploying to openfront.dev"
 else
     INSTANCE_NAME="openfrontio-instance"
+    TAG="latest"
     echo "[PROD] Deploying to openfront.io"
 fi
 
@@ -31,17 +33,17 @@ gcloud auth configure-docker us-central1-docker.pkg.dev
 docker build -t openfrontio .
 
 # Tag the new image (use a version number or 'latest')
-docker tag openfrontio us-central1-docker.pkg.dev/openfrontio/openfrontio/game-server:$ENV
+docker tag openfrontio us-central1-docker.pkg.dev/openfrontio/openfrontio/game-server:$TAG
 
 # Push the new image to Google Container Registry
-docker push us-central1-docker.pkg.dev/openfrontio/openfrontio/game-server:$ENV
+docker push us-central1-docker.pkg.dev/openfrontio/openfrontio/game-server:$TAG
 
 # Prune Docker system on the instance
 gcloud compute ssh $INSTANCE_NAME --zone us-central1-a --command 'docker system prune -f -a'
 
 # Update the GCE instance with the new container image
 gcloud compute instances update-container $INSTANCE_NAME \
-  --container-image us-central1-docker.pkg.dev/openfrontio/openfrontio/game-server:latest \
+  --container-image us-central1-docker.pkg.dev/openfrontio/openfrontio/game-server:$TAG \
   --zone=us-central1-a
 
 echo "Deployment to $ENV environment complete. New version should be live soon on $INSTANCE_NAME."

@@ -26,7 +26,7 @@ const gm = new GameManager(getConfig())
 // New GET endpoint to list lobbies
 app.get('/lobbies', (req, res) => {
     res.json({
-        lobbies: gm.gamesByPhase(GamePhase.Lobby).map(g => ({id: g.id, startTime: g.startTime()})),
+        lobbies: gm.gamesByPhase(GamePhase.Lobby).map(g => ({id: g.id, startTime: g.startTime(), numClients: g.numClients()})),
     });
 });
 

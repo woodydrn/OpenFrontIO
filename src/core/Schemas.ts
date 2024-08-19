@@ -11,7 +11,7 @@ export type BoatAttackIntent = z.infer<typeof BoatAttackIntentSchema>
 
 export type Turn = z.infer<typeof TurnSchema>
 
-export type ClientMessage = ClientIntentMessage | ClientJoinMessage
+export type ClientMessage = ClientIntentMessage | ClientJoinMessage | ClientLeaveMessage
 export type ServerMessage = ServerSyncMessage | ServerStartGameMessage
 
 export type ServerSyncMessage = z.infer<typeof ServerTurnMessageSchema>
@@ -20,10 +20,13 @@ export type ServerStartGameMessage = z.infer<typeof ServerStartGameMessageSchema
 
 export type ClientIntentMessage = z.infer<typeof ClientIntentMessageSchema>
 export type ClientJoinMessage = z.infer<typeof ClientJoinMessageSchema>
+export type ClientLeaveMessage = z.infer<typeof ClientLeaveMessageSchema>
+
 
 export interface Lobby {
     id: string;
     startTime: number;
+    numClients: number;
 }
 
 // Zod schemas
@@ -109,4 +112,10 @@ export const ClientJoinMessageSchema = ClientBaseMessageSchema.extend({
     lastTurn: z.number()
 })
 
-export const ClientMessageSchema = z.union([ClientIntentMessageSchema, ClientJoinMessageSchema]);
+export const ClientLeaveMessageSchema = ClientBaseMessageSchema.extend({
+    type: z.literal('leave'),
+    clientID: z.string(),
+    gameID: z.string(),
+})
+
+export const ClientMessageSchema = z.union([ClientIntentMessageSchema, ClientJoinMessageSchema, ClientLeaveMessageSchema]);

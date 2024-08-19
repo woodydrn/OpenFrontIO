@@ -32,9 +32,10 @@
 * use analyitics DONE 8/18/2024
 * Use Overpass font DONE 8/18/2024
 * BUG: invert zoom DONE 8/19/2024
-* better algorithm for name render placement
-* show how many players in each lobby
+* better algorithm for name render placement DONE 8/19/2024
+* show how many players in each lobby DONE 8/19/2024
 * make boats larger
+* boats same color as owner
 * make coasts look better
 * have boats not get close to shore
 * BUG: boat doesn't work if on lake on other player not on lake
