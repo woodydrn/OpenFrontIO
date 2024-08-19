@@ -27,7 +27,7 @@ export class DefaultConfig implements Config {
     theme(): Theme {return pastelTheme;}
 }
 
-export const defaultPlayerConfig = new class implements PlayerConfig {
+export class DefaultPlayerConfig implements PlayerConfig {
 
     attackLogic(attacker: Player, defender: Player | TerraNullius, tileToConquer: Tile): {attackerTroopLoss: number; defenderTroopLoss: number; tilesPerTickUsed: number} {
         if (defender.isPlayer()) {
@@ -80,3 +80,4 @@ export const defaultPlayerConfig = new class implements PlayerConfig {
 }
 
 export const defaultConfig = new DefaultConfig()
+export const defaultPlayerConfig = new DefaultPlayerConfig()

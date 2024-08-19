@@ -1,5 +1,5 @@
 import PriorityQueue from "priority-queue-typescript";
-import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, Tile} from "../Game";
+import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, TerrainTypes, Tile} from "../Game";
 import {manhattanDist} from "../Util";
 import {AttackExecution} from "./AttackExecution";
 import {Config, PlayerConfig} from "../configuration/Config";
@@ -25,6 +25,11 @@ export class BoatAttackExecution implements Execution {
     private currTileIndex: number = 0
 
     private boat: MutableBoat
+
+    private aStarPre: AStar
+    private aStarComplete: AStar
+
+    private finalPath = false
 
     constructor(
         private attackerID: PlayerID,
@@ -54,8 +59,9 @@ export class BoatAttackExecution implements Execution {
             this.active = false
             return
         }
-
-        this.path = this.computePath(this.src, this.dst)
+        this.aStarPre = new AStar(this.src, this.dst)
+        this.aStarPre.compute(10000)
+        this.path = this.aStarPre.reconstructPath()
         if (this.path != null) {
             console.log(`got path ${this.path.map(t => t.cell().toString())}`)
             this.boat = this.attacker.addBoat(1000, this.src, this.target)
@@ -63,6 +69,7 @@ export class BoatAttackExecution implements Execution {
             console.log('got null path')
             this.active = false
         }
+        this.aStarComplete = new AStar(this.path[this.path.length - 1], this.dst)
     }
 
     tick(ticks: number) {
@@ -73,9 +80,16 @@ export class BoatAttackExecution implements Execution {
             return
         }
         this.lastMove = ticks
-        this.currTileIndex++
+
+        if (!this.finalPath && this.aStarComplete.compute(10000)) {
+            this.path.push(...this.aStarComplete.reconstructPath())
+            this.finalPath = true
+        }
 
         if (this.currTileIndex >= this.path.length) {
+            if (!this.finalPath) {
+                return
+            }
             if (this.dst.owner() == this.attacker) {
                 this.attacker.addTroops(this.troops)
                 this.active = false
@@ -89,6 +103,7 @@ export class BoatAttackExecution implements Execution {
 
         const nextTile = this.path[this.currTileIndex]
         this.boat.move(nextTile)
+        this.currTileIndex++
     }
 
     owner(): MutablePlayer {
@@ -111,45 +126,60 @@ export class BoatAttackExecution implements Execution {
             return currentDistance < closestDistance ? current : closest;
         });
     }
+}
 
-    private computePath(src: Tile, dst: Tile): Tile[] {
-        if (!src.onShore() || !dst.onShore()) {
-            return null; // Both source and destination must be on water
-        }
+export class AStar {
+    private openSet: PriorityQueue<{tile: Tile, fScore: number}>;
+    private cameFrom: Map<Tile, Tile>;
+    private gScore: Map<Tile, number>;
+    private current: Tile | null;
+    public completed: boolean;
 
-        const openSet = new PriorityQueue<{tile: Tile, fScore: number}>(
-            11,
+    constructor(private src: Tile, private dst: Tile) {
+        this.openSet = new PriorityQueue<{tile: Tile, fScore: number}>(
+            500,
             (a, b) => a.fScore - b.fScore
         );
-        const cameFrom = new Map<Tile, Tile>();
-        const gScore = new Map<Tile, number>();
+        this.cameFrom = new Map<Tile, Tile>();
+        this.gScore = new Map<Tile, number>();
+        this.current = null;
+        this.completed = false;
 
-        gScore.set(src, 0);
-        openSet.add({tile: src, fScore: this.heuristic(src, dst)});
+        this.gScore.set(src, 0);
+        this.openSet.add({tile: src, fScore: this.heuristic(src, dst)});
+    }
 
-        while (!openSet.empty()) {
-            const current = openSet.poll()!.tile;
+    compute(iterations: number): boolean {
+        if (this.completed) return true;
 
-            if (current === dst) {
-                return this.reconstructPath(cameFrom, current);
+        while (!this.openSet.empty()) {
+            iterations--
+            this.current = this.openSet.poll()!.tile;
+            if (iterations <= 0) {
+                return false
             }
 
-            for (const neighbor of current.neighbors()) {
-                if (!neighbor.onShore()) continue; // Skip non-water tiles
+            if (this.current === this.dst) {
+                this.completed = true;
+                return true;
+            }
 
-                const tentativeGScore = gScore.get(current)! + 1; // Assuming uniform cost
+            for (const neighbor of this.current.neighbors()) {
+                if (neighbor != this.dst && neighbor.terrain() != TerrainTypes.Water) continue; // Skip non-water tiles
 
-                if (!gScore.has(neighbor) || tentativeGScore < gScore.get(neighbor)!) {
-                    cameFrom.set(neighbor, current);
-                    gScore.set(neighbor, tentativeGScore);
-                    const fScore = tentativeGScore + this.heuristic(neighbor, dst);
+                const tentativeGScore = this.gScore.get(this.current)! + 1; // Assuming uniform cost
 
-                    openSet.add({tile: neighbor, fScore: fScore});
+                if (!this.gScore.has(neighbor) || tentativeGScore < this.gScore.get(neighbor)!) {
+                    this.cameFrom.set(neighbor, this.current);
+                    this.gScore.set(neighbor, tentativeGScore);
+                    const fScore = tentativeGScore + this.heuristic(neighbor, this.dst);
+
+                    this.openSet.add({tile: neighbor, fScore: fScore});
                 }
             }
         }
 
-        return null; // No path found
+        return this.completed;
     }
 
     private heuristic(a: Tile, b: Tile): number {
@@ -157,13 +187,12 @@ export class BoatAttackExecution implements Execution {
         return Math.abs(a.cell().x - b.cell().x) + Math.abs(a.cell().y - b.cell().y);
     }
 
-    private reconstructPath(cameFrom: Map<Tile, Tile>, current: Tile): Tile[] {
-        const path = [current];
-        while (cameFrom.has(current)) {
-            current = cameFrom.get(current)!;
-            path.unshift(current);
+    public reconstructPath(): Tile[] {
+        const path = [this.current!];
+        while (this.cameFrom.has(this.current!)) {
+            this.current = this.cameFrom.get(this.current!)!;
+            path.unshift(this.current);
         }
         return path;
     }
-
 }

@@ -28,11 +28,11 @@
 * Create separate game config dev vs prod DONE 8/17/2024
 * improve front page, only one game at a time every 30s DONE 8/17/2024
 * create dev server DONE 8/18/2024
-* BUG: boats not going to destination, coast not being recognized
-* BUG: boats freeze game on path calculation
+* BUG: boats freeze game on path calculation DONE 8/18/2024
 * better algorithm for name render placement
 * make boats larger
 * have boats not get close to shore
+* use analyitics
 * Allow boats to attack TerraNullius
 * make coasts look better
 * add shader to dim border
@@ -41,3 +41,5 @@
 * BUG: ocean is considered TerraNullius
 * on websocket connect server only send missing turns not all turns
 * BUG: fix hotreload (priority queue breaks it)
+* BUG: boat doesn't work if on lake on other player not on lake
+* PERF: use hierarchical a* search for boats
