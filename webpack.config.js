@@ -53,7 +53,10 @@ export default (env, argv) => {
 			],
 		},
 		resolve: {
-			extensions: ['.ts', '.js'],
+			extensions: ['.tsx', '.ts', '.js'],
+			alias: {
+				'protobufjs/minimal': path.resolve(__dirname, 'node_modules/protobufjs/minimal.js')
+			}
 		},
 		plugins: [
 			new HtmlWebpackPlugin({

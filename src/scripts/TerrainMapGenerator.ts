@@ -1,8 +1,6 @@
 import {Jimp as JimpType, JimpConstructors} from '@jimp/core';
 import 'jimp';
-import {TerrainMap, TerrainType, TerrainTypes} from './Game';
-import {TerrainMapImpl} from './GameImpl';
-import {TerrainTile} from '../../generated/protos';
+import {TerrainMap, TerrainTile} from '../../generated/protos';
 
 
 declare const Jimp: JimpType & JimpConstructors;
@@ -13,16 +11,17 @@ export async function loadTerrainMap(): Promise<TerrainMap> {
     const image = await Jimp.read(imageUrl)
     const {width, height} = image.bitmap;
 
-    const terrain: TerrainType[][] = Array(width).fill(null).map(() => Array(height).fill(TerrainTypes.Water));
 
     image.scan(0, 0, width, height, function (x: number, y: number, idx: number) {
         const t: TerrainTile = new TerrainTile()
         const red = this.bitmap.data[idx + 0];
 
         if (red > 100) {
-            terrain[x][y] = TerrainTypes.Land;
         }
     })
 
-    return new TerrainMapImpl(terrain);
+    return new TerrainMap()
+
 }
+
+// loadTerrainMap()

@@ -11,9 +11,9 @@
   "include": [
     "src/**/*",
     "resources/**/*",
-    "src/**/*.ts",
-    "src/**/*.css",
-    "test/core/GameImpl.test.ts"
+    "generated/**/*",
+    "test/core/GameImpl.test.ts",
+    "src/scripts"
   ],
   "exclude": [
     "node_modules"

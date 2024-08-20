@@ -34,11 +34,12 @@
 * BUG: invert zoom DONE 8/19/2024
 * better algorithm for name render placement DONE 8/19/2024
 * show how many players in each lobby DONE 8/19/2024
-* make boats larger
-* boats same color as owner
+* make boats larger DONE 8/19/2024
+* boats same color as owner 8/19/2024
+* store map as proto
 * make coasts look better
 * have boats not get close to shore
-* BUG: boat doesn't work if on lake on other player not on lake
+* BUG: boat doesn't work if on lake if other player not on same lake
 * Allow boats to attack TerraNullius
 * add shader to dim border
 * remove player.info()
