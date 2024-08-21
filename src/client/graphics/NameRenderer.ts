@@ -85,7 +85,7 @@ export class NameRenderer {
     isVisible(render: RenderInfo, min: Cell, max: Cell): boolean {
         const ratio = (max.x - min.x) / Math.max(20, (render.boundingBox.max.x - render.boundingBox.min.x))
         if (render.player.info().isBot) {
-            if (ratio > 15) {
+            if (ratio > 25) {
                 return false
             }
         } else {

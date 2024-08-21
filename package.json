@@ -1,8 +1,7 @@
 {
   "name": "warfront-client",
   "scripts": {
-    "build-world-terrain-map": "GAME_ENV=prod node --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/TerrainMapGenerator.ts",
-    "generate-proto": "npx pbjs -t static-module -w es6 -o generated/protos.js proto/**/*.proto && npx pbts -o generated/protos.d.ts generated/protos.js",
+    "build-world-terrain-map": "node --loader ts-node/esm --experimental-specifier-resolution=node src/scripts/TerrainMapGenerator.ts",
     "build-dev": "webpack --config webpack.config.js --mode development",
     "build-prod": "webpack --config webpack.config.js --mode production",
     "start:client": "webpack serve --open --node-env development",
@@ -49,14 +48,17 @@
     "@types/express": "^4.17.21",
     "@types/google-protobuf": "^3.15.12",
     "@types/jimp": "^0.2.28",
+    "@types/msgpack5": "^3.4.6",
     "colord": "^2.9.3",
     "crypto": "^1.0.1",
     "express": "^4.19.2",
     "jimp": "^0.22.12",
+    "msgpack5": "^6.0.2",
     "node-addon-api": "^8.1.0",
     "node-gyp": "^10.2.0",
     "priority-queue-typescript": "^1.0.1",
     "protobufjs": "^7.3.2",
+    "pureimage": "^0.4.13",
     "typia": "^6.5.2",
     "ws": "^8.18.0",
     "zod": "^3.23.8"
