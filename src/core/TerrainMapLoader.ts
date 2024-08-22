@@ -23,19 +23,9 @@ export class TerrainMap {
     }
 }
 
-// TODO: make terrain api better.
-export class Terrain {
-    constructor(
-        public readonly expansionCost: number,
-        public readonly expansionTime: number,
-    ) { }
-}
-
-export type TerrainType = typeof TerrainTypes[keyof typeof TerrainTypes];
-
-export const TerrainTypes = {
-    Land: new Terrain(1, 1),
-    Water: new Terrain(0, 0)
+export enum TerrainType {
+    Land,
+    Water
 }
 
 export async function loadTerrainMap(): Promise<TerrainMap> {
@@ -44,14 +34,14 @@ export async function loadTerrainMap(): Promise<TerrainMap> {
     const image = await Jimp.read(imageUrl)
     const {width, height} = image.bitmap;
 
-    const terrain: TerrainType[][] = Array(width).fill(null).map(() => Array(height).fill(TerrainTypes.Water));
+    const terrain: TerrainType[][] = Array(width).fill(null).map(() => Array(height).fill(TerrainType.Water));
 
     image.scan(0, 0, width, height, function (x: number, y: number, idx: number) {
         const t: TerrainTile = new TerrainTile()
         const red = this.bitmap.data[idx + 0];
 
         if (red > 100) {
-            terrain[x][y] = TerrainTypes.Land;
+            terrain[x][y] = TerrainType.Land;
         }
     })
 

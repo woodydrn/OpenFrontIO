@@ -1,6 +1,6 @@
 import {EventBus} from "./EventBus";
 import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerEvent, PlayerID, PlayerInfo, Player, TerraNullius, Tile, TileEvent, Boat, MutableBoat, BoatEvent} from "./Game";
-import {TerrainMap, TerrainType, TerrainTypes} from "./TerrainMapLoader";
+import {TerrainMap, TerrainType} from "./TerrainMapLoader";
 
 export function createGame(terrainMap: TerrainMap, eventBus: EventBus): Game {
     return new GameImpl(terrainMap, eventBus)
@@ -20,10 +20,10 @@ class TileImpl implements Tile {
         private readonly _terrain: TerrainType
     ) { }
     isLand(): boolean {
-        return this._terrain == TerrainTypes.Land
+        return this._terrain == TerrainType.Land
     }
     isWater(): boolean {
-        return this._terrain == TerrainTypes.Water
+        return this._terrain == TerrainType.Water
     }
 
     borders(other: Player | TerraNullius): boolean {
