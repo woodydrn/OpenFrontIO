@@ -1,4 +1,4 @@
-import {Player, PlayerID, PlayerInfo, TerrainType, TerrainTypes, TerraNullius, Tile} from "../Game";
+import {Player, PlayerID, PlayerInfo, TerraNullius, Tile} from "../Game";
 import {Colord, colord} from "colord";
 import {devConfig} from "./DevConfig";
 import {defaultConfig} from "./DefaultConfig";
@@ -41,7 +41,7 @@ export interface Theme {
 	playerInfoColor(id: PlayerID): Colord;
 	territoryColor(id: PlayerID): Colord;
 	borderColor(id: PlayerID): Colord;
-	terrainColor(tile: TerrainType): Colord;
+	terrainColor(tile: Tile): Colord;
 	backgroundColor(): Colord;
 	font(): string;
 }

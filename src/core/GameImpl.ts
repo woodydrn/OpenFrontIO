@@ -1,5 +1,6 @@
 import {EventBus} from "./EventBus";
-import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerEvent, PlayerID, PlayerInfo, Player, TerrainMap, TerrainType, TerrainTypes, TerraNullius, Tile, TileEvent, Boat, MutableBoat, BoatEvent} from "./Game";
+import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerEvent, PlayerID, PlayerInfo, Player, TerraNullius, Tile, TileEvent, Boat, MutableBoat, BoatEvent} from "./Game";
+import {TerrainMap, TerrainType, TerrainTypes} from "./TerrainMapLoader";
 
 export function createGame(terrainMap: TerrainMap, eventBus: EventBus): Game {
     return new GameImpl(terrainMap, eventBus)
@@ -18,6 +19,12 @@ class TileImpl implements Tile {
         private readonly _cell: Cell,
         private readonly _terrain: TerrainType
     ) { }
+    isLand(): boolean {
+        return this._terrain == TerrainTypes.Land
+    }
+    isWater(): boolean {
+        return this._terrain == TerrainTypes.Water
+    }
 
     borders(other: Player | TerraNullius): boolean {
         for (const n of this.neighbors()) {
@@ -30,7 +37,7 @@ class TileImpl implements Tile {
 
     onShore(): boolean {
         return this.neighbors()
-            .filter(t => t.terrain() == TerrainTypes.Water)
+            .filter(t => t.isWater())
             .length > 0
     }
 
@@ -39,7 +46,6 @@ class TileImpl implements Tile {
     isBorder(): boolean {return this._isBorder}
     isInterior(): boolean {return this.hasOwner() && !this.isBorder()}
     cell(): Cell {return this._cell}
-    terrain(): TerrainType {return this._terrain}
 
     neighbors(): Tile[] {
         if (this._neighbors == null) {
@@ -131,7 +137,7 @@ export class PlayerImpl implements MutablePlayer {
         const ns: Set<(MutablePlayer | TerraNullius)> = new Set()
         for (const border of this.borderTiles()) {
             for (const neighbor of border.neighbors()) {
-                if (neighbor.terrain() == TerrainTypes.Land && neighbor.owner() != this) {
+                if (neighbor.isLand() && neighbor.owner() != this) {
                     ns.add((neighbor as TileImpl)._owner)
                 }
             }
@@ -353,7 +359,7 @@ export class GameImpl implements MutableGame {
         if (!owner.isPlayer()) {
             throw new Error("Must be a player")
         }
-        if (tile.terrain() == TerrainTypes.Water) {
+        if (tile.isWater()) {
             throw new Error("Cannot conquer water")
         }
         const tileImpl = tile as TileImpl

@@ -163,7 +163,7 @@ export class GameRenderer {
 	}
 
 	paintTile(tile: Tile) {
-		let terrainColor = this.theme.terrainColor(tile.terrain())
+		let terrainColor = this.theme.terrainColor(tile)
 		this.paintCell(tile.cell(), terrainColor)
 		const owner = tile.owner()
 		if (owner.isPlayer()) {

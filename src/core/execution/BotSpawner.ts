@@ -1,4 +1,4 @@
-import {Cell, Game, TerrainTypes} from "../Game";
+import {Cell, Game} from "../Game";
 import {PseudoRandom} from "../PseudoRandom";
 import {SpawnIntent} from "../Schemas";
 import {getSpawnCells} from "./Util";
@@ -19,7 +19,7 @@ export class BotSpawner {
         this.numFreeTiles = 0;
 
         this.gs.forEachTile(tile => {
-            if (tile.terrain() == TerrainTypes.Water) {
+            if (tile.isWater()) {
                 return;
             }
             if (tile.hasOwner()) {

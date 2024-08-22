@@ -1,5 +1,5 @@
 import PriorityQueue from "priority-queue-typescript";
-import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, TerrainTypes, Tile} from "../Game";
+import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, Tile} from "../Game";
 import {manhattanDist} from "../Util";
 import {AttackExecution} from "./AttackExecution";
 import {Config, PlayerConfig} from "../configuration/Config";
@@ -165,7 +165,7 @@ export class AStar {
             }
 
             for (const neighbor of this.current.neighbors()) {
-                if (neighbor != this.dst && neighbor.terrain() != TerrainTypes.Water) continue; // Skip non-water tiles
+                if (neighbor != this.dst && neighbor.isLand()) continue; // Skip non-water tiles
 
                 const tentativeGScore = this.gScore.get(this.current)! + 1; // Assuming uniform cost
 

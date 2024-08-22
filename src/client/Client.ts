@@ -1,10 +1,9 @@
 import {getConfig} from "../core/configuration/Config";
 import {defaultConfig} from "../core/configuration/DefaultConfig";
 import {devConfig} from "../core/configuration/DevConfig";
-import {TerrainMap} from "../core/Game";
 import {PseudoRandom} from "../core/PseudoRandom";
 import {GameID, Lobby, ServerMessage, ServerMessageSchema} from "../core/Schemas";
-import {loadTerrainMap} from "../core/TerrainMapLoader";
+import {loadTerrainMap, TerrainMap} from "../core/TerrainMapLoader";
 import {ClientGame, createClientGame} from "./ClientGame";
 import {v4 as uuidv4} from 'uuid';
 import backgroundImage from '../../resources/images/empty_map.png';

@@ -1,5 +1,5 @@
 import PriorityQueue from "priority-queue-typescript";
-import {Cell, Execution, MutableGame, MutablePlayer, PlayerID, Player, TerrainTypes, TerraNullius, Tile} from "../Game";
+import {Cell, Execution, MutableGame, MutablePlayer, PlayerID, TerraNullius, Tile} from "../Game";
 import {PseudoRandom} from "../PseudoRandom";
 import {manhattanDist} from "../Util";
 import {Config, PlayerConfig} from "../configuration/Config";
@@ -145,13 +145,13 @@ export class AttackExecution implements Execution {
         }
         for (const tile of existingBorder) {
             for (const neighbor of tile.neighbors()) {
-                if (neighbor.terrain() == TerrainTypes.Water || neighbor.owner() != this.target) {
+                if (neighbor.isWater() || neighbor.owner() != this.target) {
                     continue
                 }
                 newBorder.add(neighbor)
                 this.numTilesWithEnemy += 1
                 let numOwnedByMe = neighbor.neighbors()
-                    .filter(t => t.terrain() == TerrainTypes.Land)
+                    .filter(t => t.isLand())
                     .filter(t => t.owner() == this._owner)
                     .length
                 let dist = 0

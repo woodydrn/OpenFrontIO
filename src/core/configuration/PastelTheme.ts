@@ -1,5 +1,5 @@
 import {Colord, colord} from "colord";
-import {PlayerID, TerrainType, TerrainTypes} from "../Game";
+import {PlayerID, Tile} from "../Game";
 import {Theme} from "./Config";
 
 export const pastelTheme = new class implements Theme {
@@ -75,11 +75,12 @@ export const pastelTheme = new class implements Theme {
         })
     }
 
-    terrainColor(tile: TerrainType): Colord {
-        if (tile == TerrainTypes.Land) {
+    terrainColor(tile: Tile): Colord {
+        if (tile.isLand()) {
             return this.land;
+        } else {
+            return this.water;
         }
-        return this.water;
     }
 
     backgroundColor(): Colord {

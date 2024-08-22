@@ -37,35 +37,15 @@ export class PlayerInfo {
     ) { }
 }
 
-// TODO: make terrain api better.
-export class Terrain {
-    constructor(
-        public readonly expansionCost: number,
-        public readonly expansionTime: number,
-    ) { }
-}
-
-export type TerrainType = typeof TerrainTypes[keyof typeof TerrainTypes];
-
-export const TerrainTypes = {
-    Land: new Terrain(1, 1),
-    Water: new Terrain(0, 0)
-}
-
-export interface TerrainMap {
-    terrain(cell: Cell): Terrain
-    width(): number
-    height(): number
-}
-
 export interface Tile {
+    isLand(): boolean
+    isWater(): boolean
     owner(): Player | TerraNullius
     hasOwner(): boolean
     isBorder(): boolean
     borders(other: Player | TerraNullius): boolean
     isInterior(): boolean
     cell(): Cell
-    terrain(): Terrain
     game(): Game
     neighbors(): Tile[]
     onShore(): boolean

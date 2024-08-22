@@ -1,11 +1,12 @@
 import {Executor} from "../core/execution/Executor";
-import {Cell, MutableGame, PlayerEvent, PlayerID, MutablePlayer, TerrainMap, TileEvent, Player, Game, BoatEvent, TerrainTypes} from "../core/Game";
+import {Cell, MutableGame, PlayerEvent, PlayerID, MutablePlayer, TileEvent, Player, Game, BoatEvent} from "../core/Game";
 import {createGame} from "../core/GameImpl";
 import {EventBus} from "../core/EventBus";
 import {Config} from "../core/configuration/Config";
 import {GameRenderer} from "./graphics/GameRenderer";
 import {InputHandler, MouseUpEvent, ZoomEvent, DragEvent, MouseDownEvent} from "./InputHandler"
 import {ClientID, ClientIntentMessageSchema, ClientJoinMessageSchema, ClientLeaveMessageSchema, ClientMessageSchema, GameID, Intent, ServerMessage, ServerMessageSchema, ServerSyncMessage, Turn} from "../core/Schemas";
+import {TerrainMap} from "../core/TerrainMapLoader";
 
 
 
@@ -187,7 +188,7 @@ export class ClientGame {
 
         const owner = tile.owner()
         const targetID = owner.isPlayer() ? owner.id() : null
-        if (tile.owner() != this.myPlayer && tile.terrain() == TerrainTypes.Land) {
+        if (tile.owner() != this.myPlayer && tile.isLand()) {
             if (this.myPlayer.sharesBorderWith(tile.owner())) {
                 this.sendAttackIntent(targetID, cell, this.config.player().attackAmount(this.myPlayer, owner))
             } else if (owner.isPlayer()) {

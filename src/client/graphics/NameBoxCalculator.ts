@@ -1,4 +1,4 @@
-import {Game, Player, Tile, Cell, TerrainTypes} from '../../core/Game';
+import {Game, Player, Tile, Cell} from '../../core/Game';
 import {within} from '../../core/Util';
 
 export interface Point {

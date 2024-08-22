@@ -1,4 +1,4 @@
-import {Game, Cell, TerrainTypes} from "../Game";
+import {Game, Cell} from "../Game";
 
 
 export function getSpawnCells(gs: Game, cell: Cell): Cell[] {
@@ -12,7 +12,7 @@ export function getSpawnCells(gs: Game, cell: Cell): Cell[] {
             if (Math.abs(dx) === 2 && Math.abs(dy) === 2) {
                 continue;
             }
-            if (gs.tile(c).terrain() != TerrainTypes.Land) {
+            if (gs.tile(c).isWater()) {
                 continue;
             }
             if (gs.tile(c).hasOwner()) {

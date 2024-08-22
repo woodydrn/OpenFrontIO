@@ -1,11 +1,32 @@
 import {Jimp as JimpType, JimpConstructors} from '@jimp/core';
 import 'jimp';
-import {TerrainMap, TerrainType, TerrainTypes} from './Game';
 import {TerrainMapImpl} from './GameImpl';
 import {TerrainTile} from '../../generated/protos';
-
+import {Cell} from './Game';
 
 declare const Jimp: JimpType & JimpConstructors;
+
+
+// TODO: make terrain api better.
+export class Terrain {
+    constructor(
+        public readonly expansionCost: number,
+        public readonly expansionTime: number,
+    ) { }
+}
+
+export type TerrainType = typeof TerrainTypes[keyof typeof TerrainTypes];
+
+export const TerrainTypes = {
+    Land: new Terrain(1, 1),
+    Water: new Terrain(0, 0)
+}
+
+export interface TerrainMap {
+    terrain(cell: Cell): Terrain
+    width(): number
+    height(): number
+}
 
 export async function loadTerrainMap(): Promise<TerrainMap> {
     const imageModule = await import(`../../resources/maps/World.png`);
