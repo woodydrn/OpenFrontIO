@@ -29,7 +29,8 @@ export enum TerrainType {
 }
 
 export class Terrain {
-    constructor(public terrainType: TerrainType) { }
+    public shoreline: boolean = false
+    constructor(public type: TerrainType) { }
 }
 
 export async function loadTerrainMap(): Promise<TerrainMap> {
@@ -56,6 +57,37 @@ export async function loadTerrainMap(): Promise<TerrainMap> {
     return new TerrainMap(terrain);
 }
 
-function process(terrain: Terrain[][]) {
-    
+function process(map: Terrain[][]) {
+    for (let x = 0; x < map.length; x++) {
+        for (let y = 0; y < map[0].length; y++) {
+            const terrain = map[x][y]
+            const ns = neighbors(x, y, map)
+            if (terrain.type == TerrainType.Land) {
+                if (ns.filter(t => t.type == TerrainType.Water).length > 0) {
+                    terrain.shoreline = true
+                }
+            } else {
+                if (ns.filter(t => t.type == TerrainType.Land).length > 0) {
+                    terrain.shoreline = true
+                }
+            }
+        }
+    }
+}
+
+function neighbors(x: number, y: number, map: Terrain[][]): Terrain[] {
+    const ns: Terrain[] = []
+    if (x > 0) {
+        ns.push(map[x - 1][y])
+    }
+    if (x < map.length - 1) {
+        ns.push(map[x + 1][y])
+    }
+    if (y > 0) {
+        ns.push(map[x][y - 1])
+    }
+    if (y < map[0].length - 1) {
+        ns.push(map[x][y + 1])
+    }
+    return ns
 }

@@ -1,6 +1,6 @@
 import {EventBus} from "./EventBus";
 import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerEvent, PlayerID, PlayerInfo, Player, TerraNullius, Tile, TileEvent, Boat, MutableBoat, BoatEvent} from "./Game";
-import {TerrainMap, TerrainType} from "./TerrainMapLoader";
+import {Terrain, TerrainMap, TerrainType} from "./TerrainMapLoader";
 
 export function createGame(terrainMap: TerrainMap, eventBus: EventBus): Game {
     return new GameImpl(terrainMap, eventBus)
@@ -17,13 +17,19 @@ class TileImpl implements Tile {
         private readonly gs: GameImpl,
         public _owner: PlayerImpl | TerraNulliusImpl,
         private readonly _cell: Cell,
-        private readonly _terrain: TerrainType
+        private readonly _terrain: Terrain
     ) { }
+    isShore(): boolean {
+        return this.isLand() && this._terrain.shoreline
+    }
+    isShorelineWater(): boolean {
+        return this.isWater() && this._terrain.shoreline
+    }
     isLand(): boolean {
-        return this._terrain == TerrainType.Land
+        return this._terrain.type == TerrainType.Land
     }
     isWater(): boolean {
-        return this._terrain == TerrainType.Water
+        return this._terrain.type == TerrainType.Water
     }
 
     borders(other: Player | TerraNullius): boolean {
@@ -213,7 +219,7 @@ export class GameImpl implements MutableGame {
             this.map[x] = new Array(this._height);
             for (let y = 0; y < this._height; y++) {
                 let cell = new Cell(x, y);
-                this.map[x][y] = new TileImpl(this, this._terraNullius, cell, terrainMap.terrain(cell).terrainType);
+                this.map[x][y] = new TileImpl(this, this._terraNullius, cell, terrainMap.terrain(cell));
             }
         }
     }

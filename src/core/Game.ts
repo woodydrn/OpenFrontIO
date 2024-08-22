@@ -39,7 +39,9 @@ export class PlayerInfo {
 
 export interface Tile {
     isLand(): boolean
+    isShore(): boolean
     isWater(): boolean
+    isShorelineWater(): boolean
     owner(): Player | TerraNullius
     hasOwner(): boolean
     isBorder(): boolean

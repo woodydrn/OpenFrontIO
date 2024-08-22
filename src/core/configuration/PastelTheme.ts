@@ -5,7 +5,11 @@ import {Theme} from "./Config";
 export const pastelTheme = new class implements Theme {
     private background = colord({r: 100, g: 100, b: 100});
     private land = colord({r: 244, g: 243, b: 198});
+    private shore = colord({r: 234, g: 343, b: 188});
+
     private water = colord({r: 160, g: 203, b: 231});
+    private shorelineWater = colord({r: 150, g: 193, b: 221});
+
     private territoryColors: Colord[] = [
         colord({r: 255, g: 179, b: 186}), // Vibrant Light Pink
         colord({r: 255, g: 223, b: 186}), // Vibrant Peach
@@ -77,8 +81,14 @@ export const pastelTheme = new class implements Theme {
 
     terrainColor(tile: Tile): Colord {
         if (tile.isLand()) {
+            if (tile.isShore()) {
+                return this.shore
+            }
             return this.land;
         } else {
+            if (tile.isShorelineWater()) {
+                return this.shorelineWater
+            }
             return this.water;
         }
     }
