@@ -1,11 +1,27 @@
 import {Jimp as JimpType, JimpConstructors} from '@jimp/core';
 import 'jimp';
-import {TerrainMapImpl} from './GameImpl';
 import {TerrainTile} from '../../generated/protos';
 import {Cell} from './Game';
 
 declare const Jimp: JimpType & JimpConstructors;
 
+
+export class TerrainMap {
+
+    constructor(public readonly tiles: TerrainType[][]) { }
+
+    terrain(cell: Cell): TerrainType {
+        return this.tiles[cell.x][cell.y]
+    }
+
+    width(): number {
+        return this.tiles.length
+    }
+
+    height(): number {
+        return this.tiles[0].length
+    }
+}
 
 // TODO: make terrain api better.
 export class Terrain {
@@ -20,12 +36,6 @@ export type TerrainType = typeof TerrainTypes[keyof typeof TerrainTypes];
 export const TerrainTypes = {
     Land: new Terrain(1, 1),
     Water: new Terrain(0, 0)
-}
-
-export interface TerrainMap {
-    terrain(cell: Cell): Terrain
-    width(): number
-    height(): number
 }
 
 export async function loadTerrainMap(): Promise<TerrainMap> {
@@ -45,5 +55,5 @@ export async function loadTerrainMap(): Promise<TerrainMap> {
         }
     })
 
-    return new TerrainMapImpl(terrain);
+    return new TerrainMap(terrain);
 }

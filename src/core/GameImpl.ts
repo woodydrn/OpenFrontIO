@@ -190,22 +190,6 @@ class TerraNulliusImpl implements TerraNullius {
 
 }
 
-export class TerrainMapImpl implements TerrainMap {
-
-    constructor(public readonly tiles: TerrainType[][]) { }
-
-    terrain(cell: Cell): TerrainType {
-        return this.tiles[cell.x][cell.y]
-    }
-
-    width(): number {
-        return this.tiles.length
-    }
-
-    height(): number {
-        return this.tiles[0].length
-    }
-}
 
 export class GameImpl implements MutableGame {
     private ticks = 0
