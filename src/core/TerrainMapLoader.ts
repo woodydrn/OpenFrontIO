@@ -8,9 +8,9 @@ declare const Jimp: JimpType & JimpConstructors;
 
 export class TerrainMap {
 
-    constructor(public readonly tiles: TerrainType[][]) { }
+    constructor(public readonly tiles: Terrain[][]) { }
 
-    terrain(cell: Cell): TerrainType {
+    terrain(cell: Cell): Terrain {
         return this.tiles[cell.x][cell.y]
     }
 
@@ -28,22 +28,34 @@ export enum TerrainType {
     Water
 }
 
+export class Terrain {
+    constructor(public terrainType: TerrainType) { }
+}
+
 export async function loadTerrainMap(): Promise<TerrainMap> {
     const imageModule = await import(`../../resources/maps/World.png`);
     const imageUrl = imageModule.default;
     const image = await Jimp.read(imageUrl)
     const {width, height} = image.bitmap;
 
-    const terrain: TerrainType[][] = Array(width).fill(null).map(() => Array(height).fill(TerrainType.Water));
+    const terrain: Terrain[][] = Array(width).fill(null).map(() => Array(height).fill(null));
 
     image.scan(0, 0, width, height, function (x: number, y: number, idx: number) {
         const t: TerrainTile = new TerrainTile()
         const red = this.bitmap.data[idx + 0];
 
         if (red > 100) {
-            terrain[x][y] = TerrainType.Land;
+            terrain[x][y] = new Terrain(TerrainType.Land)
+        } else {
+            terrain[x][y] = new Terrain(TerrainType.Water);
         }
     })
 
+    process(terrain)
+
     return new TerrainMap(terrain);
+}
+
+function process(terrain: Terrain[][]) {
+    
 }
