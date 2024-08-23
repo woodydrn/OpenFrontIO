@@ -1,5 +1,5 @@
 import PriorityQueue from "priority-queue-typescript";
-import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, Tile} from "../Game";
+import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, Tile, TileEvent} from "../Game";
 import {manhattanDist} from "../Util";
 import {AttackExecution} from "./AttackExecution";
 import {Config, PlayerConfig} from "../configuration/Config";
@@ -60,7 +60,7 @@ export class BoatAttackExecution implements Execution {
             return
         }
         this.aStarPre = new AStar(this.src, this.dst)
-        this.aStarPre.compute(10)
+        this.aStarPre.compute(100)
         this.path = this.aStarPre.reconstructPath()
         if (this.path != null) {
             console.log(`got path ${this.path.map(t => t.cell().toString())}`)
@@ -81,7 +81,7 @@ export class BoatAttackExecution implements Execution {
         }
         this.lastMove = ticks
 
-        if (!this.finalPath && this.aStarComplete.compute(10000)) {
+        if (!this.finalPath && this.aStarComplete.compute(30000)) {
             this.path.push(...this.aStarComplete.reconstructPath())
             this.finalPath = true
         }
@@ -167,7 +167,7 @@ export class AStar {
             for (const neighbor of this.current.neighbors()) {
                 if (neighbor != this.dst && neighbor.isLand()) continue; // Skip non-water tiles
 
-                const tentativeGScore = this.gScore.get(this.current)! + 1; // Assuming uniform cost
+                const tentativeGScore = this.gScore.get(this.current)! + 100 - neighbor.magnitude();
 
                 if (!this.gScore.has(neighbor) || tentativeGScore < this.gScore.get(neighbor)!) {
                     this.cameFrom.set(neighbor, this.current);

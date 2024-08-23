@@ -134,14 +134,6 @@ export class GameRenderer {
 	}
 
 	tick() {
-		// Create a temporary canvas for the game content
-		// this.tempCanvas = document.createElement('canvas');
-		// const tempCtx = this.tempCanvas.getContext('2d');
-		// this.tempCanvas.width = this.gs.width();
-		// this.tempCanvas.height = this.gs.height();
-
-		// // Put the ImageData on the temp canvas
-		// tempCtx.putImageData(this.imageData, 0, 0);
 		this.nameRenderer.tick()
 	}
 

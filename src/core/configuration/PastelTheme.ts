@@ -1,9 +1,12 @@
-import {Colord, colord} from "colord";
+import {Colord, colord, random} from "colord";
 import {PlayerID, Tile} from "../Game";
 import {Theme} from "./Config";
 import {time} from "console";
+import {PseudoRandom} from "../PseudoRandom";
 
 export const pastelTheme = new class implements Theme {
+    private rand = new PseudoRandom(123)
+
     private background = colord({r: 100, g: 100, b: 100});
     private land = colord({r: 244, g: 243, b: 198});
     private shore = colord({r: 234, g: 343, b: 188});
@@ -87,15 +90,22 @@ export const pastelTheme = new class implements Theme {
             }
             return this.land;
         } else {
+            const w = this.water.rgba
             if (tile.isShorelineWater()) {
-                return this.shorelineWater
+                return colord({
+                    r: Math.max(w.r + 10, 0),
+                    g: Math.max(w.g + 10, 0),
+                    b: Math.max(w.b + 10, 0)
+                })
             }
-            return colord({
-                r: Math.min(20, 255),
-                g: Math.min(20, 255),
-                b: Math.min(20 + tile.magnitude(), 255)
-            })
-            return this.water;
+            if (tile.magnitude() < 5) {
+                return colord({
+                    r: Math.max(w.r + 5 - tile.magnitude() / 2, 0),
+                    g: Math.max(w.g + 5 - tile.magnitude() / 2, 0),
+                    b: Math.max(w.b + 5 - tile.magnitude() / 2, 0)
+                })
+            }
+            return this.water
         }
     }
 
