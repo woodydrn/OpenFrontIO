@@ -92,11 +92,13 @@ export class BoatAttackExecution implements Execution {
             }
             if (this.dst.owner() == this.attacker) {
                 this.attacker.addTroops(this.troops)
+                this.boat.delete()
                 this.active = false
                 return
             }
             this.attacker.conquer(this.dst)
             this.mg.addExecution(new AttackExecution(this.troops, this.attacker.id(), this.targetID, null, this.config))
+            this.boat.delete()
             this.active = false
             return
         }

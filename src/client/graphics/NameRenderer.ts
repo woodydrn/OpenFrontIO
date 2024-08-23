@@ -93,7 +93,7 @@ export class NameRenderer {
                 return false
             }
         }
-        if (render.boundingBox.max.x < min.x || render.boundingBox.max.y < min.y || render.boundingBox.min.x > max.x || render.boundingBox.max.y > max.y) {
+        if (render.boundingBox.max.x < min.x || render.boundingBox.max.y < min.y || render.boundingBox.min.x > max.x || render.boundingBox.min.y > max.y) {
             return false
         }
         return true

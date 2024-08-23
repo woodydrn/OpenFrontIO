@@ -67,6 +67,7 @@ class TileImpl implements Tile {
 }
 
 export class BoatImpl implements MutableBoat {
+    private _active = true
 
     constructor(
         private g: GameImpl,
@@ -95,6 +96,14 @@ export class BoatImpl implements MutableBoat {
     }
     target(): PlayerImpl | TerraNullius {
         return this._target
+    }
+    delete(): void {
+        this._owner._boats = this._owner._boats.filter(b => b != this)
+        this._active = false
+        this.g.fireBoatUpdateEvent(this, this._tile)
+    }
+    isActive(): boolean {
+        return this._active
     }
 }
 

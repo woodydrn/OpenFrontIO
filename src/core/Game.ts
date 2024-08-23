@@ -59,6 +59,7 @@ export interface Boat {
     tile(): Tile
     owner(): Player
     target(): Player | TerraNullius
+    isActive(): boolean
 }
 
 export interface MutableBoat extends Boat {
@@ -66,6 +67,7 @@ export interface MutableBoat extends Boat {
     owner(): MutablePlayer
     target(): MutablePlayer | TerraNullius
     setTroops(troops: number): void
+    delete(): void
 }
 
 export interface TerraNullius {

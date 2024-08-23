@@ -9,7 +9,7 @@ export const pastelTheme = new class implements Theme {
 
     private background = colord({r: 100, g: 100, b: 100});
     private land = colord({r: 244, g: 243, b: 198});
-    private shore = colord({r: 234, g: 343, b: 188});
+    private shore = colord({r: 254, g: 253, b: 208});
 
     private water = colord({r: 160, g: 203, b: 231});
     private shorelineWater = colord({r: 150, g: 193, b: 221});

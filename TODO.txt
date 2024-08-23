@@ -39,7 +39,8 @@
 * make coasts look better DONE 8/22/2024
 * only put imageDataOnce, draw territories on top DONE 8/23/2024
 * have boats not get close to shore DONE 8/23/2024
-* improve terrain colors
+* improve terrain colors DONE 8/23/2024
+* BUG: boat doesn't work if on lake if other player not on same lake
 * try vintage theme
 * BUG: boat doesn't work if on lake if other player not on same lake
 * Allow boats to attack TerraNullius

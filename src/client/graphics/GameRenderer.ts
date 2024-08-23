@@ -147,9 +147,11 @@ export class GameRenderer {
 
 	boatEvent(event: BoatEvent) {
 		this.bfs(event.oldTile, 2).forEach(t => this.paintTerritory(t))
+		if (event.boat.isActive()) {
+			this.bfs(event.boat.tile(), 2).forEach(t => this.paintCell(t.cell(), this.theme.borderColor(event.boat.owner().id())))
+			this.bfs(event.boat.tile(), 1).forEach(t => this.paintCell(t.cell(), this.theme.territoryColor(event.boat.owner().id())))
 
-		this.bfs(event.boat.tile(), 2).forEach(t => this.paintCell(t.cell(), this.theme.borderColor(event.boat.owner().id())))
-		this.bfs(event.boat.tile(), 1).forEach(t => this.paintCell(t.cell(), this.theme.territoryColor(event.boat.owner().id())))
+		}
 	}
 
 	private bfs(tile: Tile, dist: number): Set<Tile> {
