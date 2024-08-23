@@ -19,6 +19,9 @@ class TileImpl implements Tile {
         private readonly _cell: Cell,
         private readonly _terrain: Terrain
     ) { }
+    magnitude(): number {
+        return this._terrain.magnitude
+    }
     isShore(): boolean {
         return this.isLand() && this._terrain.shoreline
     }

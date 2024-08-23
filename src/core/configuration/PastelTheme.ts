@@ -1,6 +1,7 @@
 import {Colord, colord} from "colord";
 import {PlayerID, Tile} from "../Game";
 import {Theme} from "./Config";
+import {time} from "console";
 
 export const pastelTheme = new class implements Theme {
     private background = colord({r: 100, g: 100, b: 100});
@@ -89,6 +90,11 @@ export const pastelTheme = new class implements Theme {
             if (tile.isShorelineWater()) {
                 return this.shorelineWater
             }
+            return colord({
+                r: Math.min(20, 255),
+                g: Math.min(20, 255),
+                b: Math.min(20 + tile.magnitude(), 255)
+            })
             return this.water;
         }
     }

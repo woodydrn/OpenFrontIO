@@ -1,5 +1,5 @@
 import {Cell} from './Game';
-import binAsString from "!!binary-loader!../../resources/WorldSmall.bin";
+import binAsString from "!!binary-loader!../../resources/World.bin";
 
 export class TerrainMap {
     constructor(public readonly tiles: Terrain[][]) { }

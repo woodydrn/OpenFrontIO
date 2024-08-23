@@ -43,7 +43,7 @@ export class Terrain {
 }
 
 export async function loadTerrainMap(): Promise<void> {
-    const imagePath = path.resolve(__dirname, '..', '..', 'resources', 'maps', 'WorldSmall.png');
+    const imagePath = path.resolve(__dirname, '..', '..', 'resources', 'maps', 'World.png');
 
     const readStream = createReadStream(imagePath);
     const img = await PImage.decodePNGFromStream(readStream);
@@ -71,7 +71,7 @@ export async function loadTerrainMap(): Promise<void> {
     const shorelineWaters = processShore(terrain)
     processDistToLand(shorelineWaters, terrain)
     const packed = packTerrain(terrain)
-    const outputPath = path.join(__dirname, '..', '..', 'resources', 'WorldSmall.bin');
+    const outputPath = path.join(__dirname, '..', '..', 'resources', 'World.bin');
     fs.writeFile(outputPath, packed);
 }
 
@@ -163,7 +163,7 @@ function packTerrain(map: Terrain[][]): Uint8Array {
             if (terrain.shoreline) {
                 packedByte |= 0b01000000;
             }
-            packedByte |= Math.min(terrain.magnitude, 63);
+            packedByte |= Math.min(Math.ceil(terrain.magnitude / 2), 63);
 
             packedData[4 + y * width + x] = packedByte;
         }
