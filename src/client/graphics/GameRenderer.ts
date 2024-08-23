@@ -9,7 +9,10 @@ import {PseudoRandom} from "../../core/PseudoRandom";
 
 
 export class GameRenderer {
-	private tempCanvas;
+	private backgroundCanvas: HTMLCanvasElement
+	private territoryCanvas: HTMLCanvasElement
+
+	private territoryContext: CanvasRenderingContext2D
 
 	private scale: number = .8
 	private offsetX: number = 0
@@ -48,14 +51,30 @@ export class GameRenderer {
 		window.addEventListener('resize', () => this.resizeCanvas());
 		this.resizeCanvas();
 
+		this.backgroundCanvas = document.createElement('canvas');
+		const backgroundCtx = this.backgroundCanvas.getContext('2d');
+		this.backgroundCanvas.width = this.gs.width();
+		this.backgroundCanvas.height = this.gs.height();
+		backgroundCtx.putImageData(this.imageData, 0, 0);
+
+
+		this.territoryCanvas = document.createElement('canvas')
+		this.territoryCanvas.width = this.gs.width();
+		this.territoryCanvas.height = this.gs.height();
+		this.territoryContext = this.territoryCanvas.getContext('2d')
 
 		requestAnimationFrame(() => this.renderGame());
 	}
 
 	initImageData() {
 		this.gs.forEachTile((tile) => {
-			//const color = this.theme.terrainColor(tile.terrain())
-			this.paintTile(tile)
+			let terrainColor = this.theme.terrainColor(tile)
+			const index = (tile.cell().y * this.gs.width()) + tile.cell().x
+			const offset = index * 4
+			this.imageData.data[offset] = terrainColor.rgba.r;
+			this.imageData.data[offset + 1] = terrainColor.rgba.g;
+			this.imageData.data[offset + 2] = terrainColor.rgba.b;
+			this.imageData.data[offset + 3] = terrainColor.rgba.a * 255 | 0
 		})
 	}
 
@@ -91,51 +110,51 @@ export class GameRenderer {
 			this.gs.height() / 2 - this.offsetY * this.scale
 		);
 
-		if (this.tempCanvas != null) {
-			// Draw the game content from the temp canvas
-			this.context.drawImage(
-				this.tempCanvas,
-				-this.gs.width() / 2,
-				-this.gs.height() / 2,
-				this.gs.width(),
-				this.gs.height()
-			);
-		}
+		// Draw the game content from the temp canvas
+		this.context.drawImage(
+			this.backgroundCanvas,
+			-this.gs.width() / 2,
+			-this.gs.height() / 2,
+			this.gs.width(),
+			this.gs.height()
+		);
+
+		this.context.drawImage(
+			this.territoryCanvas,
+			-this.gs.width() / 2,
+			-this.gs.height() / 2,
+			this.gs.width(),
+			this.gs.height()
+		)
+
 		const [upperLeft, bottomRight] = this.boundingRect()
 		this.nameRenderer.render(this.context, this.scale, upperLeft, bottomRight)
-
-		// const paths = this.gs.executions().map(e => e as Execution).filter(e => e instanceof BoatAttackExecution).map(e => e as BoatAttackExecution).filter(e => e.path != null).map(e => e.path)
-		// paths.forEach(p => {
-		// 	p.forEach(t => {
-		// 		this.paintCell(t.cell(), new Colord({r: 255, g: 255, b: 255}))
-		// 	})
-		// })
 
 		requestAnimationFrame(() => this.renderGame());
 	}
 
 	tick() {
 		// Create a temporary canvas for the game content
-		this.tempCanvas = document.createElement('canvas');
-		const tempCtx = this.tempCanvas.getContext('2d');
-		this.tempCanvas.width = this.gs.width();
-		this.tempCanvas.height = this.gs.height();
+		// this.tempCanvas = document.createElement('canvas');
+		// const tempCtx = this.tempCanvas.getContext('2d');
+		// this.tempCanvas.width = this.gs.width();
+		// this.tempCanvas.height = this.gs.height();
 
-		// Put the ImageData on the temp canvas
-		tempCtx.putImageData(this.imageData, 0, 0);
+		// // Put the ImageData on the temp canvas
+		// tempCtx.putImageData(this.imageData, 0, 0);
 		this.nameRenderer.tick()
 	}
 
 	tileUpdate(event: TileEvent) {
-		this.paintTile(event.tile)
-		event.tile.neighbors().forEach(t => this.paintTile(t))
+		this.paintTerritory(event.tile)
+		event.tile.neighbors().forEach(t => this.paintTerritory(t))
 	}
 
 	playerEvent(event: PlayerEvent) {
 	}
 
 	boatEvent(event: BoatEvent) {
-		this.bfs(event.oldTile, 2).forEach(t => this.paintTile(t))
+		this.bfs(event.oldTile, 2).forEach(t => this.paintTerritory(t))
 
 		this.bfs(event.boat.tile(), 2).forEach(t => this.paintCell(t.cell(), this.theme.borderColor(event.boat.owner().id())))
 		this.bfs(event.boat.tile(), 1).forEach(t => this.paintCell(t.cell(), this.theme.territoryColor(event.boat.owner().id())))
@@ -162,26 +181,27 @@ export class GameRenderer {
 		this.canvas.height = Math.ceil(height / window.devicePixelRatio);
 	}
 
-	paintTile(tile: Tile) {
-		let terrainColor = this.theme.terrainColor(tile)
-		this.paintCell(tile.cell(), terrainColor)
-		const owner = tile.owner()
-		if (owner.isPlayer()) {
-			if (tile.isBorder()) {
-				this.paintCell(tile.cell(), this.theme.borderColor(owner.id()))
-			} else {
-				this.paintCell(tile.cell(), this.theme.territoryColor(owner.id()))
-			}
+	paintTerritory(tile: Tile) {
+		if (!tile.hasOwner()) {
+			this.clearCell(tile.cell())
+			return
 		}
+		// this.territoryContext.clearRect(tile.cell().x, tile.cell().y, 1, 1);
+		if (tile.isBorder()) {
+			this.territoryContext.fillStyle = this.theme.borderColor(tile.owner().id()).toRgbString()
+		} else {
+			this.territoryContext.fillStyle = this.theme.territoryColor(tile.owner().id()).toRgbString()
+		}
+		this.territoryContext.fillRect(tile.cell().x, tile.cell().y, 1, 1);
 	}
 
 	paintCell(cell: Cell, color: Colord) {
-		const index = (cell.y * this.gs.width()) + cell.x
-		const offset = index * 4
-		this.imageData.data[offset] = color.rgba.r;
-		this.imageData.data[offset + 1] = color.rgba.g;
-		this.imageData.data[offset + 2] = color.rgba.b;
-		this.imageData.data[offset + 3] = color.rgba.a * 255 | 0
+		this.territoryContext.fillStyle = color.toRgbString()
+		this.territoryContext.fillRect(cell.x, cell.y, 1, 1);
+	}
+
+	clearCell(cell: Cell) {
+		this.territoryContext.clearRect(cell.x, cell.y, 1, 1);
 	}
 
 	onZoom(event: ZoomEvent) {
