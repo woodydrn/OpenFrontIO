@@ -18,6 +18,10 @@ export default (env, argv) => {
 		module: {
 			rules: [
 				{
+					test: /\.bin$/,
+					use: 'raw-loader'
+				},
+				{
 					test: /\.ts$/,
 					use: 'ts-loader',
 					exclude: /node_modules/,

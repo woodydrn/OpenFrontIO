@@ -1,5 +1,5 @@
 declare module '*.png' {
-        const content: string;
+    const content: string;
     export default content;
 }
 declare module '*.jpg' {
@@ -12,6 +12,10 @@ declare module '*.jpeg' {
     export default value;
 }
 declare module '*.svg' {
+    const value: string;
+    export default value;
+}
+declare module '*.bin' {
     const value: string;
     export default value;
 }

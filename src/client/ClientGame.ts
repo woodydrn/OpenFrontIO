@@ -116,7 +116,7 @@ export class ClientGame {
 
         this.renderer.initialize()
         this.input.initialize()
-        this.gs.addExecution(...this.executor.spawnBots(this.config.numBots()))
+        //this.gs.addExecution(...this.executor.spawnBots(this.config.numBots()))
 
         this.intervalID = setInterval(() => this.tick(), 10);
     }

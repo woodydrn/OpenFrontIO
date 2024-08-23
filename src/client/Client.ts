@@ -17,7 +17,7 @@ class Client {
     private hasJoined = false
 
     private socket: WebSocket | null = null;
-    private terrainMap: Promise<TerrainMap>
+    private terrainMap: TerrainMap
     private game: ClientGame
 
     private lobbiesContainer: HTMLElement | null;
@@ -115,18 +115,16 @@ class Client {
             this.lobbiesContainer.appendChild(joiningMessage);
         }
 
-        this.terrainMap.then((map) => {
-            if (this.game != null) {
-                return;
-            }
-            this.game = createClientGame(getUsername(), new PseudoRandom(Date.now()).nextID(), lobby.id, getConfig(), map);
-            this.game.join();
-            const g = this.game
-            window.addEventListener('beforeunload', function (event) {
-                // Your function logic here
-                console.log('Browser is closing');
-                g.stop()
-            });
+        if (this.game != null) {
+            return;
+        }
+        this.game = createClientGame(getUsername(), new PseudoRandom(Date.now()).nextID(), lobby.id, getConfig(), this.terrainMap);
+        this.game.join();
+        const g = this.game
+        window.addEventListener('beforeunload', function (event) {
+            // Your function logic here
+            console.log('Browser is closing');
+            g.stop()
         });
     }
 }

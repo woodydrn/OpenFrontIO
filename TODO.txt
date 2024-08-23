@@ -35,9 +35,8 @@
 * better algorithm for name render placement DONE 8/19/2024
 * show how many players in each lobby DONE 8/19/2024
 * make boats larger DONE 8/19/2024
-* boats same color as owner 8/19/2024
-* store map as proto
-* make coasts look better
+* boats same color as owner DONE 8/19/2024
+* make coasts look better DONE 8/22/2024
 * have boats not get close to shore
 * BUG: boat doesn't work if on lake if other player not on same lake
 * Allow boats to attack TerraNullius
