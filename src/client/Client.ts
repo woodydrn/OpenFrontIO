@@ -7,6 +7,8 @@ import {loadTerrainMap, TerrainMap} from "../core/TerrainMapLoader";
 import {ClientGame, createClientGame} from "./ClientGame";
 import {v4 as uuidv4} from 'uuid';
 import backgroundImage from '../../resources/images/VintageMap.png';
+import favicon from '../../resources/images/Favicon.png';
+
 import './styles.css';
 
 
@@ -30,6 +32,7 @@ class Client {
     }
 
     initialize(): void {
+        setFavicon()
         this.terrainMap = loadTerrainMap()
         this.startLobbyPolling()
     }
@@ -145,3 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.body.style.backgroundImage = `url(${backgroundImage})`;
 
+function setFavicon(): void {
+    const link = document.createElement('link');
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+    link.href = favicon;
+    document.head.appendChild(link);
+}
