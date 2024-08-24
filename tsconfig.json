@@ -6,7 +6,12 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "priority-queue-typescript": [
+        "./node_modules/priority-queue-typescript/src/priority-queue/PriorityQueue.js"
+      ]
+    }
   },
   "include": [
     "src/**/*",

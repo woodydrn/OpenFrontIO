@@ -38,18 +38,19 @@
 * boats same color as owner DONE 8/19/2024
 * make coasts look better DONE 8/22/2024
 * only put imageDataOnce, draw territories on top DONE 8/23/2024
-* have boats not get close to shore DONE 8/23/2024
+* have boats not get close too shore DONE 8/23/2024
 * improve terrain colors DONE 8/23/2024
 * BUG: boat doesn't work if on lake if other player not on same lake DONE 8/23/2024
-* Allow boats to attack TerraNullius
-* improve menu
+* Allow boats to attack TerraNullius DONE 8/23/2024
 * try vintage theme
+* improve menu (keep highlighted when click, allow deselect lobby)
+* Make lobby background the terrain map
 * add shader to dim border
-* remove player.info()
-* give terranullius an ID, game.player() returns terranullius
+* REFACTOR: remove player.info()
+* REFACTOR: give terranullius an ID, game.player() returns terranullius
 * give time to (re) spawn at start of game
 * store & delay tile updates for lag compensation
-* BUG: ocean is considered TerraNullius ?
+* REFACTOR: ocean is considered TerraNullius ?
 * BUG: fix hotreload (priority queue breaks it)
 * PERF: use hierarchical a* search for boats
 * Add terrain elevation to map

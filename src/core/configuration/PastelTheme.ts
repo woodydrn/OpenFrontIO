@@ -92,11 +92,7 @@ export const pastelTheme = new class implements Theme {
         } else {
             const w = this.water.rgba
             if (tile.isShorelineWater()) {
-                return colord({
-                    r: Math.max(w.r + 10, 0),
-                    g: Math.max(w.g + 10, 0),
-                    b: Math.max(w.b + 10, 0)
-                })
+                this.shorelineWater
             }
             if (tile.magnitude() < 5) {
                 return colord({

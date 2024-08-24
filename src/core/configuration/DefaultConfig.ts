@@ -2,6 +2,7 @@ import {Player, PlayerInfo, TerraNullius, Tile} from "../Game";
 import {within} from "../Util";
 import {Config, PlayerConfig, Theme} from "./Config";
 import {pastelTheme} from "./PastelTheme";
+import {vintageTheme} from "./VintageTheme";
 
 
 
@@ -24,7 +25,7 @@ export class DefaultConfig implements Config {
     lobbyLifetime(): number {
         return 30 * 1000
     }
-    theme(): Theme {return pastelTheme;}
+    theme(): Theme {return vintageTheme;}
 }
 
 export class DefaultPlayerConfig implements PlayerConfig {
