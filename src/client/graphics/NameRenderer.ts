@@ -123,17 +123,19 @@ export class NameRenderer {
 
         context.fillText(render.player.info().name, nameCenterX, nameCenterY - render.fontSize / 2);
         context.font = `bold ${render.fontSize}px ${this.theme.font()}`;
-        let troops: string = ""
-        if (render.player.troops() > 100000) {
-            troops = String(Math.floor(render.player.troops() / 1000)) + "K"
-        } else if (render.player.troops() > 10000) {
-            troops = String((render.player.troops() / 1000).toFixed(1)) + "K"
-        } else if (render.player.troops() > 1000) {
-            troops = String((render.player.troops() / 1000).toFixed(2)) + "K"
+        let troopsStr: string = ""
+        let troops = render.player.troops() / 10
+
+        if (troops > 100000) {
+            troopsStr = String(Math.floor(troops / 1000)) + "K"
+        } else if (troops > 10000) {
+            troopsStr = String((troops / 1000).toFixed(1)) + "K"
+        } else if (troops > 1000) {
+            troopsStr = String((troops / 1000).toFixed(2)) + "K"
         }
         else {
-            troops = String(Math.floor(render.player.troops()))
+            troopsStr = String(Math.floor(troops))
         }
-        context.fillText(troops, nameCenterX, nameCenterY + render.fontSize);
+        context.fillText(troopsStr, nameCenterX, nameCenterY + render.fontSize);
     }
 }

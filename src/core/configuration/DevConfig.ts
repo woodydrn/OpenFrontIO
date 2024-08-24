@@ -7,7 +7,7 @@ export const devConfig = new class extends DefaultConfig {
         return 2 * 1000
     }
     lobbyLifetime(): number {
-        return 10 * 1000
+        return 5 * 1000
     }
     turnIntervalMs(): number {
         return 100
@@ -16,14 +16,14 @@ export const devConfig = new class extends DefaultConfig {
         return devPlayerConfig
     }
     numBots(): number {
-        return 0
+        return 500
     }
 }
 
 export const devPlayerConfig = new class extends DefaultPlayerConfig {
     startTroops(playerInfo: PlayerInfo): number {
         if (playerInfo.isBot) {
-            return 5000
+            return 1000
         }
         return 5000
     }
