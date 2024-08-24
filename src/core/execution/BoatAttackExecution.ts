@@ -1,5 +1,5 @@
 import PriorityQueue from "priority-queue-typescript";
-import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, Tile, TileEvent} from "../Game";
+import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, TerraNullius, Tile, TileEvent} from "../Game";
 import {manhattanDist} from "../Util";
 import {AttackExecution} from "./AttackExecution";
 import {Config, PlayerConfig} from "../configuration/Config";
@@ -15,7 +15,7 @@ export class BoatAttackExecution implements Execution {
 
     private mg: MutableGame
     private attacker: MutablePlayer
-    private target: MutablePlayer
+    private target: MutablePlayer | TerraNullius
 
     // TODO make private
     public path: Tile[]
@@ -40,20 +40,25 @@ export class BoatAttackExecution implements Execution {
     ) { }
 
     init(mg: MutableGame, ticks: number) {
-        if (this.targetID == null) {
-            throw new Error("attacking terranullius not supported")
-        }
         this.lastMove = ticks
 
         this.mg = mg
         this.attacker = mg.player(this.attackerID)
-        this.target = mg.player(this.targetID)
+        if (this.targetID == null) {
+            this.target = mg.terraNullius()
+        } else {
+            this.target = mg.player(this.targetID)
+        }
 
         this.troops = Math.min(this.troops, this.attacker.troops())
         this.attacker.removeTroops(this.troops)
 
         this.src = this.closestShoreTileToTarget(this.attacker, this.cell)
-        this.dst = this.closestShoreTileToTarget(this.target, this.cell)
+        if (this.target.isPlayer()) {
+            this.dst = this.closestShoreTileToTarget(this.target, this.cell)
+        } else {
+            this.dst = this.mg.tile(this.cell)
+        }
 
         if (this.src == null || this.dst == null) {
             this.active = false
@@ -64,7 +69,7 @@ export class BoatAttackExecution implements Execution {
         this.path = this.aStarPre.reconstructPath()
         if (this.path != null) {
             console.log(`got path ${this.path.map(t => t.cell().toString())}`)
-            this.boat = this.attacker.addBoat(1000, this.src, this.target)
+            this.boat = this.attacker.addBoat(this.troops, this.src, this.target)
         } else {
             console.log('got null path')
             this.active = false

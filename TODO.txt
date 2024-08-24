@@ -46,7 +46,9 @@
 * try vintage theme
 * add shader to dim border
 * remove player.info()
+* give terranullius an ID, game.player() returns terranullius
 * give time to (re) spawn at start of game
+* store & delay tile updates for lag compensation
 * BUG: ocean is considered TerraNullius ?
 * BUG: fix hotreload (priority queue breaks it)
 * PERF: use hierarchical a* search for boats

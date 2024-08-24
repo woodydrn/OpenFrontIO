@@ -190,13 +190,16 @@ export class ClientGame {
         const owner = tile.owner()
         const targetID = owner.isPlayer() ? owner.id() : null
         if (tile.owner() != this.myPlayer && tile.isLand()) {
-            // const ocean = Array.from(bfs(tile, 4))
-            //     .filter(t => t.isOcean)
-            //     .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
-            // if (ocean.length > 0) {
-            //     this.sendBoatAttackIntent(targetID, cell, this.config.player().boatAttackAmount(this.myPlayer, owner))
-            //     return
-            // }
+            const tn = Array.from(bfs(tile, 6))
+                .filter(t => t.isOcean())
+                .filter(t => !t.hasOwner())
+                .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
+                .flatMap(t => t.neighbors())
+                .filter(n => n.isShore())
+            if (tn.length > 0) {
+                this.sendBoatAttackIntent(targetID, tn[0].cell(), this.config.player().boatAttackAmount(this.myPlayer, owner))
+                return
+            }
 
             if (this.myPlayer.sharesBorderWith(tile.owner())) {
                 this.sendAttackIntent(targetID, cell, this.config.player().attackAmount(this.myPlayer, owner))
