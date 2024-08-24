@@ -6,7 +6,7 @@ import {GameID, Lobby, ServerMessage, ServerMessageSchema} from "../core/Schemas
 import {loadTerrainMap, TerrainMap} from "../core/TerrainMapLoader";
 import {ClientGame, createClientGame} from "./ClientGame";
 import {v4 as uuidv4} from 'uuid';
-import backgroundImage from '../../resources/images/empty_map.png';
+import backgroundImage from '../../resources/images/VintageMap.png';
 import './styles.css';
 
 
