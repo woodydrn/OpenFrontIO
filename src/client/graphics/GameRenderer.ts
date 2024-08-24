@@ -188,7 +188,7 @@ export class GameRenderer {
 		this.scale /= zoomFactor;
 
 		// Clamp the scale to prevent extreme zooming
-		this.scale = Math.max(0.1, Math.min(15, this.scale));
+		this.scale = Math.max(0.5, Math.min(20, this.scale));
 
 		const canvasRect = this.canvas.getBoundingClientRect();
 		const canvasX = event.x - canvasRect.left;

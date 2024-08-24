@@ -42,9 +42,10 @@
 * improve terrain colors DONE 8/23/2024
 * BUG: boat doesn't work if on lake if other player not on same lake DONE 8/23/2024
 * Allow boats to attack TerraNullius DONE 8/23/2024
-* try vintage theme
-* improve menu (keep highlighted when click, allow deselect lobby)
+* try vintage theme DONE 8/24/2023
+* Boats can go diagonally
 * Make lobby background the terrain map
+* improve menu (keep highlighted when click, allow deselect lobby)
 * add shader to dim border
 * REFACTOR: remove player.info()
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
@@ -54,4 +55,3 @@
 * BUG: fix hotreload (priority queue breaks it)
 * PERF: use hierarchical a* search for boats
 * Add terrain elevation to map
-* Boats can go diagonally

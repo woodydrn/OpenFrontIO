@@ -4,9 +4,9 @@ import {Theme} from "./Config";
 
 export const vintageTheme = new class implements Theme {
 
-    private background = colord({r: 210, g: 200, b: 180});
-    private land = colord({r: 190, g: 170, b: 150})
-    private shore = colord({r: 220, g: 200, b: 190});  // Brighter beige for shore
+    private background = colord({r: 150, g: 140, b: 120});
+    private land = colord({r: 195, g: 175, b: 155})
+    private shore = colord({r: 210, g: 190, b: 170});  // Brighter beige for shore
 
     private water = colord({r: 160, g: 180, b: 200})
     private shorelineWater = colord({r: 200, g: 200, b: 205});  // Slightly lighter muted blue for shoreline water
