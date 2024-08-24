@@ -8,23 +8,25 @@ import {InputHandler, MouseUpEvent, ZoomEvent, DragEvent, MouseDownEvent} from "
 import {ClientID, ClientIntentMessageSchema, ClientJoinMessageSchema, ClientLeaveMessageSchema, ClientMessageSchema, GameID, Intent, ServerMessage, ServerMessageSchema, ServerSyncMessage, Turn} from "../core/Schemas";
 import {TerrainMap} from "../core/TerrainMapLoader";
 import {bfs, manhattanDist} from "../core/Util";
+import {TerrainRenderer} from "./graphics/TerrainRenderer";
 
 
 
 export function createClientGame(name: string, clientID: ClientID, gameID: GameID, config: Config, terrainMap: TerrainMap): ClientGame {
     let eventBus = new EventBus()
-    let gs = createGame(terrainMap, eventBus, config)
-    let gameRenderer = new GameRenderer(gs, config.theme(), document.createElement("canvas"))
+    let game = createGame(terrainMap, eventBus, config)
+    let terrainRenderer = new TerrainRenderer(game)
+    let gameRenderer = new GameRenderer(game, config.theme(), terrainRenderer)
 
     return new ClientGame(
         name,
         clientID,
         gameID,
         eventBus,
-        gs,
+        game,
         gameRenderer,
         new InputHandler(eventBus),
-        new Executor(gs)
+        new Executor(game)
     )
 }
 

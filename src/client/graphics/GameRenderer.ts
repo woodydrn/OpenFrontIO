@@ -5,12 +5,13 @@ import {DragEvent, ZoomEvent} from "../InputHandler";
 import {NameRenderer} from "./NameRenderer";
 import {bfs, manhattanDist} from "../../core/Util";
 import {PseudoRandom} from "../../core/PseudoRandom";
+import {TerrainRenderer} from "./TerrainRenderer";
 
 
 
 export class GameRenderer {
-	private backgroundCanvas: HTMLCanvasElement
 	private territoryCanvas: HTMLCanvasElement
+	private canvas: HTMLCanvasElement
 
 	private territoryContext: CanvasRenderingContext2D
 
@@ -20,14 +21,10 @@ export class GameRenderer {
 
 	private context: CanvasRenderingContext2D
 
-	private imageData: ImageData
 
 	private nameRenderer: NameRenderer;
 
-	private random = new PseudoRandom(123)
-
-	constructor(private gs: Game, private theme: Theme, private canvas: HTMLCanvasElement) {
-		this.context = canvas.getContext("2d")
+	constructor(private gs: Game, private theme: Theme, private terrainRenderer: TerrainRenderer) {
 		this.nameRenderer = new NameRenderer(gs, theme)
 	}
 
@@ -42,20 +39,13 @@ export class GameRenderer {
 		this.canvas.style.width = '100%';
 		this.canvas.style.height = '100%';
 
-		this.imageData = this.context.getImageData(0, 0, this.gs.width(), this.gs.height())
-		this.initImageData()
 		this.nameRenderer.initialize()
+		this.terrainRenderer.init()
 
 
 		document.body.appendChild(this.canvas);
 		window.addEventListener('resize', () => this.resizeCanvas());
 		this.resizeCanvas();
-
-		this.backgroundCanvas = document.createElement('canvas');
-		const backgroundCtx = this.backgroundCanvas.getContext('2d');
-		this.backgroundCanvas.width = this.gs.width();
-		this.backgroundCanvas.height = this.gs.height();
-		backgroundCtx.putImageData(this.imageData, 0, 0);
 
 
 		this.territoryCanvas = document.createElement('canvas')
@@ -64,18 +54,6 @@ export class GameRenderer {
 		this.territoryContext = this.territoryCanvas.getContext('2d')
 
 		requestAnimationFrame(() => this.renderGame());
-	}
-
-	initImageData() {
-		this.gs.forEachTile((tile) => {
-			let terrainColor = this.theme.terrainColor(tile)
-			const index = (tile.cell().y * this.gs.width()) + tile.cell().x
-			const offset = index * 4
-			this.imageData.data[offset] = terrainColor.rgba.r;
-			this.imageData.data[offset + 1] = terrainColor.rgba.g;
-			this.imageData.data[offset + 2] = terrainColor.rgba.b;
-			this.imageData.data[offset + 3] = terrainColor.rgba.a * 255 | 0
-		})
 	}
 
 	resizeCanvas() {
@@ -110,14 +88,7 @@ export class GameRenderer {
 			this.gs.height() / 2 - this.offsetY * this.scale
 		);
 
-		// Draw the game content from the temp canvas
-		this.context.drawImage(
-			this.backgroundCanvas,
-			-this.gs.width() / 2,
-			-this.gs.height() / 2,
-			this.gs.width(),
-			this.gs.height()
-		);
+		this.terrainRenderer.draw(this.context)
 
 		this.context.drawImage(
 			this.territoryCanvas,

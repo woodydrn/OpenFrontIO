@@ -34,4 +34,14 @@ export class TerrainRenderer {
             this.imageData.data[offset + 3] = terrainColor.rgba.a * 255 | 0
         })
     }
+
+    draw(context: CanvasRenderingContext2D) {
+        context.drawImage(
+            this.canvas,
+            -this.game.width() / 2,
+            -this.game.height() / 2,
+            this.game.width(),
+            this.game.height()
+        )
+    }
 }
