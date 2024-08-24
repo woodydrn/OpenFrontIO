@@ -39,6 +39,7 @@ export enum TerrainType {
 export class Terrain {
     public shoreline: boolean = false
     public magnitude: number = 0
+    public ocean: boolean
     constructor(public type: TerrainType) { }
 }
 
@@ -57,12 +58,12 @@ export async function loadTerrainMap(): Promise<void> {
     for (let x = 0; x < img.width; x++) {
         for (let y = 0; y < img.height; y++) {
             const color = img.getPixelRGBA(x, y);
-            const red = (color >> 24) & 0xff;
+            const alpha = color & 0xff;
 
-            if (red > 100) {
-                terrain[x][y] = new Terrain(TerrainType.Land)
-            } else {
+            if (alpha < 20) { // transparent
                 terrain[x][y] = new Terrain(TerrainType.Water);
+            } else {
+                terrain[x][y] = new Terrain(TerrainType.Land)
             }
         }
     }
@@ -70,6 +71,7 @@ export async function loadTerrainMap(): Promise<void> {
 
     const shorelineWaters = processShore(terrain)
     processDistToLand(shorelineWaters, terrain)
+    processOcean(terrain)
     const packed = packTerrain(terrain)
     const outputPath = path.join(__dirname, '..', '..', 'resources', 'World.bin');
     fs.writeFile(outputPath, packed);
@@ -163,13 +165,44 @@ function packTerrain(map: Terrain[][]): Uint8Array {
             if (terrain.shoreline) {
                 packedByte |= 0b01000000;
             }
-            packedByte |= Math.min(Math.ceil(terrain.magnitude / 2), 63);
+            if (terrain.ocean) {
+                packedByte |= 0b00100000;
+            }
+            packedByte |= Math.min(Math.ceil(terrain.magnitude / 2), 31);
 
             packedData[4 + y * width + x] = packedByte;
         }
     }
     logBinaryAsBits(packedData)
     return packedData;
+}
+
+function processOcean(map: Terrain[][]) {
+    const queue: Coord[] = [{x: 0, y: 0}];
+    const visited = new Set<string>();
+
+    while (queue.length > 0) {
+        const coord = queue.shift()!;
+        const key = `${coord.x},${coord.y}`;
+
+        if (visited.has(key)) continue;
+        visited.add(key);
+
+        const terrain = map[coord.x][coord.y];
+        if (terrain.type === TerrainType.Water) {
+            terrain.ocean = true;
+
+            // Check neighbors
+            for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+                const newX = coord.x + dx;
+                const newY = coord.y + dy;
+
+                if (newX >= 0 && newX < map.length && newY >= 0 && newY < map[0].length) {
+                    queue.push({x: newX, y: newY});
+                }
+            }
+        }
+    }
 }
 
 function logBinaryAsBits(data: Uint8Array, length: number = 8) {

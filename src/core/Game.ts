@@ -23,8 +23,8 @@ export interface ExecutionView {
 }
 
 export interface Execution extends ExecutionView {
-    init(mg: MutableGame, ticks: number)
-    tick(ticks: number)
+    init(mg: MutableGame, ticks: number): void
+    tick(ticks: number): void
     owner(): MutablePlayer
 }
 
@@ -42,6 +42,8 @@ export interface Tile {
     isShore(): boolean
     isWater(): boolean
     isShorelineWater(): boolean
+    isOcean(): boolean
+    isLake(): boolean
     magnitude(): number
     owner(): Player | TerraNullius
     hasOwner(): boolean

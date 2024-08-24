@@ -24,6 +24,7 @@ export enum TerrainType {
 
 export class Terrain {
     public shoreline: boolean = false
+    public ocean: boolean = false
     public magnitude: number = 0
     constructor(public type: TerrainType) { }
 }
@@ -55,10 +56,12 @@ export function loadTerrainMap(): TerrainMap {
             const packedByte = fileData.charCodeAt(4 + y * width + x);  // +4 to skip dimension bytes
             const type = (packedByte & 0b10000000) ? TerrainType.Land : TerrainType.Water;
             const shoreline = !!(packedByte & 0b01000000);
-            const magnitude = packedByte & 0b00111111;
+            const ocean = !!(packedByte & 0b00100000);
+            const magnitude = packedByte & 0b00011111;
 
             terrain[x][y] = new Terrain(type);
             terrain[x][y].shoreline = shoreline;
+            terrain[x][y].ocean = ocean;
             terrain[x][y].magnitude = magnitude;
         }
     }

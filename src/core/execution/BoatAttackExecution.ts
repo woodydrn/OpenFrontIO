@@ -117,7 +117,7 @@ export class BoatAttackExecution implements Execution {
     }
 
     private closestShoreTileToTarget(player: Player, target: Cell): Tile | null {
-        const shoreTiles = Array.from(player.borderTiles()).filter(t => t.onShore())
+        const shoreTiles = Array.from(player.borderTiles()).filter(t => t.onShore() && t.neighbors().filter(n => n.isOcean()).length > 0)
         if (shoreTiles.length == 0) {
             return null
         }

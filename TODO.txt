@@ -40,15 +40,15 @@
 * only put imageDataOnce, draw territories on top DONE 8/23/2024
 * have boats not get close to shore DONE 8/23/2024
 * improve terrain colors DONE 8/23/2024
-* BUG: boat doesn't work if on lake if other player not on same lake
-* try vintage theme
-* BUG: boat doesn't work if on lake if other player not on same lake
+* BUG: boat doesn't work if on lake if other player not on same lake DONE 8/23/2024
 * Allow boats to attack TerraNullius
+* improve menu
+* try vintage theme
 * add shader to dim border
 * remove player.info()
-* improve menu
 * give time to (re) spawn at start of game
 * BUG: ocean is considered TerraNullius ?
 * BUG: fix hotreload (priority queue breaks it)
 * PERF: use hierarchical a* search for boats
 * Add terrain elevation to map
+* Boats can go diagonally

@@ -7,6 +7,7 @@ import {GameRenderer} from "./graphics/GameRenderer";
 import {InputHandler, MouseUpEvent, ZoomEvent, DragEvent, MouseDownEvent} from "./InputHandler"
 import {ClientID, ClientIntentMessageSchema, ClientJoinMessageSchema, ClientLeaveMessageSchema, ClientMessageSchema, GameID, Intent, ServerMessage, ServerMessageSchema, ServerSyncMessage, Turn} from "../core/Schemas";
 import {TerrainMap} from "../core/TerrainMapLoader";
+import {bfs, manhattanDist} from "../core/Util";
 
 
 
@@ -189,10 +190,17 @@ export class ClientGame {
         const owner = tile.owner()
         const targetID = owner.isPlayer() ? owner.id() : null
         if (tile.owner() != this.myPlayer && tile.isLand()) {
+            // const ocean = Array.from(bfs(tile, 4))
+            //     .filter(t => t.isOcean)
+            //     .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
+            // if (ocean.length > 0) {
+            //     this.sendBoatAttackIntent(targetID, cell, this.config.player().boatAttackAmount(this.myPlayer, owner))
+            //     return
+            // }
+
             if (this.myPlayer.sharesBorderWith(tile.owner())) {
                 this.sendAttackIntent(targetID, cell, this.config.player().attackAmount(this.myPlayer, owner))
             } else if (owner.isPlayer()) {
-                // TODO verify on ocean
                 console.log('going to send boat')
                 this.sendBoatAttackIntent(targetID, cell, this.config.player().boatAttackAmount(this.myPlayer, owner))
             }
