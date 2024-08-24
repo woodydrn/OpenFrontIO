@@ -4,12 +4,14 @@ import {Execution, MutableGame, MutablePlayer, PlayerID} from "../Game"
 export class PlayerExecution implements Execution {
 
     private player: MutablePlayer
+    private config: Config
 
-    constructor(private playerID: PlayerID, private config: Config) {
+    constructor(private playerID: PlayerID) {
     }
 
-    init(gs: MutableGame, ticks: number) {
-        this.player = gs.player(this.playerID)
+    init(mg: MutableGame, ticks: number) {
+        this.config = mg.config()
+        this.player = mg.player(this.playerID)
     }
 
     tick(ticks: number) {

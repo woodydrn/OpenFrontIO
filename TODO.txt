@@ -43,7 +43,6 @@
 * BUG: boat doesn't work if on lake if other player not on same lake DONE 8/23/2024
 * Allow boats to attack TerraNullius DONE 8/23/2024
 * try vintage theme DONE 8/24/2023
-* Boats can go diagonally
 * Make lobby background the terrain map
 * improve menu (keep highlighted when click, allow deselect lobby)
 * add shader to dim border

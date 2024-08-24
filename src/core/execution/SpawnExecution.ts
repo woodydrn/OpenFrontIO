@@ -7,30 +7,29 @@ import {getSpawnCells} from "./Util"
 export class SpawnExecution implements Execution {
 
     active: boolean = true
-    private gs: MutableGame
+    private mg: MutableGame
 
     constructor(
         private playerInfo: PlayerInfo,
-        private cell: Cell,
-        private config: Config
+        private cell: Cell
     ) { }
 
 
-    init(gs: MutableGame, ticks: number) {
-        this.gs = gs
+    init(mg: MutableGame, ticks: number) {
+        this.mg = mg
     }
 
     tick(ticks: number) {
         if (!this.isActive()) {
             return
         }
-        const player = this.gs.addPlayer(this.playerInfo, this.config.player().startTroops(this.playerInfo))
-        getSpawnCells(this.gs, this.cell).forEach(c => {
-            player.conquer(this.gs.tile(c))
+        const player = this.mg.addPlayer(this.playerInfo, this.mg.config().player().startTroops(this.playerInfo))
+        getSpawnCells(this.mg, this.cell).forEach(c => {
+            player.conquer(this.mg.tile(c))
         })
-        this.gs.addExecution(new PlayerExecution(player.id(), this.config))
+        this.mg.addExecution(new PlayerExecution(player.id()))
         if (player.info().isBot) {
-            this.gs.addExecution(new BotExecution(player, this.config))
+            this.mg.addExecution(new BotExecution(player))
         }
         this.active = false
     }

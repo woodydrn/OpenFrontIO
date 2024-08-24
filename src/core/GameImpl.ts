@@ -1,9 +1,10 @@
+import {Config} from "./configuration/Config";
 import {EventBus} from "./EventBus";
 import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerEvent, PlayerID, PlayerInfo, Player, TerraNullius, Tile, TileEvent, Boat, MutableBoat, BoatEvent} from "./Game";
 import {Terrain, TerrainMap, TerrainType} from "./TerrainMapLoader";
 
-export function createGame(terrainMap: TerrainMap, eventBus: EventBus): Game {
-    return new GameImpl(terrainMap, eventBus)
+export function createGame(terrainMap: TerrainMap, eventBus: EventBus, config: Config): Game {
+    return new GameImpl(terrainMap, eventBus, config)
 }
 
 type CellString = string
@@ -19,6 +20,7 @@ class TileImpl implements Tile {
         private readonly _cell: Cell,
         private readonly _terrain: Terrain
     ) { }
+
     isLake(): boolean {
         return !this.isLand() && !this.isOcean()
     }
@@ -228,7 +230,7 @@ export class GameImpl implements MutableGame {
     private _height: number
     _terraNullius: TerraNulliusImpl
 
-    constructor(terrainMap: TerrainMap, private eventBus: EventBus) {
+    constructor(terrainMap: TerrainMap, private eventBus: EventBus, private _config: Config) {
         this._terraNullius = new TerraNulliusImpl(this)
         this._width = terrainMap.width();
         this._height = terrainMap.height();
@@ -240,6 +242,9 @@ export class GameImpl implements MutableGame {
                 this.map[x][y] = new TileImpl(this, this._terraNullius, cell, terrainMap.terrain(cell));
             }
         }
+    }
+    config(): Config {
+        return this._config
     }
 
     tick() {
@@ -350,6 +355,23 @@ export class GameImpl implements MutableGame {
         }
         if (x < this._width - 1) {
             ns.push(this.map[x + 1][y])
+        }
+        return ns
+    }
+
+    neighborsWithDiag(tile: Tile): Tile[] {
+        const x = tile.cell().x
+        const y = tile.cell().y
+        const ns: TileImpl[] = []
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                if (dx === 0 && dy === 0) continue // Skip the center tile
+                const newX = x + dx
+                const newY = y + dy
+                if (newX >= 0 && newX < this._width && newY >= 0 && newY < this._height) {
+                    ns.push(this.map[newX][newY])
+                }
+            }
         }
         return ns
     }

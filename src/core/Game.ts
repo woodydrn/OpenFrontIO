@@ -1,3 +1,4 @@
+import {Config} from "./configuration/Config"
 import {GameEvent} from "./EventBus"
 import {ClientID, GameID} from "./Schemas"
 
@@ -120,6 +121,7 @@ export interface Game {
     terraNullius(): TerraNullius
     tick(): void
     addExecution(...exec: Execution[]): void
+    config(): Config
 }
 
 export interface MutableGame extends Game {

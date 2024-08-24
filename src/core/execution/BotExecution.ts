@@ -8,24 +8,23 @@ export class BotExecution implements Execution {
     private active = true
     private random: PseudoRandom;
     private attackRate: number
-    private gs: MutableGame
+    private mg: MutableGame
     private neighborsTerra = true
 
 
-    constructor(private bot: MutablePlayer, private config: Config) {
-
+    constructor(private bot: MutablePlayer) {
         this.random = new PseudoRandom(bot.id())
         this.attackRate = this.random.nextInt(10, 50)
     }
 
-    init(gs: MutableGame, ticks: number) {
-        this.gs = gs
+    init(mg: MutableGame, ticks: number) {
+        this.mg = mg
         // this.neighborsTerra = this.bot.neighbors().filter(n => n == this.gs.terraNullius()).length > 0
     }
 
     tick(ticks: number) {
 
-        if (ticks < this.config.turnsUntilGameStart()) {
+        if (ticks < this.mg.config().turnsUntilGameStart()) {
             return
         }
 
@@ -38,8 +37,8 @@ export class BotExecution implements Execution {
             if (this.neighborsTerra) {
                 for (const b of this.bot.borderTiles()) {
                     for (const n of b.neighbors()) {
-                        if (n.owner() == this.gs.terraNullius() && n.isLand()) {
-                            this.sendAttack(this.gs.terraNullius())
+                        if (n.owner() == this.mg.terraNullius() && n.isLand()) {
+                            this.sendAttack(this.mg.terraNullius())
                             return
                         }
                     }
@@ -57,12 +56,11 @@ export class BotExecution implements Execution {
     }
 
     sendAttack(toAttack: Player | TerraNullius) {
-        this.gs.addExecution(new AttackExecution(
+        this.mg.addExecution(new AttackExecution(
             this.bot.troops() / 20,
             this.bot.id(),
             toAttack.isPlayer() ? toAttack.id() : null,
-            null,
-            this.config
+            null
         ))
     }
 

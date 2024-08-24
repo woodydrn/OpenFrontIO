@@ -13,7 +13,7 @@ import {bfs, manhattanDist} from "../core/Util";
 
 export function createClientGame(name: string, clientID: ClientID, gameID: GameID, config: Config, terrainMap: TerrainMap): ClientGame {
     let eventBus = new EventBus()
-    let gs = createGame(terrainMap, eventBus)
+    let gs = createGame(terrainMap, eventBus, config)
     let gameRenderer = new GameRenderer(gs, config.theme(), document.createElement("canvas"))
 
     return new ClientGame(
@@ -24,8 +24,7 @@ export function createClientGame(name: string, clientID: ClientID, gameID: GameI
         gs,
         gameRenderer,
         new InputHandler(eventBus),
-        new Executor(gs, config),
-        config
+        new Executor(gs)
     )
 }
 
@@ -52,8 +51,7 @@ export class ClientGame {
         private gs: Game,
         private renderer: GameRenderer,
         private input: InputHandler,
-        private executor: Executor,
-        private config: Config
+        private executor: Executor
     ) { }
 
     public join() {
@@ -117,7 +115,7 @@ export class ClientGame {
 
         this.renderer.initialize()
         this.input.initialize()
-        this.gs.addExecution(...this.executor.spawnBots(this.config.numBots()))
+        this.gs.addExecution(...this.executor.spawnBots(this.gs.config().numBots()))
 
         this.intervalID = setInterval(() => this.tick(), 10);
     }
@@ -197,15 +195,15 @@ export class ClientGame {
                 .flatMap(t => t.neighbors())
                 .filter(n => n.isShore())
             if (tn.length > 0) {
-                this.sendBoatAttackIntent(targetID, tn[0].cell(), this.config.player().boatAttackAmount(this.myPlayer, owner))
+                this.sendBoatAttackIntent(targetID, tn[0].cell(), this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
                 return
             }
 
             if (this.myPlayer.sharesBorderWith(tile.owner())) {
-                this.sendAttackIntent(targetID, cell, this.config.player().attackAmount(this.myPlayer, owner))
+                this.sendAttackIntent(targetID, cell, this.gs.config().player().attackAmount(this.myPlayer, owner))
             } else if (owner.isPlayer()) {
                 console.log('going to send boat')
-                this.sendBoatAttackIntent(targetID, cell, this.config.player().boatAttackAmount(this.myPlayer, owner))
+                this.sendBoatAttackIntent(targetID, cell, this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
             }
         }
     }

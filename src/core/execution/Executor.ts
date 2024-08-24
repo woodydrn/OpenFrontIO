@@ -5,12 +5,11 @@ import {AttackExecution} from "./AttackExecution";
 import {SpawnExecution} from "./SpawnExecution";
 import {BotSpawner} from "./BotSpawner";
 import {BoatAttackExecution} from "./BoatAttackExecution";
-import {Config, PlayerConfig} from "../configuration/Config";
 
 
 export class Executor {
 
-    constructor(private gs: Game, private config: Config) {
+    constructor(private gs: Game) {
 
     }
 
@@ -24,22 +23,19 @@ export class Executor {
                 intent.troops,
                 intent.attackerID,
                 intent.targetID,
-                new Cell(intent.targetX, intent.targetY),
-                this.config
+                new Cell(intent.targetX, intent.targetY)
             )
         } else if (intent.type == "spawn") {
             return new SpawnExecution(
                 new PlayerInfo(intent.name, intent.isBot, intent.clientID),
-                new Cell(intent.x, intent.y),
-                this.config
+                new Cell(intent.x, intent.y)
             )
         } else if (intent.type == "boat") {
             return new BoatAttackExecution(
                 intent.attackerID,
                 intent.targetID,
                 new Cell(intent.x, intent.y),
-                intent.troops,
-                this.config
+                intent.troops
             )
         } else {
             throw new Error(`intent type ${intent} not found`)

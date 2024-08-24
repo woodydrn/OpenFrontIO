@@ -36,7 +36,6 @@ export class BoatAttackExecution implements Execution {
         private targetID: PlayerID | null,
         private cell: Cell,
         private troops: number,
-        private config: Config
     ) { }
 
     init(mg: MutableGame, ticks: number) {
@@ -102,7 +101,7 @@ export class BoatAttackExecution implements Execution {
                 return
             }
             this.attacker.conquer(this.dst)
-            this.mg.addExecution(new AttackExecution(this.troops, this.attacker.id(), this.targetID, null, this.config))
+            this.mg.addExecution(new AttackExecution(this.troops, this.attacker.id(), this.targetID, null))
             this.boat.delete()
             this.active = false
             return
