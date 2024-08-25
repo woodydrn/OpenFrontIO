@@ -41,7 +41,7 @@ export function loadTerrainMap(): TerrainMap {
     console.log(`Decoded dimensions: ${width}x${height}`);
 
     // Log the first 100 bytes of data (including the width and height bytes)
-    logBinaryAsAscii(fileData, 100);
+    // logBinaryAsAscii(fileData, 100);
 
     // Check if the data length matches the expected size
     if (fileData.length != width * height + 4) {  // +4 for the width and height bytes

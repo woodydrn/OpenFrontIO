@@ -6,7 +6,6 @@ import {fileURLToPath} from 'url';
 import {GameManager} from './GameManager';
 import {Client} from './Client';
 import {ClientMessage, ClientMessageSchema} from '../core/Schemas';
-import {defaultConfig} from '../core/configuration/DefaultConfig';
 import {GamePhase} from './GameServer';
 import {getConfig} from '../core/configuration/Config';
 
@@ -17,9 +16,13 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({server});
 
-// Serve static files from the 'out' directory
-app.use(express.static(path.join(__dirname, '../../out')));
-app.use(express.json())
+app.use(express.static(path.join(__dirname, '../../resources/styles'), {
+    setHeaders: (res, path, stat) => {
+        if (path.endsWith('.css')) {
+            res.set('Content-Type', 'text/css');
+        }
+    }
+}));
 
 const gm = new GameManager(getConfig())
 
