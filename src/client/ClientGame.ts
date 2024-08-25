@@ -97,6 +97,9 @@ export class ClientGame {
         };
         this.socket.onclose = (event: CloseEvent) => {
             console.log(`WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
+            if (!this.isActive) {
+                return
+            }
             if (event.code != 1000) {
                 this.join()
             }
@@ -126,6 +129,7 @@ export class ClientGame {
         clearInterval(this.intervalID)
         this.isActive = false
         if (this.socket.readyState === WebSocket.OPEN) {
+            console.log('on stop: leaving game')
             const msg = ClientLeaveMessageSchema.parse({
                 type: "leave",
                 clientID: this.id,

@@ -43,6 +43,7 @@ export class GameServer {
                 }
             }
             if (clientMsg.type == "leave") {
+                // TODO: get rid of leave message, just use on close?
                 const toRemove = this.clients.filter(c => c.id)
                 if (toRemove.length == 0) {
                     return

@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>OpenFront (ALPHA)</title>
-	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" type="text/css" href="styles.css">
 	<style>
 		body {
 			font-family: Arial, sans-serif;
@@ -13,7 +13,6 @@
 			padding: 0;
 			min-height: 100vh;
 			background-color: #15151500;
-			/* Dark grey background */
 			background-image: url('/resources/images/watercolor_worldmap.jpg');
 			background-size: cover;
 			background-position: center;
@@ -23,17 +22,16 @@
 
 		.content {
 			max-width: 1020px;
-			/* Allows for two 500px buttons side by side with some margin */
 			margin: 0 auto;
 			padding: 20px;
 			position: relative;
 		}
 
 		h1 {
+			font-family: Arial, serif;
 			text-align: center;
-			color: #ffffff;
-			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-			font-size: 2.5em;
+			color: #2e2e2e;
+			font-size: 8em;
 			margin-bottom: 30px;
 		}
 
@@ -50,24 +48,11 @@
 			background-color: rgba(255, 255, 255, 0.8);
 		}
 
-		.lobby-button:hover {
-			background-color: rgba(0, 123, 255, 0.4);
-			transform: translateY(-5px);
-			box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-		}
-
-		.player-count {
-			font-size: 24px;
-			margin-top: 20px;
-			color: #aaddff;
-		}
-
 		#lobbies-container {
 			display: flex;
-			flex-wrap: wrap;
 			justify-content: center;
-			gap: 20px;
 		}
+
 
 		.lobby-button {
 			width: 500px;
@@ -96,6 +81,13 @@
 			box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
 		}
 
+		.lobby-button.highlighted {
+			background-color: rgba(0, 123, 255, 0.6);
+			transform: translateY(-5px);
+			box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
+			border-color: #ffffff;
+		}
+
 		.lobby-name {
 			font-size: 36px;
 			margin-bottom: 20px;
@@ -117,15 +109,6 @@
 			text-align: center;
 			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 		}
-
-		h1 {
-			font-family: Overpass, serif;
-			text-align: center;
-			color: #3d3c3c;
-			/* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); */
-			font-size: 8em;
-			margin-bottom: 30px;
-		}
 	</style>
 </head>
 
@@ -136,7 +119,11 @@
 			<input type="text" id="username" placeholder="Enter your username">
 		</div>
 		<div id="lobbies-container">
-			<!-- Lobby buttons will be inserted here by your existing JavaScript -->
+			<button id="lobby-button" class="lobby-button">
+				<div id="lobby-name" class="lobby-name"></div>
+				<div id="lobby-timer" class="lobby-timer"></div>
+				<div id="player-count" class="player-count"></div>
+			</button>
 		</div>
 	</div>
 

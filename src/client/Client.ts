@@ -24,6 +24,7 @@ class Client {
 
     private lobbiesContainer: HTMLElement | null;
     private lobbiesInterval: NodeJS.Timeout | null = null;
+    private isLobbyHighlighted: boolean = false;
 
     private random = new PseudoRandom(1234)
 
@@ -52,34 +53,31 @@ class Client {
     }
 
     private updateLobbiesDisplay(lobbies: Lobby[]): void {
-        if (!this.lobbiesContainer) return;
+        if (lobbies.length === 0) {
+            document.getElementById('lobby-button').style.display = 'none';
+            return;
+        }
 
-        this.lobbiesContainer.innerHTML = ''; // Clear existing lobbies
+        const lobby = lobbies[0];
+        const lobbyButton = document.getElementById('lobby-button');
+        const nameElement = document.getElementById('lobby-name');
+        const timerElement = document.getElementById('lobby-timer');
+        const playerCountElement = document.getElementById('player-count');
 
-        lobbies.forEach(lobby => {
-            const button = document.createElement('button');
-            button.className = 'lobby-button';
+        if (lobbyButton) {
+            lobbyButton.style.display = 'flex';
+            lobbyButton.onclick = () => this.joinLobby(lobby);
 
-            const nameElement = document.createElement('div');
-            nameElement.className = 'lobby-name';
-            nameElement.textContent = `Lobby ${lobby.id}`;
+            // Preserve the highlighted state
+            lobbyButton.classList.toggle('highlighted', this.isLobbyHighlighted);
+        }
 
-            const timerElement = document.createElement('div');
-            timerElement.className = 'lobby-timer';
+        if (nameElement) nameElement.textContent = `Lobby ${lobby.id}`;
+        if (timerElement) {
             const timeRemaining = Math.max(0, Math.floor((lobby.startTime - Date.now()) / 1000));
             timerElement.textContent = `Starts in: ${timeRemaining}s`;
-
-            const playerCountElement = document.createElement('div');
-            playerCountElement.className = 'player-count';
-            playerCountElement.textContent = `Players: ${lobby.numClients}`
-
-            button.appendChild(nameElement);
-            button.appendChild(timerElement);
-            button.appendChild(playerCountElement);
-
-            button.onclick = () => this.joinLobby(lobby);
-            this.lobbiesContainer.appendChild(button);
-        });
+        }
+        if (playerCountElement) playerCountElement.textContent = `Players: ${lobby.numClients}`;
     }
 
     async fetchLobbies(): Promise<Lobby[]> {
@@ -97,25 +95,16 @@ class Client {
         }
     }
 
-    private async joinLobby(lobby: Lobby) {
-        clearInterval(this.lobbiesInterval);
-
-        if (this.lobbiesContainer) {
-            // Clear existing content
-            this.lobbiesContainer.innerHTML = '';
-
-            // Ensure the container takes up the full height of the viewport
-            this.lobbiesContainer.style.display = 'flex';
-            this.lobbiesContainer.style.justifyContent = 'center';
-            this.lobbiesContainer.style.alignItems = 'center';
-            this.lobbiesContainer.style.minHeight = '100vh';
-
-            // Create and add the joining message
-            const joiningMessage = document.createElement('div');
-            joiningMessage.textContent = `Joining: ${lobby.id}`;
-            joiningMessage.className = 'joining-message';
-
-            this.lobbiesContainer.appendChild(joiningMessage);
+    private joinLobby(lobby: Lobby) {
+        const lobbyButton = document.getElementById('lobby-button');
+        if (lobbyButton) {
+            this.isLobbyHighlighted = !this.isLobbyHighlighted;
+            lobbyButton.classList.toggle('highlighted', this.isLobbyHighlighted);
+        }
+        if (!this.isLobbyHighlighted) {
+            this.game.stop()
+            this.game = null
+            return
         }
 
         if (this.game != null) {
@@ -123,11 +112,10 @@ class Client {
         }
         this.game = createClientGame(getUsername(), new PseudoRandom(Date.now()).nextID(), lobby.id, getConfig(), this.terrainMap);
         this.game.join();
-        const g = this.game
+        const g = this.game;
         window.addEventListener('beforeunload', function (event) {
-            // Your function logic here
             console.log('Browser is closing');
-            g.stop()
+            g.stop();
         });
     }
 }

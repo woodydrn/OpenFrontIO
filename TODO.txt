@@ -54,3 +54,4 @@
 * BUG: fix hotreload (priority queue breaks it)
 * PERF: use hierarchical a* search for boats
 * Add terrain elevation to map
+* boats can go around the world

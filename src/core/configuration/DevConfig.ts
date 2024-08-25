@@ -4,10 +4,10 @@ import {DefaultConfig, DefaultPlayerConfig, defaultPlayerConfig} from "./Default
 
 export const devConfig = new class extends DefaultConfig {
     gameCreationRate(): number {
-        return 2 * 1000
+        return 21 * 1000
     }
     lobbyLifetime(): number {
-        return 5 * 1000
+        return 20 * 1000
     }
     turnIntervalMs(): number {
         return 100
@@ -16,7 +16,7 @@ export const devConfig = new class extends DefaultConfig {
         return devPlayerConfig
     }
     numBots(): number {
-        return 500
+        return 250
     }
 }
 
@@ -25,6 +25,6 @@ export const devPlayerConfig = new class extends DefaultPlayerConfig {
         if (playerInfo.isBot) {
             return 5000
         }
-        return 5000
+        return 10000
     }
 }
