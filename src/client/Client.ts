@@ -72,7 +72,7 @@ class Client {
             lobbyButton.classList.toggle('highlighted', this.isLobbyHighlighted);
         }
 
-        if (nameElement) nameElement.textContent = `Lobby ${lobby.id}`;
+        if (nameElement) nameElement.textContent = `Game ${lobby.id}`;
         if (timerElement) {
             const timeRemaining = Math.max(0, Math.floor((lobby.startTime - Date.now()) / 1000));
             timerElement.textContent = `Starts in: ${timeRemaining}s`;
