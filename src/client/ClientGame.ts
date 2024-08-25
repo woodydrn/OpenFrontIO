@@ -1,5 +1,5 @@
 import {Executor} from "../core/execution/Executor";
-import {Cell, MutableGame, PlayerEvent, PlayerID, MutablePlayer, TileEvent, Player, Game, BoatEvent} from "../core/Game";
+import {Cell, MutableGame, PlayerEvent, PlayerID, MutablePlayer, TileEvent, Player, Game, BoatEvent, Tile} from "../core/Game";
 import {createGame} from "../core/GameImpl";
 import {EventBus} from "../core/EventBus";
 import {Config} from "../core/configuration/Config";
@@ -188,24 +188,37 @@ export class ClientGame {
         }
 
         const owner = tile.owner()
-        const targetID = owner.isPlayer() ? owner.id() : null
-        if (tile.owner() != this.myPlayer && tile.isLand()) {
-            const tn = Array.from(bfs(tile, 6))
-                .filter(t => t.isOcean())
-                .filter(t => !t.hasOwner())
-                .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
-                .flatMap(t => t.neighbors())
-                .filter(n => n.isShore())
+        const targetID = owner.isPlayer() ? owner.id() : null;
+        let tn: Tile[] = []
+        if (tile.owner() != this.myPlayer) {
+
+            // Boat Attack Terra Nullius
+            if (tile.isLand()) {
+                tn = Array.from(bfs(tile, 2))
+                    .filter(t => t.isOcean())
+                    .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
+                    .flatMap(t => t.neighbors())
+                    .filter(n => n.isShore())
+                    .filter(n => !n.hasOwner())
+            } else if (tile.isOcean()) {
+                tn = Array.from(bfs(tile, 3))
+                    .filter(t => t.isShore())
+                    .filter(t => !t.hasOwner())
+                    .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
+            }
             if (tn.length > 0) {
                 this.sendBoatAttackIntent(targetID, tn[0].cell(), this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
                 return
             }
 
-            if (this.myPlayer.sharesBorderWith(tile.owner())) {
-                this.sendAttackIntent(targetID, cell, this.gs.config().player().attackAmount(this.myPlayer, owner))
-            } else if (owner.isPlayer()) {
-                console.log('going to send boat')
-                this.sendBoatAttackIntent(targetID, cell, this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
+            // Attack Player
+            if (tile.isLand()) {
+                if (this.myPlayer.sharesBorderWith(tile.owner())) {
+                    this.sendAttackIntent(targetID, cell, this.gs.config().player().attackAmount(this.myPlayer, owner))
+                } else if (owner.isPlayer()) {
+                    console.log('going to send boat')
+                    this.sendBoatAttackIntent(targetID, cell, this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
+                }
             }
         }
     }

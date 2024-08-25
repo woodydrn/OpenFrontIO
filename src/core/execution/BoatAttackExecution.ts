@@ -2,7 +2,6 @@ import PriorityQueue from "priority-queue-typescript";
 import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, TerraNullius, Tile, TileEvent} from "../Game";
 import {manhattanDist} from "../Util";
 import {AttackExecution} from "./AttackExecution";
-import {Config, PlayerConfig} from "../configuration/Config";
 
 export class BoatAttackExecution implements Execution {
 
@@ -64,7 +63,7 @@ export class BoatAttackExecution implements Execution {
             return
         }
         this.aStarPre = new AStar(this.src, this.dst)
-        this.aStarPre.compute(100)
+        this.aStarPre.compute(30)
         this.path = this.aStarPre.reconstructPath()
         if (this.path != null) {
             console.log(`got path ${this.path.map(t => t.cell().toString())}`)

@@ -65,7 +65,7 @@ export class DefaultPlayerConfig implements PlayerConfig {
 
     startTroops(playerInfo: PlayerInfo): number {
         if (playerInfo.isBot) {
-            return 1000
+            return 5000
         }
         return 5000
     }

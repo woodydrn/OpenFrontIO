@@ -23,7 +23,7 @@ export const devConfig = new class extends DefaultConfig {
 export const devPlayerConfig = new class extends DefaultPlayerConfig {
     startTroops(playerInfo: PlayerInfo): number {
         if (playerInfo.isBot) {
-            return 1000
+            return 5000
         }
         return 5000
     }
