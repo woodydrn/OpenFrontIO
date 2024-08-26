@@ -23,9 +23,11 @@ export class GameRenderer {
 
 
 	private nameRenderer: NameRenderer;
+	private theme: Theme
 
-	constructor(private gs: Game, private theme: Theme, private terrainRenderer: TerrainRenderer) {
-		this.nameRenderer = new NameRenderer(gs, theme)
+	constructor(private gs: Game, private terrainRenderer: TerrainRenderer) {
+		this.theme = gs.config().theme()
+		this.nameRenderer = new NameRenderer(gs, this.theme)
 	}
 
 	initialize() {
@@ -71,6 +73,10 @@ export class GameRenderer {
 		this.context.fillStyle = this.theme.backgroundColor().toHex();
 		this.context.fillRect(0, 0, this.gs.width(), this.gs.height());
 
+		// Save the current context state
+		this.context.save();
+
+
 		// Disable image smoothing for pixelated effect
 		if (this.scale > 3) {
 			this.context.imageSmoothingEnabled = false;
@@ -101,7 +107,30 @@ export class GameRenderer {
 		const [upperLeft, bottomRight] = this.boundingRect()
 		this.nameRenderer.render(this.context, this.scale, upperLeft, bottomRight)
 
+		this.context.restore()
+
+		this.renderUIBar()
+
+
 		requestAnimationFrame(() => this.renderGame());
+	}
+
+	renderUIBar() {
+		if (!this.gs.inSpawnPhase()) {
+			return
+		}
+
+		const barHeight = 15;
+		const barBackgroundWidth = this.canvas.width;
+
+		const ratio = this.gs.ticks() / this.gs.config().numSpawnPhaseTurns()
+
+		// Draw bar background
+		this.context.fillStyle = 'rgba(0, 0, 0, 0.5)';
+		this.context.fillRect(0, 0, barBackgroundWidth, barHeight);
+
+		this.context.fillStyle = 'rgba(0, 128, 255, 0.7)';
+		this.context.fillRect(0, 0, barBackgroundWidth * ratio, barHeight);
 	}
 
 	tick() {

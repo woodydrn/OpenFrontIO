@@ -23,7 +23,7 @@ export class SpawnExecution implements Execution {
             return
         }
 
-        if (ticks >= this.mg.config().turnsUntilGameStart()) {
+        if (ticks >= this.mg.config().numSpawnPhaseTurns()) {
             this.active = false
             return
         }

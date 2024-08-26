@@ -16,7 +16,7 @@ export function createClientGame(name: string, clientID: ClientID, gameID: GameI
     let eventBus = new EventBus()
     let game = createGame(terrainMap, eventBus, config)
     let terrainRenderer = new TerrainRenderer(game)
-    let gameRenderer = new GameRenderer(game, config.theme(), terrainRenderer)
+    let gameRenderer = new GameRenderer(game, terrainRenderer)
 
     return new ClientGame(
         name,

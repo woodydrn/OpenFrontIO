@@ -28,7 +28,7 @@ export class BotExecution implements Execution {
 
     tick(ticks: number) {
 
-        if (ticks < this.mg.config().turnsUntilGameStart()) {
+        if (ticks < this.mg.config().numSpawnPhaseTurns()) {
             return
         }
 

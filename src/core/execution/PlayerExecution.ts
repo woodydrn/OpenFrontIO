@@ -19,7 +19,7 @@ export class PlayerExecution implements Execution {
     }
 
     tick(ticks: number) {
-        if (ticks < this.config.turnsUntilGameStart()) {
+        if (ticks < this.config.numSpawnPhaseTurns()) {
             return
         }
         this.player.setTroops(this.config.player().troopAdditionRate(this.player))

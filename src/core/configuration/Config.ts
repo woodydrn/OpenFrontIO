@@ -21,7 +21,7 @@ export interface Config {
 	gameCreationRate(): number
 	lobbyLifetime(): number
 	numBots(): number
-	turnsUntilGameStart(): number
+	numSpawnPhaseTurns(): number
 }
 
 export interface PlayerConfig {

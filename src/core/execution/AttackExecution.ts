@@ -71,7 +71,7 @@ export class AttackExecution implements Execution {
         if (!this.active) {
             return
         }
-        if (ticks < this.mg.config().turnsUntilGameStart()) {
+        if (ticks < this.mg.config().numSpawnPhaseTurns()) {
             return
         }
 

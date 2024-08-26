@@ -7,7 +7,7 @@ import {vintageTheme} from "./VintageTheme";
 
 
 export class DefaultConfig implements Config {
-    turnsUntilGameStart(): number {
+    numSpawnPhaseTurns(): number {
         return 100
     }
     numBots(): number {

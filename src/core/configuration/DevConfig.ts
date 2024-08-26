@@ -3,7 +3,7 @@ import {PlayerConfig} from "./Config";
 import {DefaultConfig, DefaultPlayerConfig, defaultPlayerConfig} from "./DefaultConfig";
 
 export const devConfig = new class extends DefaultConfig {
-    turnsUntilGameStart(): number {
+    numSpawnPhaseTurns(): number {
         return 100
     }
     gameCreationRate(): number {

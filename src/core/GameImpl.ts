@@ -256,7 +256,7 @@ export class GameImpl implements MutableGame {
     }
 
     inSpawnPhase(): boolean {
-        return this._ticks <= this.config().turnsUntilGameStart()
+        return this._ticks <= this.config().numSpawnPhaseTurns()
     }
 
     ticks(): number {
