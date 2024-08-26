@@ -16,14 +16,9 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({server});
 
-app.use(express.static(path.join(__dirname, '../../resources/styles'), {
-    setHeaders: (res, path, stat) => {
-        if (path.endsWith('.css')) {
-            res.set('Content-Type', 'text/css');
-        }
-    }
-}));
-
+// Serve static files from the 'out' directory
+app.use(express.static(path.join(__dirname, '../../out')));
+app.use(express.json())
 const gm = new GameManager(getConfig())
 
 // New GET endpoint to list lobbies

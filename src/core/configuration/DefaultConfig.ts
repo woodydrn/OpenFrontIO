@@ -20,10 +20,10 @@ export class DefaultConfig implements Config {
         return 100
     }
     gameCreationRate(): number {
-        return 31.5 * 1000
+        return 20 * 1000
     }
     lobbyLifetime(): number {
-        return 30 * 1000
+        return 20 * 1000
     }
     theme(): Theme {return vintageTheme;}
 }
