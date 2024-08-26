@@ -36,6 +36,12 @@ class Client {
         setFavicon()
         this.terrainMap = loadTerrainMap()
         this.startLobbyPolling()
+        setupUsernameCallback((username) => {
+            console.log('Username updated:', username);
+            if (this.game != null) {
+                this.game.playerName = username
+            }
+        });
     }
 
     private startLobbyPolling(): void {
@@ -118,6 +124,11 @@ class Client {
             g.stop();
         });
     }
+
+
+
+
+
 }
 
 function getUsername(): string {
@@ -128,6 +139,21 @@ function getUsername(): string {
     }
     return 'Anon'; // Return 'Anon' if the input element is not found
 }
+
+function setupUsernameCallback(callback: (username: string) => void): void {
+    const usernameInput = document.getElementById('username') as HTMLInputElement | null;
+    if (usernameInput) {
+        usernameInput.addEventListener('input', () => {
+            const username = getUsername();
+            callback(username);
+        });
+    } else {
+        console.error('Username input element not found');
+    }
+}
+
+
+
 
 // Initialize the client when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

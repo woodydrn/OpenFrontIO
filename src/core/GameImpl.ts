@@ -1,6 +1,7 @@
 import {Config} from "./configuration/Config";
 import {EventBus} from "./EventBus";
 import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerEvent, PlayerID, PlayerInfo, Player, TerraNullius, Tile, TileEvent, Boat, MutableBoat, BoatEvent} from "./Game";
+import {ClientID} from "./Schemas";
 import {Terrain, TerrainMap, TerrainType} from "./TerrainMapLoader";
 import {simpleHash} from "./Util";
 
@@ -123,7 +124,30 @@ export class PlayerImpl implements MutablePlayer {
     public _boats: BoatImpl[] = []
     public _tiles: Map<CellString, Tile> = new Map<CellString, Tile>()
 
-    constructor(private gs: GameImpl, public readonly playerInfo: PlayerInfo, private _troops) {
+    private _name: string
+
+    constructor(private gs: GameImpl, private readonly playerInfo: PlayerInfo, private _troops) {
+        this._name = playerInfo.name
+    }
+
+    name(): string {
+        return this._name
+    }
+
+    clientID(): ClientID {
+        return this.playerInfo.clientID
+    }
+
+    id(): PlayerID {
+        return this.playerInfo.id
+    }
+
+    isBot(): boolean {
+        return this.playerInfo.isBot
+    }
+
+    setName(name: string) {
+
     }
 
     addBoat(troops: number, tile: Tile, target: Player | TerraNullius): BoatImpl {
@@ -190,7 +214,6 @@ export class PlayerImpl implements MutablePlayer {
         this.gs.relinquish(tile)
     }
     info(): PlayerInfo {return this.playerInfo}
-    id(): PlayerID {return this.playerInfo.id}
     troops(): number {return this._troops}
     isAlive(): boolean {return this._tiles.size > 0}
     gameState(): MutableGame {return this.gs}

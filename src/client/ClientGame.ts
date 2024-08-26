@@ -1,4 +1,4 @@
-import {Executor} from "../core/execution/Executor";
+import {Executor} from "../core/execution/ExecutionManager";
 import {Cell, MutableGame, PlayerEvent, PlayerID, MutablePlayer, TileEvent, Player, Game, BoatEvent, Tile} from "../core/Game";
 import {createGame} from "../core/GameImpl";
 import {EventBus} from "../core/EventBus";
@@ -46,7 +46,7 @@ export class ClientGame {
     private isProcessingTurn = false
 
     constructor(
-        private playerName: string,
+        public playerName: string,
         private id: ClientID,
         private gameID: GameID,
         private eventBus: EventBus,
@@ -86,6 +86,13 @@ export class ClientGame {
                 if (!this.isActive) {
                     this.start()
                 }
+                this.sendIntent(
+                    {
+                        type: "updateName",
+                        name: this.playerName,
+                        clientID: this.id
+                    }
+                )
             }
             if (message.type == "turn") {
                 this.addTurn(message.turn)
@@ -163,7 +170,7 @@ export class ClientGame {
 
     private playerEvent(event: PlayerEvent) {
         console.log('received new player event!')
-        if (event.player.info().clientID == this.id) {
+        if (event.player.clientID() == this.id) {
             console.log('setting name')
             this.myPlayer = event.player
         }
@@ -188,6 +195,9 @@ export class ClientGame {
             return
         }
         if (this.gs.inSpawnPhase()) {
+            return
+        }
+        if (this.myPlayer == null) {
             return
         }
 

@@ -28,7 +28,7 @@ export class SpawnExecution implements Execution {
             return
         }
 
-        const existing = this.mg.players().find(p => p.info().clientID != null && p.info().clientID == this.playerInfo.clientID)
+        const existing = this.mg.players().find(p => p.clientID() != null && p.clientID() == this.playerInfo.clientID)
         if (existing) {
             existing.tiles().forEach(t => existing.relinquish(t))
             getSpawnCells(this.mg, this.cell).forEach(c => {
@@ -42,7 +42,7 @@ export class SpawnExecution implements Execution {
             player.conquer(this.mg.tile(c))
         })
         this.mg.addExecution(new PlayerExecution(player.id()))
-        if (player.info().isBot) {
+        if (player.isBot()) {
             this.mg.addExecution(new BotExecution(player))
         }
         this.active = false

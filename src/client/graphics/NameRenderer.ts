@@ -84,7 +84,7 @@ export class NameRenderer {
 
     isVisible(render: RenderInfo, min: Cell, max: Cell): boolean {
         const ratio = (max.x - min.x) / Math.max(20, (render.boundingBox.max.x - render.boundingBox.min.x))
-        if (render.player.info().isBot) {
+        if (render.player.isBot()) {
             if (ratio > 25) {
                 return false
             }
@@ -121,7 +121,7 @@ export class NameRenderer {
         context.textAlign = 'center';
         context.textBaseline = 'middle';
 
-        context.fillText(render.player.info().name, nameCenterX, nameCenterY - render.fontSize / 2);
+        context.fillText(render.player.name(), nameCenterX, nameCenterY - render.fontSize / 2);
         context.font = `bold ${render.fontSize}px ${this.theme.font()}`;
         let troopsStr: string = ""
         let troops = render.player.troops() / 10

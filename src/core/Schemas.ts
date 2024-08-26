@@ -3,11 +3,13 @@ import {z} from 'zod';
 export type GameID = string
 export type ClientID = string
 
-export type Intent = SpawnIntent | AttackIntent | BoatAttackIntent
+export type Intent = SpawnIntent | AttackIntent | BoatAttackIntent | UpdateNameIntent
 
 export type AttackIntent = z.infer<typeof AttackIntentSchema>
 export type SpawnIntent = z.infer<typeof SpawnIntentSchema>
 export type BoatAttackIntent = z.infer<typeof BoatAttackIntentSchema>
+export type UpdateNameIntent = z.infer<typeof UpdateNameIntentSchema>
+
 
 export type Turn = z.infer<typeof TurnSchema>
 
@@ -31,7 +33,7 @@ export interface Lobby {
 
 // Zod schemas
 const BaseIntentSchema = z.object({
-    type: z.enum(['attack', 'spawn', 'boat']),
+    type: z.enum(['attack', 'spawn', 'boat', 'name']),
     clientID: z.string(),
 });
 
@@ -62,7 +64,12 @@ export const BoatAttackIntentSchema = BaseIntentSchema.extend({
     y: z.number(),
 })
 
-const IntentSchema = z.union([AttackIntentSchema, SpawnIntentSchema, BoatAttackIntentSchema]);
+export const UpdateNameIntentSchema = BaseIntentSchema.extend({
+    type: z.literal('updateName'),
+    name: z.string(),
+})
+
+const IntentSchema = z.union([AttackIntentSchema, SpawnIntentSchema, BoatAttackIntentSchema, UpdateNameIntentSchema]);
 
 const TurnSchema = z.object({
     turnNumber: z.number(),

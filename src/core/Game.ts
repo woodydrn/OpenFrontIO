@@ -82,8 +82,10 @@ export interface TerraNullius {
 }
 
 export interface Player {
-    info(): PlayerInfo
+    name(): string
+    clientID(): ClientID
     id(): PlayerID
+    isBot(): boolean
     troops(): number
     boats(): Boat[]
     ownsTile(cell: Cell): boolean
@@ -99,6 +101,7 @@ export interface Player {
 }
 
 export interface MutablePlayer extends Player {
+    setName(name: string): void
     setTroops(troops: number): void
     addTroops(troops: number): void
     removeTroops(troops: number): void

@@ -56,7 +56,7 @@ export class DefaultPlayerConfig implements PlayerConfig {
     }
 
     attackAmount(attacker: Player, defender: Player | TerraNullius) {
-        if (attacker.info().isBot) {
+        if (attacker.isBot()) {
             return attacker.troops() / 20
         } else {
             return attacker.troops() / 5

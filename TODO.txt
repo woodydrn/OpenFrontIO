@@ -47,8 +47,8 @@
 * improve menu (keep highlighted when click, allow deselect lobby) DONE 8/25/2024
 * give time to (re) spawn at start of game DONE 8/25/2024
 * show bar for long to respawn DONE 8/26/2024
-* store & delay tile updates for lag compensation
-* BUG: error if don't spawn and then click after spawn mode
+* store & delay tile updates for lag compensation DONE 8/26/2024
+* BUG: error if don't spawn and then click after spawn mode DONE 8/26/2024
 * BUG: change player name after join lobby
 * REFACTOR: use new priority queue
 * BUG: players attack each other same time creates islands

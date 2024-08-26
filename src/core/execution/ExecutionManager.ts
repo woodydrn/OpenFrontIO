@@ -6,6 +6,7 @@ import {SpawnExecution} from "./SpawnExecution";
 import {BotSpawner} from "./BotSpawner";
 import {BoatAttackExecution} from "./BoatAttackExecution";
 import {PseudoRandom} from "../PseudoRandom";
+import {UpdateNameExecution} from "./UpdateNameExecution";
 
 
 export class Executor {
@@ -39,6 +40,11 @@ export class Executor {
                 intent.targetID,
                 new Cell(intent.x, intent.y),
                 intent.troops
+            )
+        } else if (intent.type == "updateName") {
+            return new UpdateNameExecution(
+                intent.name,
+                intent.clientID
             )
         } else {
             throw new Error(`intent type ${intent} not found`)
