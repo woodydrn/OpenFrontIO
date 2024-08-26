@@ -6,8 +6,7 @@ import {NameRenderer} from "./NameRenderer";
 import {bfs, manhattanDist} from "../../core/Util";
 import {PseudoRandom} from "../../core/PseudoRandom";
 import {TerrainRenderer} from "./TerrainRenderer";
-
-
+import {MaxPriorityQueue, PriorityQueue} from "@datastructures-js/priority-queue";
 
 export class GameRenderer {
 	private territoryCanvas: HTMLCanvasElement
@@ -24,6 +23,12 @@ export class GameRenderer {
 
 	private nameRenderer: NameRenderer;
 	private theme: Theme
+
+	private random = new PseudoRandom(123)
+
+
+	private tileToRenderQueue: PriorityQueue<{tileEvent: TileEvent, lastUpdate: number}> = new PriorityQueue((a, b) => {return a.lastUpdate - b.lastUpdate})
+
 
 	constructor(private gs: Game, private terrainRenderer: TerrainRenderer) {
 		this.theme = gs.config().theme()
@@ -95,6 +100,7 @@ export class GameRenderer {
 		);
 
 		this.terrainRenderer.draw(this.context)
+		this.renderTerritory()
 
 		this.context.drawImage(
 			this.territoryCanvas,
@@ -114,6 +120,18 @@ export class GameRenderer {
 
 		requestAnimationFrame(() => this.renderGame());
 	}
+
+	renderTerritory() {
+		let numToRender = Math.floor(this.tileToRenderQueue.size() / 10)
+
+		while (numToRender > 0) {
+			numToRender--
+			const event = this.tileToRenderQueue.pop().tileEvent
+			this.paintTerritory(event.tile)
+			event.tile.neighbors().forEach(t => this.paintTerritory(t))
+		}
+	}
+
 
 	renderUIBar() {
 		if (!this.gs.inSpawnPhase()) {
@@ -138,8 +156,7 @@ export class GameRenderer {
 	}
 
 	tileUpdate(event: TileEvent) {
-		this.paintTerritory(event.tile)
-		event.tile.neighbors().forEach(t => this.paintTerritory(t))
+		this.tileToRenderQueue.push({tileEvent: event, lastUpdate: this.gs.ticks() + this.random.nextFloat(0, .5)})
 	}
 
 	playerEvent(event: PlayerEvent) {

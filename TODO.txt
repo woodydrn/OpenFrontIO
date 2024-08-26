@@ -48,6 +48,10 @@
 * give time to (re) spawn at start of game DONE 8/25/2024
 * show bar for long to respawn DONE 8/26/2024
 * store & delay tile updates for lag compensation
+* BUG: error if don't spawn and then click after spawn mode
+* BUG: change player name after join lobby
+* REFACTOR: use new priority queue
+* BUG: players attack each other same time creates islands
 * add shader to dim border
 * REFACTOR: remove player.info()
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
