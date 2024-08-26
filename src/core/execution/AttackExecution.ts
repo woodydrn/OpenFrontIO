@@ -24,6 +24,10 @@ export class AttackExecution implements Execution {
         private targetCell: Cell | null,
     ) { }
 
+    activeDuringSpawnPhase(): boolean {
+        return false
+    }
+
     init(mg: MutableGame, ticks: number) {
 
         // TODO: remove this and fix directed expansion.

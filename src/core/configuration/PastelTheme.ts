@@ -3,6 +3,7 @@ import {PlayerID, Tile} from "../Game";
 import {Theme} from "./Config";
 import {time} from "console";
 import {PseudoRandom} from "../PseudoRandom";
+import {simpleHash} from "../Util";
 
 export const pastelTheme = new class implements Theme {
     private rand = new PseudoRandom(123)
@@ -71,7 +72,7 @@ export const pastelTheme = new class implements Theme {
     }
 
     territoryColor(id: PlayerID): Colord {
-        return this.territoryColors[id % this.territoryColors.length]
+        return this.territoryColors[simpleHash(id) % this.territoryColors.length]
     }
 
     borderColor(id: PlayerID): Colord {

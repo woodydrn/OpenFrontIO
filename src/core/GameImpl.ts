@@ -2,6 +2,7 @@ import {Config} from "./configuration/Config";
 import {EventBus} from "./EventBus";
 import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerEvent, PlayerID, PlayerInfo, Player, TerraNullius, Tile, TileEvent, Boat, MutableBoat, BoatEvent} from "./Game";
 import {Terrain, TerrainMap, TerrainType} from "./TerrainMapLoader";
+import {simpleHash} from "./Util";
 
 export function createGame(terrainMap: TerrainMap, eventBus: EventBus, config: Config): Game {
     return new GameImpl(terrainMap, eventBus, config)
@@ -122,7 +123,7 @@ export class PlayerImpl implements MutablePlayer {
     public _boats: BoatImpl[] = []
     public _tiles: Map<CellString, Tile> = new Map<CellString, Tile>()
 
-    constructor(private gs: GameImpl, public readonly _id: PlayerID, public readonly playerInfo: PlayerInfo, private _troops) {
+    constructor(private gs: GameImpl, public readonly playerInfo: PlayerInfo, private _troops) {
     }
 
     addBoat(troops: number, tile: Tile, target: Player | TerraNullius): BoatImpl {
@@ -134,7 +135,6 @@ export class PlayerImpl implements MutablePlayer {
 
     boats(): BoatImpl[] {
         return this._boats
-
     }
 
     sharesBorderWith(other: Player | TerraNullius): boolean {
@@ -183,8 +183,14 @@ export class PlayerImpl implements MutablePlayer {
     ownsTile(cell: Cell): boolean {return this._tiles.has(cell.toString())}
     setTroops(troops: number) {this._troops = Math.floor(troops)}
     conquer(tile: Tile) {this.gs.conquer(this, tile)}
+    relinquish(tile: Tile) {
+        if (tile.owner() != this) {
+            throw new Error(`Cannot relinquish tile not owned by this player`)
+        }
+        this.gs.relinquish(tile)
+    }
     info(): PlayerInfo {return this.playerInfo}
-    id(): PlayerID {return this._id}
+    id(): PlayerID {return this.playerInfo.id}
     troops(): number {return this._troops}
     isAlive(): boolean {return this._tiles.size > 0}
     gameState(): MutableGame {return this.gs}
@@ -192,7 +198,7 @@ export class PlayerImpl implements MutablePlayer {
         return this.gs.executions().filter(exec => exec.owner().id() == this.id())
     }
     hash(): number {
-        return this.id() * (this.troops() + this.numTilesOwned())
+        return simpleHash(this.id()) * (this.troops() + this.numTilesOwned())
     }
     toString(): string {
         return `Player:{name:${this.info().name},clientID:${this.info().clientID},isAlive:${this.isAlive()},troops:${this._troops},numTileOwned:${this.numTilesOwned()}}]`
@@ -207,22 +213,21 @@ class TerraNulliusImpl implements TerraNullius {
     }
 
     id(): PlayerID {
-        return 0
+        return 'TerraNulliusID'
     }
     ownsTile(cell: Cell): boolean {
         return this.tiles.has(cell)
     }
     isPlayer(): false {return false as const}
-
 }
 
 
 export class GameImpl implements MutableGame {
-    private ticks = 0
+    private _ticks = 0
 
     private unInitExecs: Execution[] = []
 
-    idCounter: PlayerID = 1; // Zero reserved for TerraNullius
+    // idCounter: PlayerID = 1; // Zero reserved for TerraNullius
     map: TileImpl[][]
     _players: Map<PlayerID, PlayerImpl> = new Map<PlayerID, PlayerImpl>
     private execs: Execution[] = []
@@ -243,20 +248,44 @@ export class GameImpl implements MutableGame {
             }
         }
     }
+    hasPlayer(id: PlayerID): boolean {
+        return this._players.has(id)
+    }
     config(): Config {
         return this._config
     }
 
+    inSpawnPhase(): boolean {
+        return this._ticks <= this.config().turnsUntilGameStart()
+    }
+
+    ticks(): number {
+        return this._ticks
+    }
+
     tick() {
-        this.executions().forEach(e => e.tick(this.ticks))
-        this.unInitExecs.forEach(e => e.init(this, this.ticks))
+        this.executions().forEach(e => {
+            if (!this.inSpawnPhase() || e.activeDuringSpawnPhase()) {
+                e.tick(this._ticks)
+            }
+        })
+        const inited: Execution[] = []
+        const unInited: Execution[] = []
+        this.unInitExecs.forEach(e => {
+            if (!this.inSpawnPhase() || e.activeDuringSpawnPhase()) {
+                e.init(this, this._ticks)
+                inited.push(e)
+            } else {
+                unInited.push(e)
+            }
+        })
 
         this.removeInactiveExecutions()
 
-        this.execs.push(...this.unInitExecs)
-        this.unInitExecs = []
-        this.ticks++
-        if (this.ticks % 100 == 0) {
+        this.execs.push(...inited)
+        this.unInitExecs = unInited
+        this._ticks++
+        if (this._ticks % 100 == 0) {
             let hash = 1;
             this._players.forEach(p => {
                 if (!p.info().isBot) {
@@ -264,7 +293,7 @@ export class GameImpl implements MutableGame {
                 }
                 hash += p.hash()
             })
-            console.log(`tick ${this.ticks}: hash ${hash}`)
+            console.log(`tick ${this._ticks}: hash ${hash}`)
         }
     }
 
@@ -273,7 +302,23 @@ export class GameImpl implements MutableGame {
     }
 
     removeInactiveExecutions(): void {
-        this.execs = this.execs.filter(e => e.isActive())
+        const activeExecs: Execution[] = []
+        for (const exec of this.execs) {
+            if (this.inSpawnPhase()) {
+                if (exec.activeDuringSpawnPhase()) {
+                    if (exec.isActive()) {
+                        activeExecs.push(exec)
+                    }
+                } else {
+                    activeExecs.push(exec)
+                }
+            } else {
+                if (exec.isActive()) {
+                    activeExecs.push(exec)
+                }
+            }
+        }
+        this.execs = activeExecs
     }
 
     players(): MutablePlayer[] {
@@ -313,10 +358,8 @@ export class GameImpl implements MutableGame {
     }
 
     addPlayer(playerInfo: PlayerInfo, troops: number): MutablePlayer {
-        let id = this.idCounter
-        this.idCounter++
-        let player = new PlayerImpl(this, id, playerInfo, troops)
-        this._players.set(id, player)
+        let player = new PlayerImpl(this, playerInfo, troops)
+        this._players.set(playerInfo.id, player)
         this.eventBus.emit(new PlayerEvent(player))
         return player
     }
@@ -402,6 +445,26 @@ export class GameImpl implements MutableGame {
         }
         tileImpl._owner = owner
         owner._tiles.set(tile.cell().toString(), tile)
+        this.updateBorders(tile)
+        this.eventBus.emit(new TileEvent(tile))
+    }
+
+    relinquish(tile: Tile) {
+        if (!tile.hasOwner()) {
+            throw new Error(`Cannot relinquish tile because it is unowned: cell ${tile.cell().toString()}`)
+        }
+        if (tile.isWater()) {
+            throw new Error("Cannot relinquish water")
+        }
+
+        const tileImpl = tile as TileImpl
+        let previousOwner = tileImpl._owner as PlayerImpl
+        previousOwner._tiles.delete(tile.cell().toString())
+        previousOwner._borderTiles.delete(tile.cell().toString())
+        previousOwner._borderTileSet.delete(tile)
+        tileImpl._isBorder = false
+
+        tileImpl._owner = this._terraNullius
         this.updateBorders(tile)
         this.eventBus.emit(new TileEvent(tile))
     }

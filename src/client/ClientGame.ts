@@ -182,12 +182,12 @@ export class ClientGame {
             return
         }
         const tile = this.gs.tile(cell)
-        if (!tile.hasOwner() && !this.spawned && this.myPlayer == null) {
+        if (tile.isLand() && !tile.hasOwner() && this.gs.inSpawnPhase()) {
             this.sendSpawnIntent(cell)
             this.spawned = true
             return
         }
-        if (!this.spawned || this.myPlayer == null) {
+        if (this.gs.inSpawnPhase()) {
             return
         }
 

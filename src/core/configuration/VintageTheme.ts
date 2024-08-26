@@ -1,6 +1,7 @@
 import {Colord, colord} from "colord";
 import {PlayerID, Tile} from "../Game";
 import {Theme} from "./Config";
+import {simpleHash} from "../Util";
 
 export const vintageTheme = new class implements Theme {
 
@@ -72,7 +73,7 @@ export const vintageTheme = new class implements Theme {
     }
 
     territoryColor(id: PlayerID): Colord {
-        return this.territoryColors[id % this.territoryColors.length];
+        return this.territoryColors[simpleHash(id) % this.territoryColors.length];
     }
 
     borderColor(id: PlayerID): Colord {

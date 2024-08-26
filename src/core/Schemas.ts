@@ -37,8 +37,8 @@ const BaseIntentSchema = z.object({
 
 export const AttackIntentSchema = BaseIntentSchema.extend({
     type: z.literal('attack'),
-    attackerID: z.number(),
-    targetID: z.number().nullable(),
+    attackerID: z.string(),
+    targetID: z.string().nullable(),
     troops: z.number(),
     targetX: z.number(),
     targetY: z.number()
@@ -55,8 +55,8 @@ export const SpawnIntentSchema = BaseIntentSchema.extend({
 
 export const BoatAttackIntentSchema = BaseIntentSchema.extend({
     type: z.literal('boat'),
-    attackerID: z.number(),
-    targetID: z.number().nullable(),
+    attackerID: z.string(),
+    targetID: z.string().nullable(),
     troops: z.number(),
     x: z.number(),
     y: z.number(),

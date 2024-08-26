@@ -2,7 +2,7 @@ import {Config} from "./configuration/Config"
 import {GameEvent} from "./EventBus"
 import {ClientID, GameID} from "./Schemas"
 
-export type PlayerID = number // TODO: make string?
+export type PlayerID = string
 
 export class Cell {
 
@@ -21,6 +21,7 @@ export class Cell {
 export interface ExecutionView {
     isActive(): boolean
     owner(): Player
+    activeDuringSpawnPhase(): boolean
 }
 
 export interface Execution extends ExecutionView {
@@ -34,7 +35,8 @@ export class PlayerInfo {
         public readonly name: string,
         public readonly isBot: boolean,
         // null if bot.
-        public readonly clientID: ClientID | null
+        public readonly clientID: ClientID | null,
+        public readonly id: PlayerID
     ) { }
 }
 
@@ -101,6 +103,7 @@ export interface MutablePlayer extends Player {
     addTroops(troops: number): void
     removeTroops(troops: number): void
     conquer(tile: Tile): void
+    relinquish(tile: Tile): void
     executions(): Execution[]
     neighbors(): (MutablePlayer | TerraNullius)[]
     boats(): MutableBoat[]
@@ -110,6 +113,7 @@ export interface MutablePlayer extends Player {
 export interface Game {
     // Throws exception is player not found
     player(id: PlayerID): Player
+    hasPlayer(id: PlayerID): boolean
     players(): Player[]
     tile(cell: Cell): Tile
     isOnMap(cell: Cell): boolean
@@ -120,6 +124,8 @@ export interface Game {
     executions(): ExecutionView[]
     terraNullius(): TerraNullius
     tick(): void
+    ticks(): number
+    inSpawnPhase(): boolean
     addExecution(...exec: Execution[]): void
     config(): Config
 }

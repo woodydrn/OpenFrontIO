@@ -43,15 +43,16 @@
 * BUG: boat doesn't work if on lake if other player not on same lake DONE 8/23/2024
 * Allow boats to attack TerraNullius DONE 8/23/2024
 * try vintage theme DONE 8/24/2023
-* Make lobby background the terrain map
-* improve menu (keep highlighted when click, allow deselect lobby)
+* BUG: fix hotreload (priority queue breaks it) DONE 8/24/2024
+* improve menu (keep highlighted when click, allow deselect lobby) DONE 8/25/2024
+* give time to (re) spawn at start of game
+* store & delay tile updates for lag compensation
 * add shader to dim border
 * REFACTOR: remove player.info()
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
-* give time to (re) spawn at start of game
-* store & delay tile updates for lag compensation
 * REFACTOR: ocean is considered TerraNullius ?
-* BUG: fix hotreload (priority queue breaks it)
+* REFACTOR: remove player config?
 * PERF: use hierarchical a* search for boats
+* PERF: render tiles more efficiently
 * Add terrain elevation to map
 * boats can go around the world

@@ -9,6 +9,10 @@ export class PlayerExecution implements Execution {
     constructor(private playerID: PlayerID) {
     }
 
+    activeDuringSpawnPhase(): boolean {
+        return false
+    }
+
     init(mg: MutableGame, ticks: number) {
         this.config = mg.config()
         this.player = mg.player(this.playerID)

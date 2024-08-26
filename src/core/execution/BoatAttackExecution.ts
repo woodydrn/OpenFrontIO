@@ -37,6 +37,10 @@ export class BoatAttackExecution implements Execution {
         private troops: number,
     ) { }
 
+    activeDuringSpawnPhase(): boolean {
+        return false
+    }
+
     init(mg: MutableGame, ticks: number) {
         this.lastMove = ticks
 

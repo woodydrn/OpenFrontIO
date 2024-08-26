@@ -1,6 +1,7 @@
 import {Config, PlayerConfig} from "../configuration/Config";
 import {Cell, Execution, MutableGame, MutablePlayer, Player, PlayerID, PlayerInfo, TerraNullius} from "../Game"
 import {PseudoRandom} from "../PseudoRandom"
+import {simpleHash} from "../Util";
 import {AttackExecution} from "./AttackExecution";
 
 export class BotExecution implements Execution {
@@ -13,8 +14,11 @@ export class BotExecution implements Execution {
 
 
     constructor(private bot: MutablePlayer) {
-        this.random = new PseudoRandom(bot.id())
+        this.random = new PseudoRandom(simpleHash(bot.id()))
         this.attackRate = this.random.nextInt(10, 50)
+    }
+    activeDuringSpawnPhase(): boolean {
+        return false
     }
 
     init(mg: MutableGame, ticks: number) {

@@ -8,10 +8,10 @@ import {vintageTheme} from "./VintageTheme";
 
 export class DefaultConfig implements Config {
     turnsUntilGameStart(): number {
-        return 25
+        return 100
     }
     numBots(): number {
-        return 500
+        return 250
     }
     player(): PlayerConfig {
         return defaultPlayerConfig

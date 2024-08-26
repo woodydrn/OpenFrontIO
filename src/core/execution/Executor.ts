@@ -5,9 +5,12 @@ import {AttackExecution} from "./AttackExecution";
 import {SpawnExecution} from "./SpawnExecution";
 import {BotSpawner} from "./BotSpawner";
 import {BoatAttackExecution} from "./BoatAttackExecution";
+import {PseudoRandom} from "../PseudoRandom";
 
 
 export class Executor {
+
+    private random = new PseudoRandom(999)
 
     constructor(private gs: Game) {
 
@@ -27,7 +30,7 @@ export class Executor {
             )
         } else if (intent.type == "spawn") {
             return new SpawnExecution(
-                new PlayerInfo(intent.name, intent.isBot, intent.clientID),
+                new PlayerInfo(intent.name, intent.isBot, intent.clientID, this.random.nextID()),
                 new Cell(intent.x, intent.y)
             )
         } else if (intent.type == "boat") {
