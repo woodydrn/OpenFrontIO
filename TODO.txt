@@ -46,7 +46,7 @@
 * BUG: fix hotreload (priority queue breaks it) DONE 8/24/2024
 * improve menu (keep highlighted when click, allow deselect lobby) DONE 8/25/2024
 * give time to (re) spawn at start of game DONE 8/25/2024
-* show bar for long to respawn
+* show bar for long to respawn DONE 8/26/2024
 * store & delay tile updates for lag compensation
 * add shader to dim border
 * REFACTOR: remove player.info()
