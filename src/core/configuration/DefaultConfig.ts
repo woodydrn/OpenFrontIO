@@ -71,11 +71,12 @@ export class DefaultPlayerConfig implements PlayerConfig {
     }
 
     troopAdditionRate(player: Player): number {
-        const max = Math.sqrt(player.numTilesOwned()) * 1000 + 10000
+        let max = Math.sqrt(player.numTilesOwned()) * 1000 + 10000
+        max = Math.min(max, 1_000_000)
 
         let toAdd = 10 + (player.troops() + Math.sqrt(player.troops() * player.numTilesOwned())) / 250
 
-        return Math.min(Math.min(player.troops() + toAdd, max), 1_000_0000)
+        return Math.min(player.troops() + toAdd, max)
     }
 
 }
