@@ -8,67 +8,68 @@ import {simpleHash} from "../Util";
 export const pastelTheme = new class implements Theme {
     private rand = new PseudoRandom(123)
 
-    private background = colord({r: 100, g: 100, b: 100});
-    private land = colord({r: 244, g: 243, b: 198});
-    private shore = colord({r: 254, g: 253, b: 208});
+    private background = colord({r: 60, g: 60, b: 60});
+    private land = colord({r: 194, g: 193, b: 148});
+    private shore = colord({r: 204, g: 203, b: 158});
 
-    private water = colord({r: 160, g: 203, b: 231});
-    private shorelineWater = colord({r: 150, g: 193, b: 221});
+    private water = colord({r: 110, g: 153, b: 181});
+    private shorelineWater = colord({r: 100, g: 143, b: 171});
 
     private territoryColors: Colord[] = [
-        colord({r: 255, g: 179, b: 186}), // Vibrant Light Pink
-        colord({r: 255, g: 223, b: 186}), // Vibrant Peach
-        colord({r: 190, g: 255, b: 190}), // Vibrant Light Green
-        colord({r: 173, g: 216, b: 255}), // Vibrant Light Blue
-        colord({r: 224, g: 187, b: 255}), // Vibrant Light Purple
-        colord({r: 255, g: 191, b: 230}), // Vibrant Pink
-        colord({r: 210, g: 255, b: 210}), // Vibrant Mint Green
-        colord({r: 255, g: 213, b: 179}), // Vibrant Light Orange
-        colord({r: 198, g: 198, b: 255}), // Vibrant Lavender
-        colord({r: 255, g: 255, b: 186}), // Vibrant Light Yellow
-        colord({r: 186, g: 255, b: 201}), // Vibrant Seafoam Green
-        colord({r: 255, g: 186, b: 255}), // Vibrant Light Magenta
-        colord({r: 210, g: 255, b: 210}), // Vibrant Pale Green
-        colord({r: 255, g: 202, b: 202}), // Vibrant Salmon Pink
-        colord({r: 206, g: 206, b: 255}), // Vibrant Periwinkle
-        colord({r: 255, g: 234, b: 186}), // Vibrant Cream
-        colord({r: 186, g: 255, b: 255}), // Vibrant Light Cyan
-        colord({r: 238, g: 210, b: 255}), // Vibrant Lilac
-        colord({r: 206, g: 255, b: 238}), // Vibrant Pale Turquoise
-        colord({r: 255, g: 209, b: 186}), // Vibrant Peach
-        colord({r: 186, g: 216, b: 255}), // Vibrant Baby Blue
-        colord({r: 246, g: 255, b: 186}), // Vibrant Pale Yellow
-        colord({r: 220, g: 186, b: 255}), // Vibrant Light Violet
-        colord({r: 255, g: 186, b: 213}), // Vibrant Rose
-        colord({r: 186, g: 255, b: 226}), // Vibrant Honeydew
-        colord({r: 206, g: 236, b: 255}), // Vibrant Sky Blue
-        colord({r: 255, g: 232, b: 206}), // Vibrant Wheat
-        colord({r: 206, g: 255, b: 255}), // Vibrant Pale Cyan
-        colord({r: 255, g: 216, b: 216}), // Vibrant Misty Rose
-        colord({r: 216, g: 216, b: 255}), // Vibrant Pale Lavender
-        colord({r: 255, g: 250, b: 205}), // Vibrant Pale Goldenrod
-        colord({r: 216, g: 255, b: 216}), // Vibrant Pale Mint
-        colord({r: 255, g: 216, b: 255}), // Vibrant Pale Plum
-        colord({r: 220, g: 255, b: 220}), // Vibrant Mint Cream
-        colord({r: 255, g: 220, b: 220}), // Vibrant Pale Pink
-        colord({r: 220, g: 220, b: 255}), // Vibrant Pale Blue
-        colord({r: 255, g: 255, b: 220}), // Vibrant Light Goldenrod
-        colord({r: 220, g: 255, b: 255}), // Vibrant Light Azure
-        colord({r: 255, g: 220, b: 255}), // Vibrant Pale Magenta
-        colord({r: 230, g: 255, b: 230}), // Vibrant Honeydew
-        colord({r: 255, g: 230, b: 230}), // Vibrant Lavender Blush
-        colord({r: 230, g: 230, b: 255}), // Vibrant Ghost White
-        colord({r: 255, g: 239, b: 219}), // Vibrant Seashell
-        colord({r: 219, g: 255, b: 239}), // Vibrant Mint Cream
-        colord({r: 239, g: 219, b: 255}), // Vibrant Pale Lavender
-        colord({r: 255, g: 250, b: 230}), // Vibrant Floral White
-        colord({r: 230, g: 255, b: 250}), // Vibrant Azure Mist
-        colord({r: 250, g: 230, b: 255}), // Vibrant Pale Purple
-        colord({r: 250, g: 255, b: 230}), // Vibrant Ivory
-        colord({r: 230, g: 250, b: 255})  // Vibrant Alice Blue
+        colord({r: 205, g: 129, b: 136}), // Darker Light Pink
+        colord({r: 205, g: 173, b: 136}), // Darker Peach
+        colord({r: 140, g: 205, b: 140}), // Darker Light Green
+        colord({r: 123, g: 166, b: 205}), // Darker Light Blue
+        colord({r: 174, g: 137, b: 205}), // Darker Light Purple
+        colord({r: 205, g: 141, b: 180}), // Darker Pink
+        colord({r: 160, g: 205, b: 160}), // Darker Mint Green
+        colord({r: 205, g: 163, b: 129}), // Darker Light Orange
+        colord({r: 148, g: 148, b: 205}), // Darker Lavender
+        colord({r: 205, g: 205, b: 136}), // Darker Light Yellow
+        colord({r: 136, g: 205, b: 151}), // Darker Seafoam Green
+        colord({r: 205, g: 136, b: 205}), // Darker Light Magenta
+        colord({r: 160, g: 205, b: 160}), // Darker Pale Green
+        colord({r: 205, g: 152, b: 152}), // Darker Salmon Pink
+        colord({r: 156, g: 156, b: 205}), // Darker Periwinkle
+        colord({r: 205, g: 184, b: 136}), // Darker Cream
+        colord({r: 136, g: 205, b: 205}), // Darker Light Cyan
+        colord({r: 188, g: 160, b: 205}), // Darker Lilac
+        colord({r: 156, g: 205, b: 188}), // Darker Pale Turquoise
+        colord({r: 205, g: 159, b: 136}), // Darker Peach
+        colord({r: 136, g: 166, b: 205}), // Darker Baby Blue
+        colord({r: 196, g: 205, b: 136}), // Darker Pale Yellow
+        colord({r: 170, g: 136, b: 205}), // Darker Light Violet
+        colord({r: 205, g: 136, b: 163}), // Darker Rose
+        colord({r: 136, g: 205, b: 176}), // Darker Honeydew
+        colord({r: 156, g: 186, b: 205}), // Darker Sky Blue
+        colord({r: 205, g: 182, b: 156}), // Darker Wheat
+        colord({r: 156, g: 205, b: 205}), // Darker Pale Cyan
+        colord({r: 205, g: 166, b: 166}), // Darker Misty Rose
+        colord({r: 166, g: 166, b: 205}), // Darker Pale Lavender
+        colord({r: 205, g: 200, b: 155}), // Darker Pale Goldenrod
+        colord({r: 166, g: 205, b: 166}), // Darker Pale Mint
+        colord({r: 205, g: 166, b: 205}), // Darker Pale Plum
+        colord({r: 170, g: 205, b: 170}), // Darker Mint Cream
+        colord({r: 205, g: 170, b: 170}), // Darker Pale Pink
+        colord({r: 170, g: 170, b: 205}), // Darker Pale Blue
+        colord({r: 205, g: 205, b: 170}), // Darker Light Goldenrod
+        colord({r: 170, g: 205, b: 205}), // Darker Light Azure
+        colord({r: 205, g: 170, b: 205}), // Darker Pale Magenta
+        colord({r: 180, g: 205, b: 180}), // Darker Honeydew
+        colord({r: 205, g: 180, b: 180}), // Darker Lavender Blush
+        colord({r: 180, g: 180, b: 205}), // Darker Ghost White
+        colord({r: 205, g: 189, b: 169}), // Darker Seashell
+        colord({r: 169, g: 205, b: 189}), // Darker Mint Cream
+        colord({r: 189, g: 169, b: 205}), // Darker Pale Lavender
+        colord({r: 205, g: 200, b: 180}), // Darker Floral White
+        colord({r: 180, g: 205, b: 200}), // Darker Azure Mist
+        colord({r: 200, g: 180, b: 205}), // Darker Pale Purple
+        colord({r: 200, g: 205, b: 180}), // Darker Ivory
+        colord({r: 180, g: 200, b: 205})  // Darker Alice Blue
     ];
+
     playerInfoColor(id: PlayerID): Colord {
-        return colord({r: 0, g: 0, b: 0})
+        return colord({r: 50, g: 50, b: 50})
     }
 
     territoryColor(id: PlayerID): Colord {
@@ -78,9 +79,9 @@ export const pastelTheme = new class implements Theme {
     borderColor(id: PlayerID): Colord {
         const tc = this.territoryColor(id).rgba;
         return colord({
-            r: Math.max(tc.r - 20, 0),
-            g: Math.max(tc.g - 20, 0),
-            b: Math.max(tc.b - 20, 0)
+            r: Math.max(tc.r - 40, 0),
+            g: Math.max(tc.g - 40, 0),
+            b: Math.max(tc.b - 40, 0)
         })
     }
 
@@ -93,13 +94,13 @@ export const pastelTheme = new class implements Theme {
         } else {
             const w = this.water.rgba
             if (tile.isShorelineWater()) {
-                this.shorelineWater
+                return this.shorelineWater
             }
-            if (tile.magnitude() < 5) {
+            if (tile.magnitude() < 7) {
                 return colord({
-                    r: Math.max(w.r + 5 - tile.magnitude() / 2, 0),
-                    g: Math.max(w.g + 5 - tile.magnitude() / 2, 0),
-                    b: Math.max(w.b + 5 - tile.magnitude() / 2, 0)
+                    r: Math.max(w.r - 7 + tile.magnitude(), 0),
+                    g: Math.max(w.g - 7 + tile.magnitude(), 0),
+                    b: Math.max(w.b - 7 + tile.magnitude(), 0)
                 })
             }
             return this.water

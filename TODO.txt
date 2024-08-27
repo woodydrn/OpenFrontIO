@@ -49,7 +49,7 @@
 * show bar for long to respawn DONE 8/26/2024
 * store & delay tile updates for lag compensation DONE 8/26/2024
 * BUG: error if don't spawn and then click after spawn mode DONE 8/26/2024
-* BUG: change player name after join lobby
+* BUG: change player name after join lobby DONE 8/26/2024
 * REFACTOR: use new priority queue
 * BUG: players attack each other same time creates islands
 * add shader to dim border
@@ -61,3 +61,4 @@
 * PERF: render tiles more efficiently
 * Add terrain elevation to map
 * boats can go around the world
+* make bots more likely to attack weaker players

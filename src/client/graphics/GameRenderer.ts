@@ -6,7 +6,7 @@ import {NameRenderer} from "./NameRenderer";
 import {bfs, manhattanDist} from "../../core/Util";
 import {PseudoRandom} from "../../core/PseudoRandom";
 import {TerrainRenderer} from "./TerrainRenderer";
-import {MaxPriorityQueue, PriorityQueue} from "@datastructures-js/priority-queue";
+import {PriorityQueue} from "@datastructures-js/priority-queue";
 
 export class GameRenderer {
 	private territoryCanvas: HTMLCanvasElement
@@ -20,15 +20,12 @@ export class GameRenderer {
 
 	private context: CanvasRenderingContext2D
 
-
 	private nameRenderer: NameRenderer;
 	private theme: Theme
 
 	private random = new PseudoRandom(123)
 
-
 	private tileToRenderQueue: PriorityQueue<{tileEvent: TileEvent, lastUpdate: number}> = new PriorityQueue((a, b) => {return a.lastUpdate - b.lastUpdate})
-
 
 	constructor(private gs: Game, private terrainRenderer: TerrainRenderer) {
 		this.theme = gs.config().theme()
@@ -70,13 +67,10 @@ export class GameRenderer {
 	}
 
 	renderGame() {
-		// Clear the canvas
-		this.context.setTransform(1, 0, 0, 1, 0, 0);
-		this.context.clearRect(0, 0, this.gs.width(), this.gs.height());
 
 		// Set background
 		this.context.fillStyle = this.theme.backgroundColor().toHex();
-		this.context.fillRect(0, 0, this.gs.width(), this.gs.height());
+		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
 		// Save the current context state
 		this.context.save();

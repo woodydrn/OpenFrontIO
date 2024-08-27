@@ -25,7 +25,7 @@ export class DefaultConfig implements Config {
     lobbyLifetime(): number {
         return 20 * 1000
     }
-    theme(): Theme {return vintageTheme;}
+    theme(): Theme {return pastelTheme;}
 }
 
 export class DefaultPlayerConfig implements PlayerConfig {

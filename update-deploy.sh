@@ -41,6 +41,11 @@ docker push us-central1-docker.pkg.dev/openfrontio/openfrontio/game-server:$TAG
 # Prune Docker system on the instance
 gcloud compute ssh $INSTANCE_NAME --zone us-central1-a --command 'docker system prune -f -a'
 
+gcloud compute ssh $INSTANCE_NAME --zone us-central1-a --command 'docker kill $(docker ps -q)'
+
+gcloud compute ssh $INSTANCE_NAME --zone us-central1-a --command 'docker rmi $(docker images -q) -f'
+
+
 # Update the GCE instance with the new container image
 gcloud compute instances update-container $INSTANCE_NAME \
   --container-image us-central1-docker.pkg.dev/openfrontio/openfrontio/game-server:$TAG \
