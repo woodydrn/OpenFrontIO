@@ -62,3 +62,4 @@
 * Add terrain elevation to map
 * boats can go around the world
 * make bots more likely to attack weaker players
+* use better favicon
