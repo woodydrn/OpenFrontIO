@@ -287,8 +287,8 @@ export class GameImpl implements MutableGame {
     }
 
     tick() {
-        this.executions().forEach(e => {
-            if (!this.inSpawnPhase() || e.activeDuringSpawnPhase()) {
+        this.execs.forEach(e => {
+            if (e.isActive() && (!this.inSpawnPhase() || e.activeDuringSpawnPhase())) {
                 e.tick(this._ticks)
             }
         })
@@ -349,7 +349,7 @@ export class GameImpl implements MutableGame {
     }
 
     executions(): Execution[] {
-        return this.execs
+        return [...this.execs, ...this.unInitExecs]
     }
 
     addExecution(...exec: Execution[]) {
@@ -357,7 +357,8 @@ export class GameImpl implements MutableGame {
     }
 
     removeExecution(exec: Execution) {
-        this.execs.filter(execution => execution !== exec)
+        this.execs = this.execs.filter(execution => execution !== exec)
+        this.unInitExecs = this.unInitExecs.filter(execution => execution !== exec)
     }
 
     width(): number {

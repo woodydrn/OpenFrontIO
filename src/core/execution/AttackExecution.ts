@@ -29,6 +29,10 @@ export class AttackExecution implements Execution {
     }
 
     init(mg: MutableGame, ticks: number) {
+        if (!this.active) {
+            return
+        }
+
 
         // TODO: remove this and fix directed expansion.
         this.targetCell = null
@@ -40,13 +44,13 @@ export class AttackExecution implements Execution {
         this.mg = mg
 
         for (const exec of mg.executions()) {
-            if (exec.isActive() && exec instanceof AttackExecution) {
+            if (exec.isActive() && exec instanceof AttackExecution && exec != this) {
                 const otherAttack = exec as AttackExecution
                 // Target has opposing attack, cancel them out
-                if (this.target.isPlayer() && otherAttack.target == this._owner && this.target == otherAttack._owner) {
+                if (this.target.isPlayer() && otherAttack.targetID == this._ownerID && this.targetID == otherAttack._ownerID) {
                     if (otherAttack.troops > this.troops) {
                         otherAttack.troops -= this.troops
-                        otherAttack.calculateToConquer()
+                        // otherAttack.calculateToConquer()
                         this.active = false
                         return
                     } else {
@@ -55,7 +59,7 @@ export class AttackExecution implements Execution {
                     }
                 }
                 // Existing attack on same target, add troops
-                if (otherAttack._owner == this._owner && otherAttack.target == this.target) {
+                if (otherAttack._owner == this._owner && otherAttack.targetID == this.targetID) {
                     otherAttack.troops += this.troops
                     otherAttack.calculateToConquer()
                     this.active = false

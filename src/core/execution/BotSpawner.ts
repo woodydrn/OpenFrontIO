@@ -1,11 +1,12 @@
 import {Cell, Game} from "../Game";
 import {PseudoRandom} from "../PseudoRandom";
 import {SpawnIntent} from "../Schemas";
+import {bfs} from "../Util";
 import {getSpawnCells} from "./Util";
 
 
 export class BotSpawner {
-    private cellToIndex;
+    private cellToIndex: Map<string, number>;
     private freeTiles: Cell[];
     private numFreeTiles;
     private random = new PseudoRandom(123);
@@ -39,8 +40,7 @@ export class BotSpawner {
     spawnBot(botName: string): SpawnIntent {
         const rand = this.random.nextInt(0, this.numFreeTiles);
         const spawn = this.freeTiles[rand];
-        const spawnCells = getSpawnCells(this.gs, spawn);
-        spawnCells.forEach(c => this.removeCell(c));
+        bfs(this.gs.tile(spawn), 50).forEach(t => this.removeCell(t.cell()))
         const spawnIntent: SpawnIntent = {
             type: 'spawn',
             name: botName,
@@ -52,9 +52,14 @@ export class BotSpawner {
     }
 
     private removeCell(cell: Cell) {
-        const index = this.cellToIndex[cell.toString()];
+        if (!this.cellToIndex.has(cell.toString())) {
+            return
+        }
+        const index = this.cellToIndex.get(cell.toString());
+        this.cellToIndex.delete(cell.toString())
+
         this.freeTiles[index] = this.freeTiles[this.numFreeTiles - 1];
-        this.cellToIndex[this.freeTiles[index].toString()] = index;
+        this.cellToIndex.set(this.freeTiles[index].toString(), index);
         this.numFreeTiles--;
     }
 }

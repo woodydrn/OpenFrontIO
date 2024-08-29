@@ -50,16 +50,20 @@
 * store & delay tile updates for lag compensation DONE 8/26/2024
 * BUG: error if don't spawn and then click after spawn mode DONE 8/26/2024
 * BUG: change player name after join lobby DONE 8/26/2024
-* REFACTOR: use new priority queue
-* BUG: players attack each other same time creates islands
-* add shader to dim border
-* REFACTOR: remove player.info()
+* REFACTOR: use new priority queue DONE 8/27/2024
+* BUG: players attack each other same time creates islands DONE 8/28/2024
+* make bot spawn better DONE 8/28/2024
+* make UX for attacking TerraNullius by boat better
+* make bots more likely to attack weaker players
+* make bot territory less funky (more likely attack neighbors with larger border)
+    - maybe use bounding box, bots want to be circular?
+* PERF: use hierarchical a* search for boats
+* precompute spawns
+* end game when no players left (or after 1 hour or so?)
+* boats can go around the world
+* Add terrain elevation to map
+* use better favicon
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
 * REFACTOR: ocean is considered TerraNullius ?
 * REFACTOR: remove player config?
-* PERF: use hierarchical a* search for boats
 * PERF: render tiles more efficiently
-* Add terrain elevation to map
-* boats can go around the world
-* make bots more likely to attack weaker players
-* use better favicon
