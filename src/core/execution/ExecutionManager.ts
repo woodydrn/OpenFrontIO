@@ -1,4 +1,3 @@
-import PriorityQueue from "priority-queue-typescript";
 import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerInfo, TerraNullius, Tile} from "../Game";
 import {AttackIntent, BoatAttackIntentSchema, Intent, Turn} from "../Schemas";
 import {AttackExecution} from "./AttackExecution";

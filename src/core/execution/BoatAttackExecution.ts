@@ -1,4 +1,4 @@
-import PriorityQueue from "priority-queue-typescript";
+import {PriorityQueue} from "@datastructures-js/priority-queue";
 import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, TerraNullius, Tile, TileEvent} from "../Game";
 import {manhattanDist} from "../Util";
 import {AttackExecution} from "./AttackExecution";
@@ -146,7 +146,6 @@ export class AStar {
 
     constructor(private src: Tile, private dst: Tile) {
         this.openSet = new PriorityQueue<{tile: Tile, fScore: number}>(
-            500,
             (a, b) => a.fScore - b.fScore
         );
         this.cameFrom = new Map<Tile, Tile>();
@@ -155,15 +154,15 @@ export class AStar {
         this.completed = false;
 
         this.gScore.set(src, 0);
-        this.openSet.add({tile: src, fScore: this.heuristic(src, dst)});
+        this.openSet.enqueue({tile: src, fScore: this.heuristic(src, dst)});
     }
 
     compute(iterations: number): boolean {
         if (this.completed) return true;
 
-        while (!this.openSet.empty()) {
+        while (!this.openSet.size()) {
             iterations--
-            this.current = this.openSet.poll()!.tile;
+            this.current = this.openSet.dequeue()!.tile;
             if (iterations <= 0) {
                 return false
             }
@@ -183,7 +182,7 @@ export class AStar {
                     this.gScore.set(neighbor, tentativeGScore);
                     const fScore = tentativeGScore + this.heuristic(neighbor, this.dst);
 
-                    this.openSet.add({tile: neighbor, fScore: fScore});
+                    this.openSet.enqueue({tile: neighbor, fScore: fScore});
                 }
             }
         }

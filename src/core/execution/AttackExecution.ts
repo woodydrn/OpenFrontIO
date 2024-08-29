@@ -1,4 +1,4 @@
-import PriorityQueue from "priority-queue-typescript";
+import {PriorityQueue} from "@datastructures-js/priority-queue";
 import {Cell, Execution, MutableGame, MutablePlayer, PlayerID, TerraNullius, Tile} from "../Game";
 import {PseudoRandom} from "../PseudoRandom";
 import {manhattanDist} from "../Util";
@@ -6,7 +6,7 @@ import {Config, PlayerConfig} from "../configuration/Config";
 
 export class AttackExecution implements Execution {
     private active: boolean = true;
-    private toConquer: PriorityQueue<TileContainer> = new PriorityQueue<TileContainer>(1000, (a: TileContainer, b: TileContainer) => a.priority - b.priority);
+    private toConquer: PriorityQueue<TileContainer> = new PriorityQueue<TileContainer>((a: TileContainer, b: TileContainer) => a.priority - b.priority);
     private random = new PseudoRandom(123)
 
     private _owner: MutablePlayer
@@ -103,7 +103,7 @@ export class AttackExecution implements Execution {
                 return
             }
 
-            const toConquerContainer = this.toConquer.poll()
+            const toConquerContainer = this.toConquer.dequeue()
             const tileToConquer: Tile = toConquerContainer.tile
             const onBorder = tileToConquer.neighbors().filter(t => t.owner() == this._owner).length > 0
             if (tileToConquer.owner() != this.target || !onBorder) {
@@ -164,7 +164,7 @@ export class AttackExecution implements Execution {
                 if (numOwnedByMe > 2) {
                     numOwnedByMe = 1000
                 }
-                this.toConquer.add(new TileContainer(neighbor, dist + -numOwnedByMe))
+                this.toConquer.enqueue(new TileContainer(neighbor, dist + -numOwnedByMe))
             }
         }
         this.borderTiles = newBorder
