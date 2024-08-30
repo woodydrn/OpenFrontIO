@@ -2,11 +2,13 @@ import {Player, PlayerInfo, TerraNullius, Tile} from "../Game";
 import {within} from "../Util";
 import {Config, Theme} from "./Config";
 import {pastelTheme} from "./PastelTheme";
-import {vintageTheme} from "./VintageTheme";
 
 
 
 export class DefaultConfig implements Config {
+    boatMaxDistance(): number {
+        return 500
+    }
     numSpawnPhaseTurns(): number {
         return 100
     }

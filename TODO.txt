@@ -55,7 +55,8 @@
 * make bot spawn better DONE 8/28/2024
 * make UX for attacking TerraNullius by boat better DONE 8/29/2024
 * make bot territory less funky (more likely attack neighbors with larger border) DONE 8/29/2024
-* give boats limit for how far they can go
+* REFACTOR: remove player config DONE 8/29/2024
+* give boats limit for how far they can go DONE 8/29/2024
 * PERF: precompute spawns
 * PERF: load terrain map async
 * PERF: enable CDN
@@ -66,5 +67,4 @@
 * use better favicon
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
 * REFACTOR: ocean is considered TerraNullius ?
-* REFACTOR: remove player config?
 * Make fake humans

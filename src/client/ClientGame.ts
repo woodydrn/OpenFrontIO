@@ -39,7 +39,6 @@ export class ClientGame {
 
     private currTurn = 0
 
-    private spawned = false
 
     private intervalID: NodeJS.Timeout
 
@@ -191,7 +190,6 @@ export class ClientGame {
         const tile = this.gs.tile(cell)
         if (tile.isLand() && !tile.hasOwner() && this.gs.inSpawnPhase()) {
             this.sendSpawnIntent(cell)
-            this.spawned = true
             return
         }
         if (this.gs.inSpawnPhase()) {
