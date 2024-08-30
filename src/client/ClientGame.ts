@@ -7,7 +7,7 @@ import {GameRenderer} from "./graphics/GameRenderer";
 import {InputHandler, MouseUpEvent, ZoomEvent, DragEvent, MouseDownEvent} from "./InputHandler"
 import {ClientID, ClientIntentMessageSchema, ClientJoinMessageSchema, ClientLeaveMessageSchema, ClientMessageSchema, GameID, Intent, ServerMessage, ServerMessageSchema, ServerSyncMessage, Turn} from "../core/Schemas";
 import {TerrainMap} from "../core/TerrainMapLoader";
-import {bfs, manhattanDist} from "../core/Util";
+import {and, bfs, dist, manhattanDist} from "../core/Util";
 import {TerrainRenderer} from "./graphics/TerrainRenderer";
 
 
@@ -203,28 +203,12 @@ export class ClientGame {
 
         const owner = tile.owner()
         const targetID = owner.isPlayer() ? owner.id() : null;
-        let tn: Tile[] = []
-        if (tile.owner() != this.myPlayer) {
 
-            // Boat Attack Terra Nullius
-            if (tile.isLand()) {
-                tn = Array.from(bfs(tile, 2))
-                    .filter(t => t.isOcean())
-                    .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
-                    .flatMap(t => t.neighbors())
-                    .filter(n => n.isShore())
-                    .filter(n => !n.hasOwner())
-            } else if (tile.isOcean()) {
-                tn = Array.from(bfs(tile, 3))
-                    .filter(t => t.isShore())
-                    .filter(t => !t.hasOwner())
-                    .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
-            }
-            if (tn.length > 0) {
-                this.sendBoatAttackIntent(targetID, tn[0].cell(), this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
-                return
-            }
+        if (tile.owner() == this.myPlayer) {
+            return
+        }
 
+        if (tile.hasOwner()) {
             // Attack Player
             if (tile.isLand()) {
                 if (this.myPlayer.sharesBorderWith(tile.owner())) {
@@ -233,6 +217,45 @@ export class ClientGame {
                     console.log('going to send boat')
                     this.sendBoatAttackIntent(targetID, cell, this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
                 }
+            }
+            return
+        }
+
+
+
+        // Attack Terra Nullius
+        if (tile.isLand()) {
+
+            const neighbors = Array.from(bfs(tile, and((r, t) => t.isLand(), dist(100))));
+            for (const n of neighbors) {
+                if (this.myPlayer.borderTiles().has(n)) {
+                    this.sendAttackIntent(targetID, cell, this.gs.config().player().attackAmount(this.myPlayer, owner))
+                    return
+                }
+            }
+
+            const tn = Array.from(bfs(tile, dist(30)))
+                .filter(t => t.isOceanShore())
+                .filter(t => !t.hasOwner())
+                .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
+            if (tn.length > 0) {
+                this.sendBoatAttackIntent(targetID, tn[0].cell(), this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
+            } else {
+                this.sendAttackIntent(targetID, cell, this.gs.config().player().attackAmount(this.myPlayer, owner))
+            }
+        }
+
+        if (tile.isOcean()) {
+            const bordersOcean = Array.from(this.myPlayer.borderTiles()).filter(t => t.isOceanShore()).length > 0
+            if (!bordersOcean) {
+                return
+            }
+            const tn = Array.from(bfs(tile, dist(3)))
+                .filter(t => t.isOceanShore())
+                .filter(t => !t.hasOwner())
+                .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
+            if (tn.length > 0) {
+                this.sendBoatAttackIntent(targetID, tn[0].cell(), this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
             }
         }
     }

@@ -43,6 +43,7 @@ export class PlayerInfo {
 export interface Tile {
     isLand(): boolean
     isShore(): boolean
+    isOceanShore(): boolean
     isWater(): boolean
     isShorelineWater(): boolean
     isOcean(): boolean

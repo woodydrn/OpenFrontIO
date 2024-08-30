@@ -1,7 +1,7 @@
 import {Cell, Game} from "../Game";
 import {PseudoRandom} from "../PseudoRandom";
 import {SpawnIntent} from "../Schemas";
-import {bfs} from "../Util";
+import {bfs, dist as dist} from "../Util";
 import {getSpawnCells} from "./Util";
 
 
@@ -40,7 +40,7 @@ export class BotSpawner {
     spawnBot(botName: string): SpawnIntent {
         const rand = this.random.nextInt(0, this.numFreeTiles);
         const spawn = this.freeTiles[rand];
-        bfs(this.gs.tile(spawn), 50).forEach(t => this.removeCell(t.cell()))
+        bfs(this.gs.tile(spawn), dist(50)).forEach(t => this.removeCell(t.cell()))
         const spawnIntent: SpawnIntent = {
             type: 'spawn',
             name: botName,

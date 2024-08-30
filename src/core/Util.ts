@@ -1,3 +1,4 @@
+import {functional} from "typia";
 import {Cell, Tile} from "./Game";
 
 export function manhattanDist(c1: Cell, c2: Cell): number {
@@ -8,7 +9,15 @@ export function within(value: number, min: number, max: number): number {
     return Math.min(Math.max(value, min), max);
 }
 
-export function bfs(tile: Tile, dist: number): Set<Tile> {
+export function dist(dist: number): (root: Tile, tile: Tile) => boolean {
+    return (root: Tile, n: Tile) => manhattanDist(root.cell(), n.cell()) <= dist;
+}
+
+export function and(x: (root: Tile, tile: Tile) => boolean, y: (root: Tile, tile: Tile) => boolean): (root: Tile, tile: Tile) => boolean {
+    return (root: Tile, tile: Tile) => x(root, tile) && y(root, tile)
+}
+
+export function bfs(tile: Tile, filter: (root: Tile, tile: Tile) => boolean): Set<Tile> {
     const seen = new Set<Tile>
     const q: Tile[] = []
     q.push(tile)
@@ -16,7 +25,7 @@ export function bfs(tile: Tile, dist: number): Set<Tile> {
         const curr = q.pop()
         seen.add(curr)
         for (const n of curr.neighbors()) {
-            if (!seen.has(n) && manhattanDist(tile.cell(), n.cell()) <= dist) {
+            if (!seen.has(n) && filter(tile, n)) {
                 q.push(n)
             }
         }

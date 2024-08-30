@@ -160,7 +160,7 @@ export class AStar {
     compute(iterations: number): boolean {
         if (this.completed) return true;
 
-        while (!this.openSet.size()) {
+        while (!this.openSet.isEmpty()) {
             iterations--
             this.current = this.openSet.dequeue()!.tile;
             if (iterations <= 0) {

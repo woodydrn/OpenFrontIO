@@ -35,6 +35,10 @@ class TileImpl implements Tile {
     isShore(): boolean {
         return this.isLand() && this._terrain.shoreline
     }
+    isOceanShore(): boolean {
+        return this.isShore() && this.neighbors().find(t => t.isOcean()) != null
+    }
+
     isShorelineWater(): boolean {
         return this.isWater() && this._terrain.shoreline
     }

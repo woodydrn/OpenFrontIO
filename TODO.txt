@@ -53,12 +53,10 @@
 * REFACTOR: use new priority queue DONE 8/27/2024
 * BUG: players attack each other same time creates islands DONE 8/28/2024
 * make bot spawn better DONE 8/28/2024
-* make UX for attacking TerraNullius by boat better
-* make bots more likely to attack weaker players
+* make UX for attacking TerraNullius by boat better DONE 8/29/2024
 * make bot territory less funky (more likely attack neighbors with larger border)
-    - maybe use bounding box, bots want to be circular?
 * PERF: use hierarchical a* search for boats
-* precompute spawns
+* PERF: precompute spawns
 * end game when no players left (or after 1 hour or so?)
 * boats can go around the world
 * Add terrain elevation to map
@@ -66,4 +64,4 @@
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
 * REFACTOR: ocean is considered TerraNullius ?
 * REFACTOR: remove player config?
-* PERF: render tiles more efficiently
+* Make fake humans
