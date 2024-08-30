@@ -1,6 +1,6 @@
 import {PriorityQueue} from "@datastructures-js/priority-queue";
 import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, TerraNullius, Tile, TileEvent} from "../Game";
-import {manhattanDist} from "../Util";
+import {manhattanDist, manhattenDistWrapped} from "../Util";
 import {AttackExecution} from "./AttackExecution";
 import {Config} from "../configuration/Config";
 
@@ -67,7 +67,7 @@ export class BoatAttackExecution implements Execution {
             this.active = false
             return
         }
-        if (manhattanDist(this.src.cell(), this.dst.cell()) > mg.config().boatMaxDistance()) {
+        if (manhattenDistWrapped(this.src.cell(), this.dst.cell(), mg.width()) > mg.config().boatMaxDistance()) {
             console.log(`boat attack distance too large, dist ${manhattanDist(this.src.cell(), this.dst.cell())} max: ${mg.config().boatMaxDistance()}`)
             this.active = false
             return
@@ -179,7 +179,7 @@ export class AStar {
                 return true;
             }
 
-            for (const neighbor of this.current.neighbors()) {
+            for (const neighbor of this.current.neighborsWrapped()) {
                 if (neighbor != this.dst && neighbor.isLand()) continue; // Skip non-water tiles
 
                 const tentativeGScore = this.gScore.get(this.current)! + 100 - neighbor.magnitude();

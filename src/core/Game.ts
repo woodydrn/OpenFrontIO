@@ -57,6 +57,7 @@ export interface Tile {
     cell(): Cell
     game(): Game
     neighbors(): Tile[]
+    neighborsWrapped(): Tile[]
     onShore(): boolean
 }
 

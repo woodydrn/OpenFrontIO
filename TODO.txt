@@ -57,12 +57,12 @@
 * make bot territory less funky (more likely attack neighbors with larger border) DONE 8/29/2024
 * REFACTOR: remove player config DONE 8/29/2024
 * give boats limit for how far they can go DONE 8/29/2024
-* PERF: precompute spawns
+* boats can go around the world DONE 8/29/2024
+* PERF: more efficient spawns
 * PERF: load terrain map async
 * PERF: enable CDN
 * enable load balancing metrics
 * end game when no players left (or after 1 hour or so?)
-* boats can go around the world
 * Add terrain elevation to map
 * use better favicon
 * REFACTOR: give terranullius an ID, game.player() returns terranullius

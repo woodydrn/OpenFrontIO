@@ -5,6 +5,19 @@ export function manhattanDist(c1: Cell, c2: Cell): number {
     return Math.abs(c1.x - c2.x) + Math.abs(c1.y - c2.y);
 }
 
+export function manhattenDistWrapped(c1: Cell, c2: Cell, width: number): number {
+    // Calculate x distance
+    let dx = Math.abs(c1.x - c2.x);
+    // Check if wrapping around the x-axis is shorter
+    dx = Math.min(dx, width - dx);
+
+    // Calculate y distance (no wrapping for y-axis)
+    let dy = Math.abs(c1.y - c2.y);
+
+    // Return the sum of x and y distances
+    return dx + dy;
+}
+
 export function within(value: number, min: number, max: number): number {
     return Math.min(Math.max(value, min), max);
 }

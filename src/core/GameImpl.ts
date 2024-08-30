@@ -23,6 +23,40 @@ class TileImpl implements Tile {
         private readonly _terrain: Terrain
     ) { }
 
+    neighborsWrapped(): Tile[] {
+        const x = this._cell.x;
+        const y = this._cell.y;
+        const ns: Tile[] = [];
+
+        // Check top neighbor
+        if (y > 0) {
+            ns.push(this.gs.map[x][y - 1]);
+        } else {
+            ns.push(this.gs.map[x][this.gs.height() - 1]);
+        }
+
+        // Check bottom neighbor
+        if (y < this.gs.height() - 1) {
+            ns.push(this.gs.map[x][y + 1]);
+        } else {
+            ns.push(this.gs.map[x][0]);
+        }
+
+        // Check left neighbor (wrap around)
+        if (x > 0) {
+            ns.push(this.gs.map[x - 1][y]);
+        } else {
+            ns.push(this.gs.map[this.gs.width() - 1][y]);
+        }
+
+        // Check right neighbor (wrap around)
+        if (x < this.gs.width() - 1) {
+            ns.push(this.gs.map[x + 1][y]);
+        } else {
+            ns.push(this.gs.map[0][y]);
+        }
+        return ns;
+    }
     isLake(): boolean {
         return !this.isLand() && !this.isOcean()
     }
