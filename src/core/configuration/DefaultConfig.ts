@@ -6,6 +6,9 @@ import {pastelTheme} from "./PastelTheme";
 
 
 export class DefaultConfig implements Config {
+    boatMaxNumber(): number {
+        return 3
+    }
     boatMaxDistance(): number {
         return 500
     }

@@ -33,6 +33,7 @@ export interface Config {
 	attackAmount(attacker: Player, defender: Player | TerraNullius): number
 	boatAttackAmount(attacker: Player, defender: Player | TerraNullius): number
 	boatMaxDistance(): number
+	boatMaxNumber(): number
 }
 
 export interface Theme {

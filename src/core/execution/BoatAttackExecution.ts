@@ -44,9 +44,16 @@ export class BoatAttackExecution implements Execution {
 
     init(mg: MutableGame, ticks: number) {
         this.lastMove = ticks
-
         this.mg = mg
+
         this.attacker = mg.player(this.attackerID)
+
+        if (this.attacker.boats().length >= mg.config().boatMaxNumber()) {
+            console.log('too many boats')
+            this.active = false
+            return
+        }
+
         if (this.targetID == null) {
             this.target = mg.terraNullius()
         } else {

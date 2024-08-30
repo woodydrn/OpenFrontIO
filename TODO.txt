@@ -58,13 +58,17 @@
 * REFACTOR: remove player config DONE 8/29/2024
 * give boats limit for how far they can go DONE 8/29/2024
 * boats can go around the world DONE 8/29/2024
+* max boats (3)?
 * PERF: more efficient spawns
 * PERF: load terrain map async
 * PERF: enable CDN
 * enable load balancing metrics
 * end game when no players left (or after 1 hour or so?)
-* Add terrain elevation to map
+* if completely surrended, lose piece of land
 * use better favicon
+* BUG: tiles get left behind during conquer
+* Add terrain elevation to map
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
 * REFACTOR: ocean is considered TerraNullius ?
+* Create exit to menu button
 * Make fake humans
