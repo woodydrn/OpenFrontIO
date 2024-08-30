@@ -1,4 +1,3 @@
-import {Config, PlayerConfig} from "../configuration/Config"
 import {Cell, Execution, MutableGame, MutablePlayer, PlayerInfo} from "../Game"
 import {BotExecution} from "./BotExecution"
 import {PlayerExecution} from "./PlayerExecution"
@@ -37,7 +36,7 @@ export class SpawnExecution implements Execution {
             return
         }
 
-        const player = this.mg.addPlayer(this.playerInfo, this.mg.config().player().startTroops(this.playerInfo))
+        const player = this.mg.addPlayer(this.playerInfo, this.mg.config().startTroops(this.playerInfo))
         getSpawnCells(this.mg, this.cell).forEach(c => {
             player.conquer(this.mg.tile(c))
         })

@@ -1,6 +1,5 @@
 import {PlayerInfo} from "../Game";
-import {PlayerConfig} from "./Config";
-import {DefaultConfig, DefaultPlayerConfig, defaultPlayerConfig} from "./DefaultConfig";
+import {DefaultConfig} from "./DefaultConfig";
 
 export const devConfig = new class extends DefaultConfig {
     numSpawnPhaseTurns(): number {
@@ -15,15 +14,11 @@ export const devConfig = new class extends DefaultConfig {
     turnIntervalMs(): number {
         return 100
     }
-    player(): PlayerConfig {
-        return devPlayerConfig
-    }
+
     numBots(): number {
         return 250
     }
-}
 
-export const devPlayerConfig = new class extends DefaultPlayerConfig {
     startTroops(playerInfo: PlayerInfo): number {
         if (playerInfo.isBot) {
             return 5000

@@ -1,4 +1,4 @@
-import {Config, PlayerConfig} from "../configuration/Config"
+import {Config} from "../configuration/Config"
 import {Execution, MutableGame, MutablePlayer, PlayerID} from "../Game"
 
 export class PlayerExecution implements Execution {
@@ -22,7 +22,7 @@ export class PlayerExecution implements Execution {
         if (ticks < this.config.numSpawnPhaseTurns()) {
             return
         }
-        this.player.setTroops(this.config.player().troopAdditionRate(this.player))
+        this.player.setTroops(this.config.troopAdditionRate(this.player))
     }
 
     owner(): MutablePlayer {

@@ -16,15 +16,12 @@ export function getConfig(): Config {
 
 export interface Config {
 	theme(): Theme;
-	player(): PlayerConfig
 	turnIntervalMs(): number
 	gameCreationRate(): number
 	lobbyLifetime(): number
 	numBots(): number
 	numSpawnPhaseTurns(): number
-}
 
-export interface PlayerConfig {
 	startTroops(playerInfo: PlayerInfo): number
 	troopAdditionRate(player: Player): number
 	attackTilesPerTick(attacker: Player, defender: Player | TerraNullius, numAdjacentTilesWithEnemy: number): number

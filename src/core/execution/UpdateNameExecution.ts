@@ -1,4 +1,3 @@
-import {Config, PlayerConfig} from "../configuration/Config"
 import {Execution, MutableGame, MutablePlayer, PlayerID} from "../Game"
 import {ClientID} from "../Schemas"
 

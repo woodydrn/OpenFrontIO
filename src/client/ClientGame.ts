@@ -212,10 +212,10 @@ export class ClientGame {
             // Attack Player
             if (tile.isLand()) {
                 if (this.myPlayer.sharesBorderWith(tile.owner())) {
-                    this.sendAttackIntent(targetID, cell, this.gs.config().player().attackAmount(this.myPlayer, owner))
+                    this.sendAttackIntent(targetID, cell, this.gs.config().attackAmount(this.myPlayer, owner))
                 } else if (owner.isPlayer()) {
                     console.log('going to send boat')
-                    this.sendBoatAttackIntent(targetID, cell, this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
+                    this.sendBoatAttackIntent(targetID, cell, this.gs.config().boatAttackAmount(this.myPlayer, owner))
                 }
             }
             return
@@ -229,7 +229,7 @@ export class ClientGame {
             const neighbors = Array.from(bfs(tile, and((r, t) => t.isLand(), dist(100))));
             for (const n of neighbors) {
                 if (this.myPlayer.borderTiles().has(n)) {
-                    this.sendAttackIntent(targetID, cell, this.gs.config().player().attackAmount(this.myPlayer, owner))
+                    this.sendAttackIntent(targetID, cell, this.gs.config().attackAmount(this.myPlayer, owner))
                     return
                 }
             }
@@ -239,9 +239,9 @@ export class ClientGame {
                 .filter(t => !t.hasOwner())
                 .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
             if (tn.length > 0) {
-                this.sendBoatAttackIntent(targetID, tn[0].cell(), this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
+                this.sendBoatAttackIntent(targetID, tn[0].cell(), this.gs.config().boatAttackAmount(this.myPlayer, owner))
             } else {
-                this.sendAttackIntent(targetID, cell, this.gs.config().player().attackAmount(this.myPlayer, owner))
+                this.sendAttackIntent(targetID, cell, this.gs.config().attackAmount(this.myPlayer, owner))
             }
         }
 
@@ -255,7 +255,7 @@ export class ClientGame {
                 .filter(t => !t.hasOwner())
                 .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
             if (tn.length > 0) {
-                this.sendBoatAttackIntent(targetID, tn[0].cell(), this.gs.config().player().boatAttackAmount(this.myPlayer, owner))
+                this.sendBoatAttackIntent(targetID, tn[0].cell(), this.gs.config().boatAttackAmount(this.myPlayer, owner))
             }
         }
     }

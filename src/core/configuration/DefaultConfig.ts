@@ -1,6 +1,6 @@
 import {Player, PlayerInfo, TerraNullius, Tile} from "../Game";
 import {within} from "../Util";
-import {Config, PlayerConfig, Theme} from "./Config";
+import {Config, Theme} from "./Config";
 import {pastelTheme} from "./PastelTheme";
 import {vintageTheme} from "./VintageTheme";
 
@@ -13,9 +13,6 @@ export class DefaultConfig implements Config {
     numBots(): number {
         return 250
     }
-    player(): PlayerConfig {
-        return defaultPlayerConfig
-    }
     turnIntervalMs(): number {
         return 100
     }
@@ -26,9 +23,6 @@ export class DefaultConfig implements Config {
         return 20 * 1000
     }
     theme(): Theme {return pastelTheme;}
-}
-
-export class DefaultPlayerConfig implements PlayerConfig {
 
     attackLogic(attacker: Player, defender: Player | TerraNullius, tileToConquer: Tile): {attackerTroopLoss: number; defenderTroopLoss: number; tilesPerTickUsed: number} {
         if (defender.isPlayer()) {
@@ -78,8 +72,7 @@ export class DefaultPlayerConfig implements PlayerConfig {
 
         return Math.min(player.troops() + toAdd, max)
     }
-
 }
 
+
 export const defaultConfig = new DefaultConfig()
-export const defaultPlayerConfig = new DefaultPlayerConfig()

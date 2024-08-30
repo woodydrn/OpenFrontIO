@@ -1,4 +1,3 @@
-import {Config, PlayerConfig} from "../configuration/Config";
 import {Cell, Execution, MutableGame, MutablePlayer, Player, PlayerID, PlayerInfo, TerraNullius} from "../Game"
 import {PseudoRandom} from "../PseudoRandom"
 import {simpleHash} from "../Util";

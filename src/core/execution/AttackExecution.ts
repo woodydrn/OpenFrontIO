@@ -2,7 +2,6 @@ import {PriorityQueue} from "@datastructures-js/priority-queue";
 import {Cell, Execution, MutableGame, MutablePlayer, PlayerID, TerraNullius, Tile} from "../Game";
 import {PseudoRandom} from "../PseudoRandom";
 import {manhattanDist} from "../Util";
-import {Config, PlayerConfig} from "../configuration/Config";
 
 export class AttackExecution implements Execution {
     private active: boolean = true;
@@ -79,7 +78,7 @@ export class AttackExecution implements Execution {
             return
         }
 
-        let numTilesPerTick = this.mg.config().player().attackTilesPerTick(this._owner, this.target, this.numTilesWithEnemy)
+        let numTilesPerTick = this.mg.config().attackTilesPerTick(this._owner, this.target, this.numTilesWithEnemy)
         if (this.targetCell != null) {
             numTilesPerTick /= 2
         }
@@ -114,7 +113,7 @@ export class AttackExecution implements Execution {
                 badTiles++
                 continue
             }
-            const {attackerTroopLoss, defenderTroopLoss, tilesPerTickUsed} = this.mg.config().player().attackLogic(this._owner, this.target, tileToConquer)
+            const {attackerTroopLoss, defenderTroopLoss, tilesPerTickUsed} = this.mg.config().attackLogic(this._owner, this.target, tileToConquer)
             numTilesPerTick -= tilesPerTickUsed
             this.troops -= attackerTroopLoss
             if (this.target.isPlayer()) {
