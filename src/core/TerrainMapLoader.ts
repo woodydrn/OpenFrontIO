@@ -29,8 +29,11 @@ export class Terrain {
     constructor(public type: TerrainType) { }
 }
 
-export function loadTerrainMap(): TerrainMap {
-    const fileData = binAsString;
+export async function loadTerrainMap(): Promise<TerrainMap> {
+    // Simulate an asynchronous file load
+    const fileData = await new Promise<string>((resolve) => {
+        setTimeout(() => resolve(binAsString), 100);
+    });
 
     console.log(`Loaded data length: ${fileData.length} bytes`);
 
@@ -39,9 +42,6 @@ export function loadTerrainMap(): TerrainMap {
     const height = (fileData.charCodeAt(3) << 8) | fileData.charCodeAt(2);
 
     console.log(`Decoded dimensions: ${width}x${height}`);
-
-    // Log the first 100 bytes of data (including the width and height bytes)
-    // logBinaryAsAscii(fileData, 100);
 
     // Check if the data length matches the expected size
     if (fileData.length != width * height + 4) {  // +4 for the width and height bytes
