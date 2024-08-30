@@ -10,7 +10,7 @@ export class BotExecution implements Execution {
     private random: PseudoRandom;
     private attackRate: number
     private mg: MutableGame
-    private neighborsTerra = true
+    private neighborsTerraNullius = true
 
 
     constructor(private bot: MutablePlayer) {
@@ -37,26 +37,30 @@ export class BotExecution implements Execution {
             return
         }
 
-        if (ticks % this.attackRate == 0) {
-            if (this.neighborsTerra) {
-                for (const b of this.bot.borderTiles()) {
-                    for (const n of b.neighbors()) {
-                        if (n.owner() == this.mg.terraNullius() && n.isLand()) {
-                            this.sendAttack(this.mg.terraNullius())
-                            return
-                        }
+        if (ticks % this.attackRate != 0) {
+            return
+        }
+
+        if (this.neighborsTerraNullius) {
+            for (const b of this.bot.borderTiles()) {
+                for (const n of b.neighbors()) {
+                    if (n.owner() == this.mg.terraNullius() && n.isLand()) {
+                        this.sendAttack(this.mg.terraNullius())
+                        return
                     }
                 }
-                this.neighborsTerra = false
             }
-
-            const ns = this.bot.neighbors()
-            if (ns.length == 0) {
-                return
-            }
-            const toAttack = ns[this.random.nextInt(0, ns.length)]
-            this.sendAttack(toAttack)
+            this.neighborsTerraNullius = false
         }
+
+        const border = Array.from(this.bot.borderTiles()).flatMap(t => t.neighbors()).filter(t => t.hasOwner() && t.owner() != this.bot)
+
+        if (border.length == 0) {
+            return
+        }
+
+        const toAttack = border[this.random.nextInt(0, border.length)]
+        this.sendAttack(toAttack.owner())
     }
 
     sendAttack(toAttack: Player | TerraNullius) {

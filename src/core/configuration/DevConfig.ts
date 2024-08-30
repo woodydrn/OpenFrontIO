@@ -19,7 +19,7 @@ export const devConfig = new class extends DefaultConfig {
         return devPlayerConfig
     }
     numBots(): number {
-        return 50
+        return 250
     }
 }
 
