@@ -1,6 +1,6 @@
 import {PriorityQueue} from "@datastructures-js/priority-queue";
 import {Boat, Cell, Execution, MutableBoat, MutableGame, MutablePlayer, Player, PlayerID, TerraNullius, Tile, TileEvent} from "../Game";
-import {manhattanDist, manhattenDistWrapped} from "../Util";
+import {manhattanDist, manhattanDistWrapped} from "../Util";
 import {AttackExecution} from "./AttackExecution";
 import {Config} from "../configuration/Config";
 
@@ -74,7 +74,7 @@ export class BoatAttackExecution implements Execution {
             this.active = false
             return
         }
-        if (manhattenDistWrapped(this.src.cell(), this.dst.cell(), mg.width()) > mg.config().boatMaxDistance()) {
+        if (manhattanDistWrapped(this.src.cell(), this.dst.cell(), mg.width()) > mg.config().boatMaxDistance()) {
             console.log(`boat attack distance too large, dist ${manhattanDist(this.src.cell(), this.dst.cell())} max: ${mg.config().boatMaxDistance()}`)
             this.active = false
             return

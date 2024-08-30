@@ -1,65 +1,56 @@
-import {Cell, Game} from "../Game";
+import {Cell, Game, Tile, TileEvent} from "../Game";
 import {PseudoRandom} from "../PseudoRandom";
 import {SpawnIntent} from "../Schemas";
-import {bfs, dist as dist} from "../Util";
-import {getSpawnCells} from "./Util";
+import {bfs, dist as dist, manhattanDist} from "../Util";
 
 
 export class BotSpawner {
-    private cellToIndex: Map<string, number>;
-    private freeTiles: Cell[];
-    private numFreeTiles;
     private random = new PseudoRandom(123);
+    private bots: SpawnIntent[] = [];
 
     constructor(private gs: Game) { }
 
     spawnBots(numBots: number): SpawnIntent[] {
-        const bots: SpawnIntent[] = [];
-        this.cellToIndex = new Map<string, number>();
-        this.freeTiles = new Array();
-        this.numFreeTiles = 0;
-
-        this.gs.forEachTile(tile => {
-            if (tile.isWater()) {
-                return;
+        let tries = 0
+        while (this.bots.length < numBots - 1) {
+            if (tries > 10000) {
+                console.log('too many retries while spawning bots, giving up')
+                return this.bots
             }
-            if (tile.hasOwner()) {
-                return;
+            const spawn = this.spawnBot("Bot" + this.bots.length)
+            if (spawn != null) {
+                this.bots.push(spawn);
+            } else {
+                tries++
             }
-
-            this.freeTiles.push(tile.cell());
-            this.cellToIndex.set(tile.cell().toString(), this.numFreeTiles);
-            this.numFreeTiles++;
-        });
-        for (let i = 0; i < numBots; i++) {
-            bots.push(this.spawnBot("Bot" + i));
         }
-        return bots;
+        return this.bots;
     }
 
-    spawnBot(botName: string): SpawnIntent {
-        const rand = this.random.nextInt(0, this.numFreeTiles);
-        const spawn = this.freeTiles[rand];
-        bfs(this.gs.tile(spawn), dist(50)).forEach(t => this.removeCell(t.cell()))
-        const spawnIntent: SpawnIntent = {
+    spawnBot(botName: string): SpawnIntent | null {
+        const tile = this.randTile()
+        if (!tile.isLand()) {
+            return null
+        }
+        for (const spawn of this.bots) {
+            if (manhattanDist(new Cell(spawn.x, spawn.y), tile.cell()) < 50) {
+                return null
+            }
+        }
+        return {
             type: 'spawn',
             name: botName,
             isBot: true,
-            x: spawn.x,
-            y: spawn.y
+            x: tile.cell().x,
+            y: tile.cell().y
         };
-        return spawnIntent;
     }
 
-    private removeCell(cell: Cell) {
-        if (!this.cellToIndex.has(cell.toString())) {
-            return
-        }
-        const index = this.cellToIndex.get(cell.toString());
-        this.cellToIndex.delete(cell.toString())
-
-        this.freeTiles[index] = this.freeTiles[this.numFreeTiles - 1];
-        this.cellToIndex.set(this.freeTiles[index].toString(), index);
-        this.numFreeTiles--;
+    private randTile(): Tile {
+        return this.gs.tile(new Cell(
+            this.random.nextInt(0, this.gs.width()),
+            this.random.nextInt(0, this.gs.height())
+        ))
     }
 }
+

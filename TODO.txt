@@ -58,8 +58,8 @@
 * REFACTOR: remove player config DONE 8/29/2024
 * give boats limit for how far they can go DONE 8/29/2024
 * boats can go around the world DONE 8/29/2024
-* max boats (3)?
-* PERF: more efficient spawns
+* max boats (3) DONE 8/30/2024
+* PERF: more efficient spawns DONE 8/30/2024
 * PERF: load terrain map async
 * PERF: enable CDN
 * enable load balancing metrics
