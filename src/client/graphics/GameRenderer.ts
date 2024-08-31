@@ -3,10 +3,8 @@ import {Cell, Game, PlayerEvent, Tile, TileEvent, Player, Execution, BoatEvent} 
 import {Theme} from "../../core/configuration/Config";
 import {DragEvent, ZoomEvent} from "../InputHandler";
 import {NameRenderer} from "./NameRenderer";
-import {bfs, dist, manhattanDist} from "../../core/Util";
-import {PseudoRandom} from "../../core/PseudoRandom";
 import {TerrainRenderer} from "./TerrainRenderer";
-import {PriorityQueue} from "@datastructures-js/priority-queue";
+import {TerritoryRenderer} from "./TerritoryRenderer";
 
 export class GameRenderer {
 	private territoryCanvas: HTMLCanvasElement
@@ -21,15 +19,14 @@ export class GameRenderer {
 	private context: CanvasRenderingContext2D
 
 	private nameRenderer: NameRenderer;
+	private territoryRenderer: TerritoryRenderer;
+
 	private theme: Theme
-
-	private random = new PseudoRandom(123)
-
-	private tileToRenderQueue: PriorityQueue<{tileEvent: TileEvent, lastUpdate: number}> = new PriorityQueue((a, b) => {return a.lastUpdate - b.lastUpdate})
 
 	constructor(private gs: Game, private terrainRenderer: TerrainRenderer) {
 		this.theme = gs.config().theme()
 		this.nameRenderer = new NameRenderer(gs, this.theme)
+		this.territoryRenderer = new TerritoryRenderer(gs)
 	}
 
 	initialize() {
@@ -45,6 +42,7 @@ export class GameRenderer {
 
 		this.nameRenderer.initialize()
 		this.terrainRenderer.init()
+		this.territoryRenderer.init()
 
 
 		document.body.appendChild(this.canvas);
@@ -56,6 +54,8 @@ export class GameRenderer {
 		this.territoryCanvas.width = this.gs.width();
 		this.territoryCanvas.height = this.gs.height();
 		this.territoryContext = this.territoryCanvas.getContext('2d')
+		this.territoryContext.globalAlpha = 0.4;
+
 
 		requestAnimationFrame(() => this.renderGame());
 	}
@@ -67,7 +67,6 @@ export class GameRenderer {
 	}
 
 	renderGame() {
-
 		// Set background
 		this.context.fillStyle = this.theme.backgroundColor().toHex();
 		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -94,15 +93,7 @@ export class GameRenderer {
 		);
 
 		this.terrainRenderer.draw(this.context)
-		this.renderTerritory()
-
-		this.context.drawImage(
-			this.territoryCanvas,
-			-this.gs.width() / 2,
-			-this.gs.height() / 2,
-			this.gs.width(),
-			this.gs.height()
-		)
+		this.territoryRenderer.draw(this.context)
 
 		const [upperLeft, bottomRight] = this.boundingRect()
 		this.nameRenderer.render(this.context, this.scale, upperLeft, bottomRight)
@@ -111,22 +102,7 @@ export class GameRenderer {
 
 		this.renderUIBar()
 
-
 		requestAnimationFrame(() => this.renderGame());
-	}
-
-	renderTerritory() {
-		let numToRender = Math.floor(this.tileToRenderQueue.size() / 10)
-		if (numToRender == 0) {
-			numToRender = this.tileToRenderQueue.size()
-		}
-
-		while (numToRender > 0) {
-			numToRender--
-			const event = this.tileToRenderQueue.pop().tileEvent
-			this.paintTerritory(event.tile)
-			event.tile.neighbors().forEach(t => this.paintTerritory(t))
-		}
 	}
 
 
@@ -153,18 +129,15 @@ export class GameRenderer {
 	}
 
 	tileUpdate(event: TileEvent) {
-		this.tileToRenderQueue.push({tileEvent: event, lastUpdate: this.gs.ticks() + this.random.nextFloat(0, .5)})
+		this.territoryRenderer.tileUpdate(event)
+		// this.tileToRenderQueue.push({tileEvent: event, lastUpdate: this.gs.ticks() + this.random.nextFloat(0, .5)})
 	}
 
 	playerEvent(event: PlayerEvent) {
 	}
 
 	boatEvent(event: BoatEvent) {
-		bfs(event.oldTile, dist(event.oldTile, 2)).forEach(t => this.paintTerritory(t))
-		if (event.boat.isActive()) {
-			bfs(event.boat.tile(), dist(event.boat.tile(), 2)).forEach(t => this.paintCell(t.cell(), this.theme.borderColor(event.boat.owner().id())))
-			bfs(event.boat.tile(), dist(event.boat.tile(), 1)).forEach(t => this.paintCell(t.cell(), this.theme.territoryColor(event.boat.owner().id())))
-		}
+		this.territoryRenderer.boatEvent(event)
 	}
 
 	resize(width: number, height: number): void {
@@ -172,22 +145,24 @@ export class GameRenderer {
 		this.canvas.height = Math.ceil(height / window.devicePixelRatio);
 	}
 
-	paintTerritory(tile: Tile) {
-		if (!tile.hasOwner()) {
-			this.clearCell(tile.cell())
-			return
-		}
-		// this.territoryContext.clearRect(tile.cell().x, tile.cell().y, 1, 1);
-		if (tile.isBorder()) {
-			this.territoryContext.fillStyle = this.theme.borderColor(tile.owner().id()).toRgbString()
-		} else {
-			this.territoryContext.fillStyle = this.theme.territoryColor(tile.owner().id()).toRgbString()
-		}
-		this.territoryContext.fillRect(tile.cell().x, tile.cell().y, 1, 1);
-	}
+	// paintTerritory(tile: Tile) {
+	// 	this.clearCell(tile.cell())
+	// 	// if (!tile.hasOwner()) {
+	// 	// 	this.clearCell(tile.cell())
+	// 	// 	return
+	// 	// }
+	// 	// this.territoryContext.clearRect(tile.cell().x, tile.cell().y, 1, 1);
+	// 	if (tile.isBorder()) {
+	// 		this.territoryContext.fillStyle = this.theme.borderColor(tile.owner().id()).toRgbString()
+	// 	} else {
+	// 		this.territoryContext.fillStyle = this.theme.territoryColor(tile.owner().id()).alpha(100).toHex()
+	// 	}
+	// 	this.territoryContext.fillRect(tile.cell().x, tile.cell().y, 1, 1);
+	// }
 
 	paintCell(cell: Cell, color: Colord) {
-		this.territoryContext.fillStyle = color.toRgbString()
+		color = color.alpha(10)  // Assign the result back to color
+		this.territoryContext.fillStyle = color.toHslString()
 		this.territoryContext.fillRect(cell.x, cell.y, 1, 1);
 	}
 

@@ -90,10 +90,37 @@ export const pastelTheme = new class implements Theme {
             if (tile.isShore()) {
                 return this.shore
             }
+            // let mag = Math.min(tile.magnitude() + 4, 15)
+            // if (mag < 3) {
+            //     mag = 0
+            // }
+            let mag = tile.magnitude()
+            // if (mag < 3) {
+            //     return colord({
+            //         r: 0,
+            //         g: 0,
+            //         b: 0
+            //     })
+            // }
+
+            if (mag < 2) {
+                mag = 0
+            }
+
+            // else if (mag < 5) {
+            //     mag = 1
+            // } else if (mag < 8) {
+            //     mag = 10
+            // } else {
+            //     mag = 15
+            // }
+
+            const delta = 8 * mag
+
             return colord({
-                r: 174 + 5 * tile.magnitude(),
-                g: 163 + 5 * tile.magnitude(),
-                b: 128 + 5 * tile.magnitude()
+                r: 190 + delta,
+                g: 193 + delta,
+                b: 138 + delta
             })
         } else {
             const w = this.water.rgba

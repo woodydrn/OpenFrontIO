@@ -1,5 +1,6 @@
 import {inherits} from "util"
 import {Game} from "../../core/Game";
+import {throws} from "assert";
 
 export class TerrainRenderer {
     private canvas: HTMLCanvasElement
@@ -15,11 +16,9 @@ export class TerrainRenderer {
 
         this.imageData = this.context.getImageData(0, 0, this.game.width(), this.game.height())
         this.initImageData()
-        this.canvas = document.createElement('canvas');
-        const backgroundCtx = this.canvas.getContext('2d');
         this.canvas.width = this.game.width();
         this.canvas.height = this.game.height();
-        backgroundCtx.putImageData(this.imageData, 0, 0);
+        this.context.putImageData(this.imageData, 0, 0);
     }
 
     initImageData() {
