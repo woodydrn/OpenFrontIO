@@ -60,15 +60,19 @@
 * boats can go around the world DONE 8/29/2024
 * max boats (3) DONE 8/30/2024
 * PERF: more efficient spawns DONE 8/30/2024
-* PERF: load terrain map async
+* PERF: load terrain map async DONE 8/30/2024
+* if completely surrended, lose piece of land DONE 8/30/2024
+* Add terrain elevation to map
 * PERF: enable CDN
 * enable load balancing metrics
 * end game when no players left (or after 1 hour or so?)
-* if completely surrended, lose piece of land
 * use better favicon
 * BUG: tiles get left behind during conquer
-* Add terrain elevation to map
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
 * REFACTOR: ocean is considered TerraNullius ?
 * Create exit to menu button
 * Make fake humans
+* Load terrain dataImage in background
+* BUG: shore tiles left behind during conquer
+* BUG: when sending boat to TerraNullius, only takes one tile
+* directed expansion

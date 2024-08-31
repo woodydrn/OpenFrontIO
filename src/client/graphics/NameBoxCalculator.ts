@@ -1,5 +1,5 @@
 import {Game, Player, Tile, Cell} from '../../core/Game';
-import {within} from '../../core/Util';
+import {calculateBoundingBox, within} from '../../core/Util';
 
 export interface Point {
     x: number;
@@ -15,7 +15,7 @@ export interface Rectangle {
 
 
 export function placeName(game: Game, player: Player): [position: Cell, fontSize: number] {
-    const boundingBox = calculateBoundingBox(player);
+    const boundingBox = calculateBoundingBox(player.borderTiles());
 
     const rawScalingFactor = (boundingBox.max.x - boundingBox.min.x) / 50
     const scalingFactor = within(Math.floor(rawScalingFactor), 1, 100)
@@ -35,20 +35,6 @@ export function placeName(game: Game, player: Player): [position: Cell, fontSize
     const fontSize = calculateFontSize(largestRectangle, player.name());
 
     return [center, fontSize]
-}
-
-export function calculateBoundingBox(player: Player): {min: Cell; max: Cell} {
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
-    player.borderTiles().forEach((tile: Tile) => {
-        const cell = tile.cell();
-        minX = Math.min(minX, cell.x);
-        minY = Math.min(minY, cell.y);
-        maxX = Math.max(maxX, cell.x);
-        maxY = Math.max(maxY, cell.y);
-    });
-
-    return {min: new Cell(minX, minY), max: new Cell(maxX, maxY)}
 }
 
 export function createGrid(game: Game, player: Player, boundingBox: {min: Point; max: Point}, scalingFactor: number): boolean[][] {

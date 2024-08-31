@@ -12,7 +12,7 @@ export class BotSpawner {
 
     spawnBots(numBots: number): SpawnIntent[] {
         let tries = 0
-        while (this.bots.length < numBots - 1) {
+        while (this.bots.length < numBots) {
             if (tries > 10000) {
                 console.log('too many retries while spawning bots, giving up')
                 return this.bots
@@ -33,7 +33,7 @@ export class BotSpawner {
             return null
         }
         for (const spawn of this.bots) {
-            if (manhattanDist(new Cell(spawn.x, spawn.y), tile.cell()) < 50) {
+            if (manhattanDist(new Cell(spawn.x, spawn.y), tile.cell()) < 70) {
                 return null
             }
         }

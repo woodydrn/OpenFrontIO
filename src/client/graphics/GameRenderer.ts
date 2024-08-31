@@ -117,6 +117,9 @@ export class GameRenderer {
 
 	renderTerritory() {
 		let numToRender = Math.floor(this.tileToRenderQueue.size() / 10)
+		if (numToRender == 0) {
+			numToRender = this.tileToRenderQueue.size()
+		}
 
 		while (numToRender > 0) {
 			numToRender--
@@ -157,10 +160,10 @@ export class GameRenderer {
 	}
 
 	boatEvent(event: BoatEvent) {
-		bfs(event.oldTile, dist(2)).forEach(t => this.paintTerritory(t))
+		bfs(event.oldTile, dist(event.oldTile, 2)).forEach(t => this.paintTerritory(t))
 		if (event.boat.isActive()) {
-			bfs(event.boat.tile(), dist(2)).forEach(t => this.paintCell(t.cell(), this.theme.borderColor(event.boat.owner().id())))
-			bfs(event.boat.tile(), dist(1)).forEach(t => this.paintCell(t.cell(), this.theme.territoryColor(event.boat.owner().id())))
+			bfs(event.boat.tile(), dist(event.boat.tile(), 2)).forEach(t => this.paintCell(t.cell(), this.theme.borderColor(event.boat.owner().id())))
+			bfs(event.boat.tile(), dist(event.boat.tile(), 1)).forEach(t => this.paintCell(t.cell(), this.theme.territoryColor(event.boat.owner().id())))
 		}
 	}
 

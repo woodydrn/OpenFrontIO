@@ -224,7 +224,7 @@ export class ClientGame {
         // Attack Terra Nullius
         if (tile.isLand()) {
 
-            const neighbors = Array.from(bfs(tile, and((r, t) => t.isLand(), dist(100))));
+            const neighbors = Array.from(bfs(tile, and((t) => t.isLand(), dist(tile, 100))));
             for (const n of neighbors) {
                 if (this.myPlayer.borderTiles().has(n)) {
                     this.sendAttackIntent(targetID, cell, this.gs.config().attackAmount(this.myPlayer, owner))
@@ -232,7 +232,7 @@ export class ClientGame {
                 }
             }
 
-            const tn = Array.from(bfs(tile, dist(30)))
+            const tn = Array.from(bfs(tile, dist(tile, 30)))
                 .filter(t => t.isOceanShore())
                 .filter(t => !t.hasOwner())
                 .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
@@ -248,7 +248,7 @@ export class ClientGame {
             if (!bordersOcean) {
                 return
             }
-            const tn = Array.from(bfs(tile, dist(3)))
+            const tn = Array.from(bfs(tile, dist(tile, 3)))
                 .filter(t => t.isOceanShore())
                 .filter(t => !t.hasOwner())
                 .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))

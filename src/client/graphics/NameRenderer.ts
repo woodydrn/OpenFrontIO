@@ -1,7 +1,8 @@
 import {Cell, Game, Player} from "../../core/Game"
 import {PseudoRandom} from "../../core/PseudoRandom"
+import {calculateBoundingBox} from "../../core/Util"
 import {Theme} from "../../core/configuration/Config"
-import {calculateBoundingBox, placeName} from "./NameBoxCalculator"
+import {placeName} from "./NameBoxCalculator"
 
 class RenderInfo {
     public isVisible = true
@@ -62,7 +63,7 @@ export class NameRenderer {
         for (const render of this.renders) {
             const now = Date.now()
             if (now - render.lastBoundingCalculated > this.refreshRate) {
-                render.boundingBox = calculateBoundingBox(render.player);
+                render.boundingBox = calculateBoundingBox(render.player.borderTiles());
                 render.lastBoundingCalculated = now
             }
             if (render.isVisible && now - render.lastRenderCalc > this.refreshRate) {
