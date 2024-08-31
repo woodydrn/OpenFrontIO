@@ -30,26 +30,27 @@ export class DefaultConfig implements Config {
     theme(): Theme {return pastelTheme;}
 
     attackLogic(attacker: Player, defender: Player | TerraNullius, tileToConquer: Tile): {attackerTroopLoss: number; defenderTroopLoss: number; tilesPerTickUsed: number} {
+        const mag = tileToConquer.magnitude() / 5
         if (defender.isPlayer()) {
             return {
-                attackerTroopLoss: Math.min(defender.troops() / 2000, 10) + tileToConquer.magnitude(),
+                attackerTroopLoss: Math.min(defender.troops() / 2000, 10) + mag,
                 defenderTroopLoss: Math.min(attacker.troops() / 3000, 5),
-                tilesPerTickUsed: tileToConquer.magnitude() + 1
+                tilesPerTickUsed: mag + 1
             }
         } else {
             return {
-                attackerTroopLoss: tileToConquer.magnitude(),
+                attackerTroopLoss: mag,
                 defenderTroopLoss: 0,
-                tilesPerTickUsed: tileToConquer.magnitude() + 1
+                tilesPerTickUsed: mag + 1
             }
         }
     }
 
     attackTilesPerTick(attacker: Player, defender: Player | TerraNullius, numAdjacentTilesWithEnemy: number): number {
         if (defender.isPlayer()) {
-            return within(attacker.numTilesOwned() / defender.numTilesOwned() * 2, .01, .5) * numAdjacentTilesWithEnemy
+            return within(attacker.numTilesOwned() / defender.numTilesOwned() * 2, .01, .5) * numAdjacentTilesWithEnemy * 2
         } else {
-            return numAdjacentTilesWithEnemy
+            return numAdjacentTilesWithEnemy * 2
         }
     }
 
@@ -73,10 +74,10 @@ export class DefaultConfig implements Config {
     }
 
     troopAdditionRate(player: Player): number {
-        let max = Math.sqrt(player.numTilesOwned()) * 1000 + 10000 + 100000
+        let max = Math.sqrt(player.numTilesOwned()) * 2000 + 10000 + 10000
         max = Math.min(max, 1_000_000)
 
-        let toAdd = 10 + (player.troops() + Math.sqrt(player.troops() * player.numTilesOwned())) / 250
+        let toAdd = 10 + (player.troops() + Math.sqrt(player.troops() * player.numTilesOwned())) / 200
 
         return Math.min(player.troops() + toAdd, max)
     }

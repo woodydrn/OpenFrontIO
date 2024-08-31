@@ -78,7 +78,7 @@ export class AttackExecution implements Execution {
             return
         }
 
-        let numTilesPerTick = this.mg.config().attackTilesPerTick(this._owner, this.target, this.numTilesWithEnemy)
+        let numTilesPerTick = this.mg.config().attackTilesPerTick(this._owner, this.target, this.numTilesWithEnemy + this.random.nextInt(0, 5))
         if (this.targetCell != null) {
             numTilesPerTick /= 2
         }
@@ -165,10 +165,10 @@ export class AttackExecution implements Execution {
                 if (this.targetCell != null) {
                     dist = manhattanDist(tile.cell(), this.targetCell)
                 }
-                if (numOwnedByMe > 2) {
-                    numOwnedByMe = 1000
-                }
-                this.toConquer.enqueue(new TileContainer(neighbor, -numOwnedByMe + tile.magnitude()))
+                // if (numOwnedByMe > 3) {
+                //     numOwnedByMe = 1000
+                // }
+                this.toConquer.enqueue(new TileContainer(neighbor, this.random.nextInt(0, 2) - numOwnedByMe + tile.magnitude() / 5))
             }
         }
         this.borderTiles = newBorder

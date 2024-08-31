@@ -52,10 +52,12 @@ export class TerritoryRenderer {
     }
 
     boatEvent(event: BoatEvent) {
-        bfs(event.oldTile, dist(event.oldTile, 2)).forEach(t => this.clearCell(t.cell()))
+        bfs(event.oldTile, dist(event.oldTile, 3)).forEach(t => {
+            this.paintTerritory(t)
+        })
         if (event.boat.isActive()) {
             bfs(event.boat.tile(), dist(event.boat.tile(), 2)).forEach(t => this.paintCell(t.cell(), this.theme.borderColor(event.boat.owner().id()), 255))
-            bfs(event.boat.tile(), dist(event.boat.tile(), 1)).forEach(t => this.paintCell(t.cell(), this.theme.territoryColor(event.boat.owner().id()), 255))
+            bfs(event.boat.tile(), dist(event.boat.tile(), 1)).forEach(t => this.paintCell(t.cell(), this.theme.territoryColor(event.boat.owner().id()), 150))
         }
     }
 
@@ -74,6 +76,9 @@ export class TerritoryRenderer {
     }
 
     paintTerritory(tile: Tile) {
+        if (!tile.hasOwner()) {
+            this.clearCell(tile.cell())
+        }
         if (tile.isBorder()) {
             this.paintCell(
                 tile.cell(),
@@ -84,7 +89,7 @@ export class TerritoryRenderer {
             this.paintCell(
                 tile.cell(),
                 this.theme.territoryColor(tile.owner().id()),
-                75
+                100
             )
         }
     }
