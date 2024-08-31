@@ -44,7 +44,7 @@ export class Terrain {
 }
 
 export async function loadTerrainMap(): Promise<void> {
-    const imagePath = path.resolve(__dirname, '..', '..', 'resources', 'maps', 'World.png');
+    const imagePath = path.resolve(__dirname, '..', '..', 'resources', 'maps', 'TopoWorldMap.png');
 
     const readStream = createReadStream(imagePath);
     const img = await PImage.decodePNGFromStream(readStream);
@@ -59,11 +59,64 @@ export async function loadTerrainMap(): Promise<void> {
         for (let y = 0; y < img.height; y++) {
             const color = img.getPixelRGBA(x, y);
             const alpha = color & 0xff;
+            const blue = (color >> 8) & 0xff;
+
 
             if (alpha < 20) { // transparent
                 terrain[x][y] = new Terrain(TerrainType.Water);
             } else {
                 terrain[x][y] = new Terrain(TerrainType.Land)
+                terrain[x][y].magnitude = 0
+
+                // 150 -> 220
+                switch (true) {
+                    case (blue > 220):
+                        terrain[x][y].magnitude = 14;
+                        break;
+                    case (blue > 215):
+                        terrain[x][y].magnitude = 13;
+                        break;
+                    case (blue > 210):
+                        terrain[x][y].magnitude = 12;
+                        break;
+                    case (blue > 205):
+                        terrain[x][y].magnitude = 11;
+                        break;
+                    case (blue > 200):
+                        terrain[x][y].magnitude = 10;
+                        break;
+                    case (blue > 195):
+                        terrain[x][y].magnitude = 9;
+                        break;
+                    case (blue > 185):
+                        terrain[x][y].magnitude = 8;
+                        break;
+                    case (blue > 180):
+                        terrain[x][y].magnitude = 7;
+                        break;
+                    case (blue > 175):
+                        terrain[x][y].magnitude = 6;
+                        break;
+                    case (blue > 170):
+                        terrain[x][y].magnitude = 5;
+                        break;
+                    case (blue > 165):
+                        terrain[x][y].magnitude = 4;
+                        break;
+                    case (blue > 160):
+                        terrain[x][y].magnitude = 3;
+                        break;
+                    case (blue > 155):
+                        terrain[x][y].magnitude = 2;
+                        break;
+                    case (blue > 150):
+                        terrain[x][y].magnitude = 1;
+                        break;
+                    default:
+                        terrain[x][y].magnitude = 0;
+                        break;
+                }
+
             }
         }
     }
@@ -73,7 +126,7 @@ export async function loadTerrainMap(): Promise<void> {
     processDistToLand(shorelineWaters, terrain)
     processOcean(terrain)
     const packed = packTerrain(terrain)
-    const outputPath = path.join(__dirname, '..', '..', 'resources', 'World.bin');
+    const outputPath = path.join(__dirname, '..', '..', 'resources', 'TopoWorldMap.bin');
     fs.writeFile(outputPath, packed);
 }
 

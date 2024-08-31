@@ -90,7 +90,11 @@ export const pastelTheme = new class implements Theme {
             if (tile.isShore()) {
                 return this.shore
             }
-            return this.land;
+            return colord({
+                r: 174 + 5 * tile.magnitude(),
+                g: 163 + 5 * tile.magnitude(),
+                b: 128 + 5 * tile.magnitude()
+            })
         } else {
             const w = this.water.rgba
             if (tile.isShorelineWater()) {

@@ -80,6 +80,9 @@ export class PlayerExecution implements Execution {
         const tiles = bfs(firstTile, filter)
 
         const modePlayer = this.mg.player(mode)
+        if (modePlayer == null) {
+            console.warn('mode player is null')
+        }
         for (const tile of tiles) {
             modePlayer.conquer(tile)
         }

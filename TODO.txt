@@ -62,7 +62,9 @@
 * PERF: more efficient spawns DONE 8/30/2024
 * PERF: load terrain map async DONE 8/30/2024
 * if completely surrended, lose piece of land DONE 8/30/2024
-* Add terrain elevation to map
+* Add terrain elevation to map DONE 8/30/2024
+* Have terrain affect attack
+* improve pastel territory colors
 * PERF: enable CDN
 * enable load balancing metrics
 * end game when no players left (or after 1 hour or so?)
