@@ -3,8 +3,6 @@ import {Config} from "../configuration/Config"
 import {Execution, MutableGame, MutablePlayer, PlayerID, Tile} from "../Game"
 import {bfs, calculateBoundingBox, getMode, inscribed, simpleHash} from "../Util"
 import {GameImpl} from "../GameImpl"
-import {gr} from "../../client/ClientGame"
-import {AttackExecution} from "./AttackExecution"
 
 export class PlayerExecution implements Execution {
 
