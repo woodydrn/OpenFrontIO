@@ -32,21 +32,24 @@ export class DefaultConfig implements Config {
     attackLogic(attacker: Player, defender: Player | TerraNullius, tileToConquer: Tile): {attackerTroopLoss: number; defenderTroopLoss: number; tilesPerTickUsed: number} {
         if (defender.isPlayer()) {
             return {
-                attackerTroopLoss: Math.min(defender.troops() / 1000, 10),
-                defenderTroopLoss: Math.min(attacker.troops() / 2000, 5),
-                tilesPerTickUsed: 1
+                attackerTroopLoss: Math.min(defender.troops() / 2000, 10) + tileToConquer.magnitude(),
+                defenderTroopLoss: Math.min(attacker.troops() / 3000, 5),
+                tilesPerTickUsed: tileToConquer.magnitude() + 1
             }
         } else {
-            return {attackerTroopLoss: 1, defenderTroopLoss: 0, tilesPerTickUsed: 1}
+            return {
+                attackerTroopLoss: tileToConquer.magnitude(),
+                defenderTroopLoss: 0,
+                tilesPerTickUsed: tileToConquer.magnitude() + 1
+            }
         }
-
     }
 
     attackTilesPerTick(attacker: Player, defender: Player | TerraNullius, numAdjacentTilesWithEnemy: number): number {
         if (defender.isPlayer()) {
-            return within(attacker.numTilesOwned() / defender.numTilesOwned(), .01, .5) * numAdjacentTilesWithEnemy
+            return within(attacker.numTilesOwned() / defender.numTilesOwned() * 2, .01, .5) * numAdjacentTilesWithEnemy
         } else {
-            return numAdjacentTilesWithEnemy / 4
+            return numAdjacentTilesWithEnemy
         }
     }
 
@@ -70,7 +73,7 @@ export class DefaultConfig implements Config {
     }
 
     troopAdditionRate(player: Player): number {
-        let max = Math.sqrt(player.numTilesOwned()) * 1000 + 10000
+        let max = Math.sqrt(player.numTilesOwned()) * 1000 + 10000 + 100000
         max = Math.min(max, 1_000_000)
 
         let toAdd = 10 + (player.troops() + Math.sqrt(player.troops() * player.numTilesOwned())) / 250

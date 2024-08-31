@@ -95,7 +95,6 @@ export class TerritoryRenderer {
         this.imageData.data[offset + 3] = 0; // Set alpha to 0 (fully transparent)
     }
 
-
     tileUpdate(event: TileEvent) {
         this.tileToRenderQueue.push({tileEvent: event, lastUpdate: this.game.ticks() + this.random.nextFloat(0, .5)})
     }

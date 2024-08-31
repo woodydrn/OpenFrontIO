@@ -89,7 +89,7 @@ export class AttackExecution implements Execution {
                 return
             }
 
-            if (this.toConquer.size() < this.numTilesWithEnemy / 2) {
+            if (this.toConquer.size() < this.numTilesWithEnemy / 1.2) {
                 this.calculateToConquer()
             }
             if (badTiles > 1000) {
@@ -145,7 +145,8 @@ export class AttackExecution implements Execution {
         this.toConquer.clear()
 
         const newBorder: Set<Tile> = new Set()
-        let existingBorder: ReadonlySet<Tile> = this.borderTiles
+        // TODO: figure out existing border
+        let existingBorder: ReadonlySet<Tile> = new Set<Tile>()
         if (existingBorder.size == 0) {
             existingBorder = this._owner.borderTiles()
         }
@@ -167,7 +168,7 @@ export class AttackExecution implements Execution {
                 if (numOwnedByMe > 2) {
                     numOwnedByMe = 1000
                 }
-                this.toConquer.enqueue(new TileContainer(neighbor, dist + -numOwnedByMe))
+                this.toConquer.enqueue(new TileContainer(neighbor, -numOwnedByMe + tile.magnitude()))
             }
         }
         this.borderTiles = newBorder
