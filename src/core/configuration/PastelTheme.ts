@@ -95,27 +95,31 @@ export const pastelTheme = new class implements Theme {
             //     mag = 0
             // }
             let mag = tile.magnitude()
-            // if (mag < 3) {
-            //     return colord({
-            //         r: 0,
-            //         g: 0,
-            //         b: 0
-            //     })
-            // }
 
-            if (mag < 2) {
-                mag = 0
+            if (mag > 20) {
+                return colord({
+                    r: 250,
+                    g: 250,
+                    b: 250
+                })
             }
 
-            // else if (mag < 5) {
-            //     mag = 1
-            // } else if (mag < 8) {
-            //     mag = 10
-            // } else {
-            //     mag = 15
-            // }
+            if (mag < 5) {
+                return colord({
+                    r: 180,
+                    g: 200,
+                    b: 128
+                })
+            }
+            if (mag < 10) {
+                return colord({
+                    r: 190,
+                    g: 200,
+                    b: 138
+                })
+            }
 
-            const delta = 8 * mag
+            const delta = 2 * mag
 
             return colord({
                 r: 190 + delta,

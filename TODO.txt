@@ -64,10 +64,9 @@
 * if completely surrended, lose piece of land DONE 8/30/2024
 * Add terrain elevation to map DONE 8/30/2024
 * Make territory translucent DONE 8/31/2024
-* Have terrain affect attack
-* improve pastel territory colors
-* PERF: enable CDN
-* enable load balancing metrics
+* Have terrain affect attack DONE 8/31/2024
+* PERF: enable CDN DONE 8/31/2024
+* enable load balancing metrics DONE 8/31/2024
 * end game when no players left (or after 1 hour or so?)
 * use better favicon
 * BUG: tiles get left behind during conquer

@@ -54,6 +54,11 @@ export async function loadTerrainMap(): Promise<void> {
 
     const terrain: Terrain[][] = Array(img.width).fill(null).map(() => Array(img.height).fill(null));
 
+    let max = 0
+    let min = 1000
+    const array: number[] = new Array(256).fill(0);
+
+
     // Iterate through each pixel
     for (let x = 0; x < img.width; x++) {
         for (let y = 0; y < img.height; y++) {
@@ -61,66 +66,27 @@ export async function loadTerrainMap(): Promise<void> {
             const alpha = color & 0xff;
             const blue = (color >> 8) & 0xff;
 
-
             if (alpha < 20) { // transparent
                 terrain[x][y] = new Terrain(TerrainType.Water);
             } else {
                 terrain[x][y] = new Terrain(TerrainType.Land)
                 terrain[x][y].magnitude = 0
 
-                // 150 -> 220
-                switch (true) {
-                    case (blue > 220):
-                        terrain[x][y].magnitude = 14;
-                        break;
-                    case (blue > 215):
-                        terrain[x][y].magnitude = 13;
-                        break;
-                    case (blue > 210):
-                        terrain[x][y].magnitude = 12;
-                        break;
-                    case (blue > 205):
-                        terrain[x][y].magnitude = 11;
-                        break;
-                    case (blue > 200):
-                        terrain[x][y].magnitude = 10;
-                        break;
-                    case (blue > 195):
-                        terrain[x][y].magnitude = 9;
-                        break;
-                    case (blue > 185):
-                        terrain[x][y].magnitude = 8;
-                        break;
-                    case (blue > 180):
-                        terrain[x][y].magnitude = 7;
-                        break;
-                    case (blue > 175):
-                        terrain[x][y].magnitude = 6;
-                        break;
-                    case (blue > 170):
-                        terrain[x][y].magnitude = 5;
-                        break;
-                    case (blue > 165):
-                        terrain[x][y].magnitude = 4;
-                        break;
-                    case (blue > 160):
-                        terrain[x][y].magnitude = 3;
-                        break;
-                    case (blue > 155):
-                        terrain[x][y].magnitude = 2;
-                        break;
-                    case (blue > 150):
-                        terrain[x][y].magnitude = 1;
-                        break;
-                    default:
-                        terrain[x][y].magnitude = 0;
-                        break;
-                }
+
+                array[blue]++
+
+                // 140 -> 200 = 60
+                const mag = Math.min(200, Math.max(140, blue)) - 140
+                terrain[x][y].magnitude = mag / 2
 
             }
         }
     }
-
+    // console.log(`min: ${min}, max ${max}, arr ${array}`)
+    // console.log('Array contents (index, value):');
+    // array.forEach((val, index) => {
+    //     console.log(`(${index}, ${val})`);
+    // });
 
     const shorelineWaters = processShore(terrain)
     processDistToLand(shorelineWaters, terrain)
@@ -221,7 +187,11 @@ function packTerrain(map: Terrain[][]): Uint8Array {
             if (terrain.ocean) {
                 packedByte |= 0b00100000;
             }
-            packedByte |= Math.min(Math.ceil(terrain.magnitude / 2), 31);
+            if (terrain.type == TerrainType.Land) {
+                packedByte |= Math.min(Math.ceil(terrain.magnitude), 31);
+            } else {
+                packedByte |= Math.min(Math.ceil(terrain.magnitude / 2), 31);
+            }
 
             packedData[4 + y * width + x] = packedByte;
         }

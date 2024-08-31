@@ -25,9 +25,18 @@ export class TerritoryRenderer {
         this.context = this.canvas.getContext("2d")
 
         this.imageData = this.context.getImageData(0, 0, this.game.width(), this.game.height())
+        this.initImageData()
         this.canvas.width = this.game.width();
         this.canvas.height = this.game.height();
         this.context.putImageData(this.imageData, 0, 0);
+    }
+
+    initImageData() {
+        this.game.forEachTile((tile) => {
+            const index = (tile.cell().y * this.game.width()) + tile.cell().x
+            const offset = index * 4
+            this.imageData.data[offset + 3] = 0
+        })
     }
 
     draw(context: CanvasRenderingContext2D) {
