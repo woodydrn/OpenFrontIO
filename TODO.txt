@@ -67,6 +67,9 @@
 * Have terrain affect attack DONE 8/31/2024
 * PERF: enable CDN DONE 8/31/2024
 * enable load balancing metrics DONE 8/31/2024
+* BUG: island don't check if inscribed, just try to remove it DONE 8/31/2024
+* if completely surrounded by same enemy, lose island DONE 8/31/2024
+* fix boat leaves trail bug
 * end game when no players left (or after 1 hour or so?)
 * use better favicon
 * BUG: tiles get left behind during conquer
@@ -78,3 +81,5 @@
 * directed expansion
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
 * REFACTOR: ocean is considered TerraNullius ?
+* BUG: sometimes islands don't get removed
+

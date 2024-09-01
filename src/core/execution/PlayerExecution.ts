@@ -1,12 +1,11 @@
-import cluster from "cluster"
 import {Config} from "../configuration/Config"
-import {Execution, MutableGame, MutablePlayer, PlayerID, Tile} from "../Game"
+import {Execution, MutableGame, MutablePlayer, Player, PlayerID, TerraNullius, Tile} from "../Game"
 import {bfs, calculateBoundingBox, getMode, inscribed, simpleHash} from "../Util"
 import {GameImpl} from "../GameImpl"
 
 export class PlayerExecution implements Execution {
 
-    private readonly ticksPerIslandCalc = 50
+    private readonly ticksPerClusterCalc = 10
 
     private player: MutablePlayer
     private config: Config
@@ -24,7 +23,7 @@ export class PlayerExecution implements Execution {
         this.mg = mg
         this.config = mg.config()
         this.player = mg.player(this.playerID)
-        this.lastCalc = ticks + (simpleHash(this.player.name()) % this.ticksPerIslandCalc)
+        this.lastCalc = ticks + (simpleHash(this.player.name()) % this.ticksPerClusterCalc)
     }
 
     tick(ticks: number) {
@@ -33,10 +32,10 @@ export class PlayerExecution implements Execution {
         }
         this.player.setTroops(this.config.troopAdditionRate(this.player))
 
-        if (ticks - this.lastCalc > this.ticksPerIslandCalc) {
+        if (ticks - this.lastCalc > this.ticksPerClusterCalc) {
             this.lastCalc = ticks
             const start = performance.now()
-            this.removeIslands()
+            this.removeClusters()
             const end = performance.now()
             if (end - start > 1000) {
                 console.log(`player ${this.player.name()}, took ${end - start}ms`)
@@ -44,35 +43,65 @@ export class PlayerExecution implements Execution {
         }
     }
 
-    private removeIslands() {
+    private removeClusters() {
         const clusters = this.calculateClusters()
-        if (clusters.length <= 1) {
-            return
-        }
+        // if (clusters.length <= 1) {
+        //     return
+        // }
         clusters.sort((a, b) => b.size - a.size);
-        const main = clusters.shift()
-        const mainBox = calculateBoundingBox(main)
-        for (const toRemove of clusters) {
-            const toRemoveBox = calculateBoundingBox(toRemove)
-            if (inscribed(mainBox, toRemoveBox)) {
-                return
-            }
 
-            for (const tile of toRemove) {
-                if (tile.isOceanShore()) {
-                    return
-                }
+        const main = clusters.shift()
+        if (this.isSurroundedBySamePlayer(main)) {
+            this.removeCluster(main)
+        }
+
+        for (const cluster of clusters) {
+            if (this.isSurrounded(cluster)) {
+                this.removeCluster(cluster)
             }
-            this.removeIsland(toRemove)
         }
     }
 
-    private removeIsland(cluster: Set<Tile>) {
-        console.log('removing island!')
+    private isSurroundedBySamePlayer(cluster: Set<Tile>): boolean {
+        const enemies = new Set<Player>()
+        for (const tile of cluster) {
+            if (tile.isOceanShore() || tile.neighbors().find(n => !n.hasOwner())) {
+                return false
+            }
+            tile.neighbors()
+                .filter(n => n.hasOwner() && n.owner() != this.player)
+                .forEach(p => enemies.add(p.owner() as Player))
+            if (enemies.size != 1) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private isSurrounded(cluster: Set<Tile>): boolean {
+        let enemyTiles = new Set<Tile>()
+        for (const tile of cluster) {
+            if (tile.isOceanShore()) {
+                return false
+            }
+            tile.neighbors()
+                .filter(n => n.hasOwner() && n.owner() != this.player)
+                .forEach(n => enemyTiles.add(n))
+        }
+        if (enemyTiles.size == 0) {
+            return false
+        }
+        const enemyBox = calculateBoundingBox(enemyTiles)
+        const clusterBox = calculateBoundingBox(cluster)
+        return inscribed(enemyBox, clusterBox)
+    }
+
+    private removeCluster(cluster: Set<Tile>) {
+        console.log('removing cluster!')
         const arr = Array.from(cluster)
         const mode = getMode(arr.flatMap(t => t.neighbors()).filter(t => t.hasOwner() && t.owner() != this.player).map(t => t.owner().id()))
-        if (mode == null) {
-            console.warn('mode is null')
+        if (!this.mg.hasPlayer(mode)) {
+            console.warn('mode is not found')
             return
         }
         const firstTile = arr[0]
@@ -108,10 +137,6 @@ export class PlayerExecution implements Execution {
 
                 const neighbors = (this.mg as GameImpl).neighborsWithDiag(curr)
                 for (const neighbor of neighbors) {
-                    // if (this.mg.ticks() == 736 && loops > 580000) {
-                    //     // console.log(`got neighbor ${neighbor.cell().toString()}`)
-                    //     gr.paintBlack(neighbor)
-                    // }
                     if (neighbor.isBorder() && border.has(neighbor)) {
                         if (!seen.has(neighbor)) {
                             queue.push(neighbor)
@@ -129,9 +154,7 @@ export class PlayerExecution implements Execution {
         return this.player
     }
 
-    private active = true
     isActive(): boolean {
-        // return this.player.isAlive()
-        return this.active
+        return this.player.isAlive()
     }
 }

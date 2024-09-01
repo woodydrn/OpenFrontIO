@@ -168,7 +168,7 @@ export class AttackExecution implements Execution {
                 // if (numOwnedByMe > 3) {
                 //     numOwnedByMe = 1000
                 // }
-                this.toConquer.enqueue(new TileContainer(neighbor, this.random.nextInt(0, 2) - numOwnedByMe + tile.magnitude() / 5))
+                this.toConquer.enqueue(new TileContainer(neighbor, this.random.nextInt(0, 4) - numOwnedByMe + tile.magnitude() / 5))
             }
         }
         this.borderTiles = newBorder
