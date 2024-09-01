@@ -13,7 +13,7 @@ export enum GamePhase {
 export class GameServer {
 
 
-    private gameDuration = 30 * 60 * 1000 // TODO!!! fix this
+    private maxGameDuration = 60 * 60 * 1000 // 1 hour
 
     private turns: Turn[] = []
     private intents: Intent[] = []
@@ -126,10 +126,17 @@ export class GameServer {
         if (Date.now() - this.createdAt < this.config.lobbyLifetime()) {
             return GamePhase.Lobby
         }
-        if (Date.now() - this.createdAt < this.config.lobbyLifetime() + this.gameDuration) {
-            return GamePhase.Active
+
+        if (this.clients.length == 0) {
+            return GamePhase.Finished
         }
-        return GamePhase.Finished
+
+        if (Date.now() > this.createdAt + this.config.lobbyLifetime() + this.maxGameDuration) {
+            console.warn(`game past max duration ${this.id}`)
+            return GamePhase.Finished
+        }
+
+        return GamePhase.Active
     }
 
     hasStarted(): boolean {
