@@ -5,7 +5,7 @@ import {PseudoRandom} from "../core/PseudoRandom";
 import {GameID, Lobby, ServerMessage, ServerMessageSchema} from "../core/Schemas";
 import {loadTerrainMap, TerrainMap} from "../core/TerrainMapLoader";
 import {ClientGame, createClientGame} from "./ClientGame";
-import backgroundImage from '../../resources/images/PastelMap.png';
+import backgroundImage from '../../resources/images/TerrainMapFrontPage.png';
 import favicon from '../../resources/images/Favicon.png';
 
 import './styles.css';
