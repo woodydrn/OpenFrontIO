@@ -53,6 +53,8 @@ export class TerritoryRenderer {
 
     boatEvent(event: BoatEvent) {
         bfs(event.oldTile, dist(event.oldTile, 3)).forEach(t => {
+            // this.clearCell(t.cell())
+            // this.paintCell(t.cell(), new Colord({r: 0, g: 0, b: 0}), 200)
             this.paintTerritory(t)
         })
         if (event.boat.isActive()) {
@@ -78,6 +80,7 @@ export class TerritoryRenderer {
     paintTerritory(tile: Tile) {
         if (!tile.hasOwner()) {
             this.clearCell(tile.cell())
+            return
         }
         if (tile.isBorder()) {
             this.paintCell(

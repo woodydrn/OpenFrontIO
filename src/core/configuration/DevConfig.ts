@@ -3,7 +3,7 @@ import {DefaultConfig} from "./DefaultConfig";
 
 export const devConfig = new class extends DefaultConfig {
     numSpawnPhaseTurns(): number {
-        return 60
+        return 40
     }
     gameCreationRate(): number {
         return 3 * 1000
