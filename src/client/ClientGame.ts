@@ -12,7 +12,7 @@ import {TerrainRenderer} from "./graphics/TerrainRenderer";
 
 
 
-export function createClientGame(name: string, clientID: ClientID, gameID: GameID, config: Config, terrainMap: TerrainMap): ClientGame {
+export function createClientGame(name: string, clientID: ClientID, ip: string | null, gameID: GameID, config: Config, terrainMap: TerrainMap): ClientGame {
     let eventBus = new EventBus()
     let game = createGame(terrainMap, eventBus, config)
     let terrainRenderer = new TerrainRenderer(game)
@@ -21,6 +21,7 @@ export function createClientGame(name: string, clientID: ClientID, gameID: GameI
     return new ClientGame(
         name,
         clientID,
+        ip,
         gameID,
         eventBus,
         game,
@@ -47,6 +48,7 @@ export class ClientGame {
     constructor(
         public playerName: string,
         private id: ClientID,
+        private clientIP: string | null,
         private gameID: GameID,
         private eventBus: EventBus,
         private gs: Game,
@@ -67,6 +69,7 @@ export class ClientGame {
                         type: "join",
                         gameID: this.gameID,
                         clientID: this.id,
+                        clientIP: this.clientIP,
                         lastTurn: this.turns.length
                     })
                 )

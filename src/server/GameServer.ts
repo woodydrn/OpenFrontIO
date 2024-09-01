@@ -2,6 +2,7 @@ import {ClientMessage, ClientMessageSchema, Intent, ServerStartGameMessage, Serv
 import {Config} from "../core/configuration/Config";
 import {Client} from "./Client";
 import WebSocket from 'ws';
+import {slog} from "./StructuredLog";
 
 
 export enum GamePhase {
@@ -30,6 +31,12 @@ export class GameServer {
 
     public addClient(client: Client, lastTurn: number) {
         console.log(`game ${this.id} adding client ${client.id}`)
+        slog('client_joined_game', `client ${client.id} (re)joining game ${this.id}`, {
+            clientID: client.id,
+            clientIP: client.ip,
+            gameID: this.id,
+            isRejoin: lastTurn > 0
+        })
         // Remove stale client if this is a reconnect
         this.clients = this.clients.filter(c => c.id != client.id)
         this.clients.push(client)

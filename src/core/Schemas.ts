@@ -114,9 +114,9 @@ export const ClientIntentMessageSchema = ClientBaseMessageSchema.extend({
 export const ClientJoinMessageSchema = ClientBaseMessageSchema.extend({
     type: z.literal('join'),
     clientID: z.string(),
+    clientIP: z.string().nullable(),
     gameID: z.string(),
-    // The last turn the client saw.
-    lastTurn: z.number()
+    lastTurn: z.number() // The last turn the client saw.
 })
 
 export const ClientLeaveMessageSchema = ClientBaseMessageSchema.extend({

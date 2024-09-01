@@ -70,11 +70,14 @@
 * BUG: island don't check if inscribed, just try to remove it DONE 8/31/2024
 * if completely surrounded by same enemy, lose island DONE 8/31/2024
 * BUG: fix boat leaves trail DONE 9/1/2024
-* end game when no players left (or after 1 hour or so?)
-* use better favicon
-* BUG: tiles get left behind during conquer
+* end game when no players left (or after 1 hour or so?) DONE 9/1/2024
+* add structured logging DONE 9/1/2024
+* make attack execution stream tiles to pq
 * Create exit to menu button
+* use better favicon
+* center map on game start
 * Make fake humans
+* BUG: tiles get left behind during conquer
 * Load terrain dataImage in background
 * BUG: shore tiles left behind during conquer
 * BUG: when sending boat to TerraNullius, only takes one tile

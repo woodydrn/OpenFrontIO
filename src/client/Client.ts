@@ -27,6 +27,8 @@ class Client {
 
     private random = new PseudoRandom(1234)
 
+    private ip: Promise<string | null> = null
+
     constructor() {
         this.lobbiesContainer = document.getElementById('lobbies-container');
     }
@@ -35,6 +37,7 @@ class Client {
         setFavicon()
         this.terrainMap = loadTerrainMap()
         this.startLobbyPolling()
+        this.ip = getClientIP()
         setupUsernameCallback((username) => {
             console.log('Username updated:', username);
             if (this.game != null) {
@@ -100,7 +103,7 @@ class Client {
         }
     }
 
-    private joinLobby(lobby: Lobby) {
+    private async joinLobby(lobby: Lobby) {
         const lobbyButton = document.getElementById('lobby-button');
         if (lobbyButton) {
             this.isLobbyHighlighted = !this.isLobbyHighlighted;
@@ -115,21 +118,26 @@ class Client {
         if (this.game != null) {
             return;
         }
-        this.terrainMap.then(tm => {
-            this.game = createClientGame(getUsername(), new PseudoRandom(Date.now()).nextID(), lobby.id, getConfig(), tm);
-            this.game.join();
-            const g = this.game;
-            window.addEventListener('beforeunload', function (event) {
-                console.log('Browser is closing');
-                g.stop();
-            });
-        })
+        const [terrainMap, clientIP] = await Promise.all([
+            this.terrainMap,
+            this.ip
+        ]);
+        console.log(`got ip ${clientIP}`)
+        this.game = createClientGame(
+            getUsername(),
+            new PseudoRandom(Date.now()).nextID(), // TODO this can cause dup ids
+            clientIP,
+            lobby.id,
+            getConfig(),
+            terrainMap
+        );
+        this.game.join();
+        const g = this.game;
+        window.addEventListener('beforeunload', function (event) {
+            console.log('Browser is closing');
+            g.stop();
+        });
     }
-
-
-
-
-
 }
 
 function getUsername(): string {
@@ -153,6 +161,37 @@ function setupUsernameCallback(callback: (username: string) => void): void {
     }
 }
 
+
+async function getClientIP(timeoutMs: number = 1000): Promise<string | null> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+        const response: Response = await fetch('https://api.ipify.org?format=json', {
+            signal: controller.signal
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data: {ip: string} = await response.json();
+        return data.ip;
+    } catch (error) {
+        if (error instanceof Error) {
+            if (error.name === 'AbortError') {
+                console.error('Request timed out');
+            } else {
+                console.error('Error fetching IP:', error.message);
+            }
+        } else {
+            console.error('An unknown error occurred');
+        }
+        return null;
+    } finally {
+        clearTimeout(timeoutId);
+    }
+}
 
 
 

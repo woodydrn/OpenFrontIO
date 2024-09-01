@@ -8,6 +8,7 @@ import {Client} from './Client';
 import {ClientMessage, ClientMessageSchema} from '../core/Schemas';
 import {GamePhase} from './GameServer';
 import {getConfig} from '../core/configuration/Config';
+import {LogSeverity, slog} from './StructuredLog';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,11 +32,10 @@ app.get('/lobbies', (req, res) => {
 wss.on('connection', (ws) => {
 
     ws.on('message', (message: string) => {
-        console.log(`got message ${message}`)
         const clientMsg: ClientMessage = ClientMessageSchema.parse(JSON.parse(message))
+        slog('websocket_msg', 'server received websocket message', clientMsg, LogSeverity.DEBUG)
         if (clientMsg.type == "join") {
-            console.log('got join request')
-            gm.addClient(new Client(clientMsg.clientID, ws), clientMsg.gameID, clientMsg.lastTurn)
+            gm.addClient(new Client(clientMsg.clientID, clientMsg.clientIP, ws), clientMsg.gameID, clientMsg.lastTurn)
         }
         // TODO: send error message
     })
