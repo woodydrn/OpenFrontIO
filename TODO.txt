@@ -81,6 +81,7 @@
 * Create exit to menu button DONE 9/2/2024
 * show next game in menu DONE 9/2/2024
 * BUG: attacks starts slow but gets faster DONE 9/2/2024
+* BUG: can't join game if click with 1s before start DONE 9/2/2024
 * test & deploy game
 
 --- v2 Release

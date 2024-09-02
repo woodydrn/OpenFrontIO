@@ -134,7 +134,7 @@ export class GameServer {
             return GamePhase.Lobby
         }
 
-        if (this.clients.length == 0) {
+        if (this.clients.length == 0 && Date.now() > this.createdAt + this.config.lobbyLifetime() + 30 * 60) { // wait at least 30s before ending game
             return GamePhase.Finished
         }
 

@@ -100,6 +100,7 @@ class Client {
     }
 
     private async joinLobby(lobby: Lobby) {
+        console.log(`joining lobby ${lobby.id}`)
         const lobbyButton = document.getElementById('lobby-button');
         if (lobbyButton) {
             this.isLobbyHighlighted = !this.isLobbyHighlighted;
