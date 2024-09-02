@@ -13,8 +13,6 @@ export class AttackExecution implements Execution {
 
     private mg: MutableGame
 
-    private numTilesWithEnemy = 0
-
     constructor(
         private troops: number,
         private _ownerID: PlayerID,
@@ -30,7 +28,6 @@ export class AttackExecution implements Execution {
         if (!this.active) {
             return
         }
-
 
         // TODO: remove this and fix directed expansion.
         this.targetCell = null
@@ -84,9 +81,9 @@ export class AttackExecution implements Execution {
             return
         }
 
-        let numTilesPerTick = this.mg.config().attackTilesPerTick(this._owner, this.target, this.numTilesWithEnemy + this.random.nextInt(0, 5))
+        let numTilesPerTick = this.mg.config().attackTilesPerTick(this._owner, this.target, this.toConquer.size() + this.random.nextInt(0, 5))
 
-        let tries = 0
+
         while (numTilesPerTick > 0) {
             if (this.troops < 1) {
                 this.active = false
@@ -109,7 +106,6 @@ export class AttackExecution implements Execution {
                 continue
             }
             this.addNeighbors(tileToConquer)
-
             const {attackerTroopLoss, defenderTroopLoss, tilesPerTickUsed} = this.mg.config().attackLogic(this._owner, this.target, tileToConquer)
             numTilesPerTick -= tilesPerTickUsed
             this.troops -= attackerTroopLoss
@@ -126,7 +122,6 @@ export class AttackExecution implements Execution {
             if (neighbor.isWater() || neighbor.owner() != this.target) {
                 continue
             }
-            this.numTilesWithEnemy += 1
             let numOwnedByMe = neighbor.neighbors()
                 .filter(t => t.isLand())
                 .filter(t => t.owner() == this._owner)

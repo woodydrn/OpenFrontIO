@@ -14,7 +14,9 @@ export function slog(eventType: string, description, data: any, severity = LogSe
         data: data
     };
     if (process.env.GAME_ENV == 'dev') {
-        console.log(description)
+        if (severity != LogSeverity.DEBUG) {
+            console.log(description)
+        }
     } else {
         console.log(JSON.stringify(logEntry));
     }

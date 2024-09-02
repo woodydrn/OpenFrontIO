@@ -80,7 +80,7 @@
 * remove tiny islands DONE 9/1/2024
 * Create exit to menu button DONE 9/2/2024
 * show next game in menu DONE 9/2/2024
-* BUG: attacks starts slow but gets faster
+* BUG: attacks starts slow but gets faster DONE 9/2/2024
 * test & deploy game
 
 --- v2 Release
