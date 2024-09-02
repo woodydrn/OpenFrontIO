@@ -33,7 +33,7 @@ export class BotSpawner {
             return null
         }
         for (const spawn of this.bots) {
-            if (manhattanDist(new Cell(spawn.x, spawn.y), tile.cell()) < 70) {
+            if (manhattanDist(new Cell(spawn.x, spawn.y), tile.cell()) < 30) {
                 return null
             }
         }

@@ -73,10 +73,10 @@
 * end game when no players left (or after 1 hour or so?) DONE 9/1/2024
 * add structured logging DONE 9/1/2024
 * improve background image DONE 9/1/2024
+* make attack execution stream tiles to pq DONE 9/1/2024
 * center map on game start
 * make mediterranion ocean, fix panama canal
 * remove tiny islands
-* make attack execution stream tiles to pq
 * Create exit to menu button
 * use better favicon
 * show next game in menu

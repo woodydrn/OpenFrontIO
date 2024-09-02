@@ -14,7 +14,6 @@ export class AttackExecution implements Execution {
     private mg: MutableGame
 
     private numTilesWithEnemy = 0
-    private borderTiles: Set<Tile> = new Set()
 
     constructor(
         private troops: number,
@@ -60,14 +59,21 @@ export class AttackExecution implements Execution {
                 // Existing attack on same target, add troops
                 if (otherAttack._owner == this._owner && otherAttack.targetID == this.targetID) {
                     otherAttack.troops += this.troops
-                    otherAttack.calculateToConquer()
+                    otherAttack.refreshToConquer()
                     this.active = false
                     return
                 }
             }
         }
 
-        this.calculateToConquer()
+        this.refreshToConquer()
+    }
+
+    private refreshToConquer() {
+        this.toConquer.clear()
+        for (const tile of this._owner.borderTiles()) {
+            this.addNeighbors(tile)
+        }
     }
 
     tick(ticks: number) {
@@ -79,40 +85,31 @@ export class AttackExecution implements Execution {
         }
 
         let numTilesPerTick = this.mg.config().attackTilesPerTick(this._owner, this.target, this.numTilesWithEnemy + this.random.nextInt(0, 5))
-        if (this.targetCell != null) {
-            numTilesPerTick /= 2
-        }
-        let badTiles = 0
+
+        let tries = 0
         while (numTilesPerTick > 0) {
             if (this.troops < 1) {
                 this.active = false
                 return
             }
 
-            if (this.toConquer.size() < this.numTilesWithEnemy / 1.2) {
-                this.calculateToConquer()
-            }
-            if (badTiles > 1000) {
-                console.log('bad tiles')
-                this.borderTiles.clear()
-                this.calculateToConquer()
-                badTiles = 0
-                continue
-            }
             if (this.toConquer.size() == 0) {
-                badTiles = 0
-                this.active = false
-                this._owner.addTroops(this.troops)
-                return
+                this.refreshToConquer()
+                if (this.toConquer.size() == 0) {
+                    this.active = false
+                    this._owner.addTroops(this.troops)
+                    return
+                }
             }
 
-            const toConquerContainer = this.toConquer.dequeue()
-            const tileToConquer: Tile = toConquerContainer.tile
+            const tileToConquer = this.toConquer.dequeue().tile
+
             const onBorder = tileToConquer.neighbors().filter(t => t.owner() == this._owner).length > 0
             if (tileToConquer.owner() != this.target || !onBorder) {
-                badTiles++
                 continue
             }
+            this.addNeighbors(tileToConquer)
+
             const {attackerTroopLoss, defenderTroopLoss, tilesPerTickUsed} = this.mg.config().attackLogic(this._owner, this.target, tileToConquer)
             numTilesPerTick -= tilesPerTickUsed
             this.troops -= attackerTroopLoss
@@ -120,58 +117,52 @@ export class AttackExecution implements Execution {
                 this.target.removeTroops(defenderTroopLoss)
             }
             this._owner.conquer(tileToConquer)
-            if (this.target.isPlayer() && this.target.numTilesOwned() < 100) {
-                for (let i = 0; i < 10; i++) {
-                    for (const tile of this.target.tiles()) {
-                        if (tile.borders(this._owner)) {
-                            this._owner.conquer(tile)
-                        } else {
-                            for (const neighbor of tile.neighbors()) {
-                                const no = neighbor.owner()
-                                if (no.isPlayer() && no != this.target) {
-                                    this.mg.player(no.id()).conquer(tile)
-                                    break
-                                }
+            this.checkDefenderDead()
+        }
+    }
+
+    private addNeighbors(tile: Tile) {
+        for (const neighbor of tile.neighbors()) {
+            if (neighbor.isWater() || neighbor.owner() != this.target) {
+                continue
+            }
+            this.numTilesWithEnemy += 1
+            let numOwnedByMe = neighbor.neighbors()
+                .filter(t => t.isLand())
+                .filter(t => t.owner() == this._owner)
+                .length
+            let dist = 0
+            if (this.targetCell != null) {
+                dist = manhattanDist(tile.cell(), this.targetCell)
+            }
+            if (numOwnedByMe > 2) {
+                numOwnedByMe = 10
+            }
+            this.toConquer.enqueue(new TileContainer(
+                neighbor,
+                this.random.nextInt(0, 2) - numOwnedByMe + Math.floor(tile.magnitude() / 10),
+            ))
+        }
+    }
+
+    private checkDefenderDead() {
+        if (this.target.isPlayer() && this.target.numTilesOwned() < 100) {
+            for (let i = 0; i < 10; i++) {
+                for (const tile of this.target.tiles()) {
+                    if (tile.borders(this._owner)) {
+                        this._owner.conquer(tile)
+                    } else {
+                        for (const neighbor of tile.neighbors()) {
+                            const no = neighbor.owner()
+                            if (no.isPlayer() && no != this.target) {
+                                this.mg.player(no.id()).conquer(tile)
+                                break
                             }
                         }
                     }
                 }
             }
         }
-    }
-
-    private calculateToConquer() {
-        this.numTilesWithEnemy = 0
-        this.toConquer.clear()
-
-        const newBorder: Set<Tile> = new Set()
-        // TODO: figure out existing border
-        let existingBorder: ReadonlySet<Tile> = new Set<Tile>()
-        if (existingBorder.size == 0) {
-            existingBorder = this._owner.borderTiles()
-        }
-        for (const tile of existingBorder) {
-            for (const neighbor of tile.neighbors()) {
-                if (neighbor.isWater() || neighbor.owner() != this.target) {
-                    continue
-                }
-                newBorder.add(neighbor)
-                this.numTilesWithEnemy += 1
-                let numOwnedByMe = neighbor.neighbors()
-                    .filter(t => t.isLand())
-                    .filter(t => t.owner() == this._owner)
-                    .length
-                let dist = 0
-                if (this.targetCell != null) {
-                    dist = manhattanDist(tile.cell(), this.targetCell)
-                }
-                // if (numOwnedByMe > 3) {
-                //     numOwnedByMe = 1000
-                // }
-                this.toConquer.enqueue(new TileContainer(neighbor, this.random.nextInt(0, 4) - numOwnedByMe + tile.magnitude() / 5))
-            }
-        }
-        this.borderTiles = newBorder
     }
 
     owner(): MutablePlayer {
