@@ -78,7 +78,7 @@
 * use better favicon DONE 9/1/2024
 * make mediterranion ocean, fix panama canal DONE 9/1/2024
 * remove tiny islands DONE 9/1/2024
-* Create exit to menu button
+* Create exit to menu button DONE 9/2/2024
 * show next game in menu
 * BUG: attacks starts slow but gets faster
 * BUG: sometimes doesn't connect to lobby
@@ -86,10 +86,11 @@
 
 --- v2 Release
 
+* more random names for game id & client id
 * Make fake humans
 * directed expansion
 * win condition & popup
-* BUG: tiles get left behind during conquer
+* BUG: tiles get left behind during conquer; still problem?
 * Load terrain dataImage in background
 * BUG: shore tiles left behind during conquer
 * BUG: when sending boat to TerraNullius, only takes one tile

@@ -23,6 +23,9 @@ export class GameRenderer {
 
 	private theme: Theme
 
+	private exitButton: HTMLButtonElement;
+
+
 	constructor(private gs: Game, private terrainRenderer: TerrainRenderer) {
 		this.theme = gs.config().theme()
 		this.nameRenderer = new NameRenderer(gs, this.theme)
@@ -56,8 +59,51 @@ export class GameRenderer {
 		this.territoryContext = this.territoryCanvas.getContext('2d')
 		this.territoryContext.globalAlpha = 0.4;
 
+		this.createExitButton()
+
 
 		requestAnimationFrame(() => this.renderGame());
+	}
+
+
+
+	createExitButton() {
+		this.exitButton = document.createElement('button');
+		this.exitButton.innerHTML = '&#10005;'; // HTML entity for "×" (multiplication sign)
+		this.exitButton.style.position = 'fixed';
+		this.exitButton.style.top = '20px';
+		this.exitButton.style.right = '20px';
+		this.exitButton.style.zIndex = '1000';
+		this.exitButton.style.width = '40px';
+		this.exitButton.style.height = '40px';
+		this.exitButton.style.fontSize = '20px';
+		this.exitButton.style.fontWeight = 'bold';
+		this.exitButton.style.backgroundColor = 'rgba(255, 0, 0, 0.4)'; // More translucent red
+		this.exitButton.style.color = 'white';
+		this.exitButton.style.border = 'none';
+		this.exitButton.style.borderRadius = '50%';
+		this.exitButton.style.cursor = 'pointer';
+		this.exitButton.style.display = 'flex';
+		this.exitButton.style.justifyContent = 'center';
+		this.exitButton.style.alignItems = 'center';
+		this.exitButton.style.transition = 'background-color 0.3s';
+
+		this.exitButton.addEventListener('mouseover', () => {
+			this.exitButton.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // Less translucent on hover
+		});
+
+		this.exitButton.addEventListener('mouseout', () => {
+			this.exitButton.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // Back to more translucent
+		});
+
+		this.exitButton.addEventListener('click', () => this.onExitButtonClick());
+		document.body.appendChild(this.exitButton);
+	}
+
+	onExitButtonClick() {
+		console.log('Button clicked!');
+		window.location.reload();
+		// Add your button action here
 	}
 
 	resizeCanvas() {
