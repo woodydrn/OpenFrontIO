@@ -16,7 +16,7 @@ export class DefaultConfig implements Config {
         return 100
     }
     numBots(): number {
-        return 250
+        return 350
     }
     turnIntervalMs(): number {
         return 100

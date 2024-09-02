@@ -74,12 +74,14 @@
 * add structured logging DONE 9/1/2024
 * improve background image DONE 9/1/2024
 * make attack execution stream tiles to pq DONE 9/1/2024
-* center map on game start
-* make mediterranion ocean, fix panama canal
-* remove tiny islands
+* center map on game start DONE 9/1/2024
+* use better favicon DONE 9/1/2024
+* make mediterranion ocean, fix panama canal DONE 9/1/2024
+* remove tiny islands DONE 9/1/2024
 * Create exit to menu button
-* use better favicon
 * show next game in menu
+* BUG: attacks starts slow but gets faster
+* BUG: sometimes doesn't connect to lobby
 * test & deploy game
 
 --- v2 Release
@@ -93,5 +95,4 @@
 * BUG: when sending boat to TerraNullius, only takes one tile
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
 * REFACTOR: ocean is considered TerraNullius ?
-* BUG: sometimes islands don't get removed
 

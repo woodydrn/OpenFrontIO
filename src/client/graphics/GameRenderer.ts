@@ -12,9 +12,9 @@ export class GameRenderer {
 
 	private territoryContext: CanvasRenderingContext2D
 
-	private scale: number = .8
-	private offsetX: number = 0
-	private offsetY: number = 100
+	private scale: number = 1.8
+	private offsetX: number = -350
+	private offsetY: number = -200
 
 	private context: CanvasRenderingContext2D
 
