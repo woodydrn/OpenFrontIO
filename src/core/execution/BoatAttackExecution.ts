@@ -138,14 +138,14 @@ export class BoatAttackExecution implements Execution {
     }
 
     private closestShoreTileToTarget(player: Player, target: Cell): Tile | null {
-        const shoreTiles = Array.from(player.borderTiles()).filter(t => t.onShore() && t.neighbors().filter(n => n.isOcean()).length > 0)
+        const shoreTiles = Array.from(player.borderTiles()).filter(t => t.isOceanShore())
         if (shoreTiles.length == 0) {
             return null
         }
 
         return shoreTiles.reduce((closest, current) => {
-            const closestDistance = manhattanDist(target, closest.cell());
-            const currentDistance = manhattanDist(target, current.cell());
+            const closestDistance = manhattanDistWrapped(target, closest.cell(), this.mg.width());
+            const currentDistance = manhattanDistWrapped(target, current.cell(), this.mg.width());
             return currentDistance < closestDistance ? current : closest;
         });
     }
