@@ -6,10 +6,10 @@ export const devConfig = new class extends DefaultConfig {
         return 40
     }
     gameCreationRate(): number {
-        return 3 * 1000
+        return 2 * 1000
     }
     lobbyLifetime(): number {
-        return 3 * 1000
+        return 4 * 1000
     }
     turnIntervalMs(): number {
         return 100

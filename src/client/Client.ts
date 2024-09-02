@@ -11,26 +11,15 @@ import favicon from '../../resources/images/Favicon.png';
 import './styles.css';
 
 
-
-// import WebSocket from 'ws';
-
 class Client {
-    private hasJoined = false
-
-    private socket: WebSocket | null = null;
     private terrainMap: Promise<TerrainMap>
     private game: ClientGame
-
-    private lobbiesContainer: HTMLElement | null;
     private lobbiesInterval: NodeJS.Timeout | null = null;
     private isLobbyHighlighted: boolean = false;
-
-    private random = new PseudoRandom(1234)
 
     private ip: Promise<string | null> = null
 
     constructor() {
-        this.lobbiesContainer = document.getElementById('lobbies-container');
     }
 
     initialize(): void {
@@ -86,6 +75,13 @@ class Client {
             timerElement.textContent = `Starts in: ${timeRemaining}s`;
         }
         if (playerCountElement) playerCountElement.textContent = `Players: ${lobby.numClients}`;
+
+        if (lobbies.length > 1) {
+            const nextLobby = lobbies[1]
+            const nextGame = document.getElementById('next-game');
+            nextGame.textContent = `Next Game: ${nextLobby.id}`
+        }
+
     }
 
     async fetchLobbies(): Promise<Lobby[]> {
@@ -161,7 +157,6 @@ function setupUsernameCallback(callback: (username: string) => void): void {
     }
 }
 
-
 async function getClientIP(timeoutMs: number = 1000): Promise<string | null> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -192,8 +187,6 @@ async function getClientIP(timeoutMs: number = 1000): Promise<string | null> {
         clearTimeout(timeoutId);
     }
 }
-
-
 
 // Initialize the client when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

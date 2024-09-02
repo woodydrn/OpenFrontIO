@@ -22,7 +22,7 @@ export class DefaultConfig implements Config {
         return 100
     }
     gameCreationRate(): number {
-        return 20 * 1000
+        return 10 * 1000
     }
     lobbyLifetime(): number {
         return 20 * 1000
