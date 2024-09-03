@@ -115,7 +115,6 @@ export class GameServer {
         this.clients.forEach(c => {
             c.ws.send(msg)
         })
-
     }
 
     endGame() {

@@ -27,7 +27,7 @@ export type ClientLeaveMessage = z.infer<typeof ClientLeaveMessageSchema>
 
 export interface Lobby {
     id: string;
-    startTime: number;
+    msUntilStart: number;
     numClients: number;
 }
 

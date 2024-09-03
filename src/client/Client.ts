@@ -71,7 +71,7 @@ class Client {
 
         if (nameElement) nameElement.textContent = `Game ${lobby.id}`;
         if (timerElement) {
-            const timeRemaining = Math.max(0, Math.floor((lobby.startTime - Date.now()) / 1000));
+            const timeRemaining = Math.max(0, Math.floor((lobby.msUntilStart) / 1000));
             timerElement.textContent = `Starts in: ${timeRemaining}s`;
         }
         if (playerCountElement) playerCountElement.textContent = `Players: ${lobby.numClients}`;
