@@ -1,5 +1,5 @@
 import {PriorityQueue} from "@datastructures-js/priority-queue";
-import {BoatEvent, Cell, Game, Tile, TileEvent} from "../../core/Game";
+import {Boat, BoatEvent, Cell, Game, Tile, TileEvent} from "../../core/Game";
 import {PseudoRandom} from "../../core/PseudoRandom";
 import {Colord} from "colord";
 import {bfs, dist} from "../../core/Util";
@@ -14,6 +14,7 @@ export class TerritoryRenderer {
     private random = new PseudoRandom(123)
     private theme: Theme = null
 
+    private boatToTrail = new Map<Boat, Set<Tile>>()
 
 
     constructor(private game: Game) {
@@ -52,14 +53,27 @@ export class TerritoryRenderer {
     }
 
     boatEvent(event: BoatEvent) {
+        if (!this.boatToTrail.has(event.boat)) {
+            this.boatToTrail.set(event.boat, new Set<Tile>())
+        }
+        const trail = this.boatToTrail.get(event.boat)
+        trail.add(event.oldTile)
         bfs(event.oldTile, dist(event.oldTile, 3)).forEach(t => {
-            // this.clearCell(t.cell())
-            // this.paintCell(t.cell(), new Colord({r: 0, g: 0, b: 0}), 200)
             this.paintTerritory(t)
         })
         if (event.boat.isActive()) {
+            bfs(event.boat.tile(), dist(event.boat.tile(), 4)).forEach(
+                t => {
+                    if (trail.has(t)) {
+                        this.paintCell(t.cell(), this.theme.borderColor(event.boat.owner().id()), 255)
+                    }
+                }
+            )
             bfs(event.boat.tile(), dist(event.boat.tile(), 2)).forEach(t => this.paintCell(t.cell(), this.theme.borderColor(event.boat.owner().id()), 255))
             bfs(event.boat.tile(), dist(event.boat.tile(), 1)).forEach(t => this.paintCell(t.cell(), this.theme.territoryColor(event.boat.owner().id()), 150))
+        } else {
+            trail.forEach(t => this.paintTerritory(t))
+            this.boatToTrail.delete(event.boat)
         }
     }
 
