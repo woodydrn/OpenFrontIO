@@ -5,6 +5,9 @@ import {DragEvent, ZoomEvent} from "../InputHandler";
 import {NameRenderer} from "./NameRenderer";
 import {TerrainRenderer} from "./TerrainRenderer";
 import {TerritoryRenderer} from "./TerritoryRenderer";
+import {ClientID} from "../../core/Schemas";
+import {renderTroops} from "./Utils";
+import {UIRenderer} from "./UIRenderer";
 
 export class GameRenderer {
 	private territoryCanvas: HTMLCanvasElement
@@ -20,16 +23,16 @@ export class GameRenderer {
 
 	private nameRenderer: NameRenderer;
 	private territoryRenderer: TerritoryRenderer;
+	private uiRenderer: UIRenderer;
 
 	private theme: Theme
 
-	private exitButton: HTMLButtonElement;
 
-
-	constructor(private gs: Game, private terrainRenderer: TerrainRenderer) {
+	constructor(private gs: Game, private clientID: ClientID, private terrainRenderer: TerrainRenderer) {
 		this.theme = gs.config().theme()
 		this.nameRenderer = new NameRenderer(gs, this.theme)
 		this.territoryRenderer = new TerritoryRenderer(gs)
+		this.uiRenderer = new UIRenderer(gs, this.theme, clientID)
 	}
 
 	initialize() {
@@ -46,6 +49,7 @@ export class GameRenderer {
 		this.nameRenderer.initialize()
 		this.terrainRenderer.init()
 		this.territoryRenderer.init()
+		this.uiRenderer.init()
 
 
 		document.body.appendChild(this.canvas);
@@ -59,51 +63,7 @@ export class GameRenderer {
 		this.territoryContext = this.territoryCanvas.getContext('2d')
 		this.territoryContext.globalAlpha = 0.4;
 
-		this.createExitButton()
-
-
 		requestAnimationFrame(() => this.renderGame());
-	}
-
-
-
-	createExitButton() {
-		this.exitButton = document.createElement('button');
-		this.exitButton.innerHTML = '&#10005;'; // HTML entity for "×" (multiplication sign)
-		this.exitButton.style.position = 'fixed';
-		this.exitButton.style.top = '20px';
-		this.exitButton.style.right = '20px';
-		this.exitButton.style.zIndex = '1000';
-		this.exitButton.style.width = '40px';
-		this.exitButton.style.height = '40px';
-		this.exitButton.style.fontSize = '20px';
-		this.exitButton.style.fontWeight = 'bold';
-		this.exitButton.style.backgroundColor = 'rgba(255, 0, 0, 0.4)'; // More translucent red
-		this.exitButton.style.color = 'white';
-		this.exitButton.style.border = 'none';
-		this.exitButton.style.borderRadius = '50%';
-		this.exitButton.style.cursor = 'pointer';
-		this.exitButton.style.display = 'flex';
-		this.exitButton.style.justifyContent = 'center';
-		this.exitButton.style.alignItems = 'center';
-		this.exitButton.style.transition = 'background-color 0.3s';
-
-		this.exitButton.addEventListener('mouseover', () => {
-			this.exitButton.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // Less translucent on hover
-		});
-
-		this.exitButton.addEventListener('mouseout', () => {
-			this.exitButton.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // Back to more translucent
-		});
-
-		this.exitButton.addEventListener('click', () => this.onExitButtonClick());
-		document.body.appendChild(this.exitButton);
-	}
-
-	onExitButtonClick() {
-		console.log('Button clicked!');
-		window.location.reload();
-		// Add your button action here
 	}
 
 	resizeCanvas() {
@@ -147,11 +107,13 @@ export class GameRenderer {
 		this.context.restore()
 
 		this.renderUIBar()
+		this.uiRenderer.render(this.context)
 
 		requestAnimationFrame(() => this.renderGame());
 	}
 
 
+	// TODO: move to UIRenderer
 	renderUIBar() {
 		if (!this.gs.inSpawnPhase()) {
 			return
@@ -190,21 +152,6 @@ export class GameRenderer {
 		this.canvas.width = Math.ceil(width / window.devicePixelRatio);
 		this.canvas.height = Math.ceil(height / window.devicePixelRatio);
 	}
-
-	// paintTerritory(tile: Tile) {
-	// 	this.clearCell(tile.cell())
-	// 	// if (!tile.hasOwner()) {
-	// 	// 	this.clearCell(tile.cell())
-	// 	// 	return
-	// 	// }
-	// 	// this.territoryContext.clearRect(tile.cell().x, tile.cell().y, 1, 1);
-	// 	if (tile.isBorder()) {
-	// 		this.territoryContext.fillStyle = this.theme.borderColor(tile.owner().id()).toRgbString()
-	// 	} else {
-	// 		this.territoryContext.fillStyle = this.theme.territoryColor(tile.owner().id()).alpha(100).toHex()
-	// 	}
-	// 	this.territoryContext.fillRect(tile.cell().x, tile.cell().y, 1, 1);
-	// }
 
 	paintCell(cell: Cell, color: Colord) {
 		color = color.alpha(10)  // Assign the result back to color

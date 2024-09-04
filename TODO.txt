@@ -83,24 +83,23 @@
 * BUG: attacks starts slow but gets faster DONE 9/2/2024
 * BUG: can't join game if click with 1s before start DONE 9/2/2024
 * boat not going around world dist vs distwrapped DONE 9/2/2024
-
-* test & deploy game
+* test & deploy game DONE 9/2/2024
 
 --- v2 Release
 
+* put number of troops ui DONE 9/3/2024
+* boats leave trails
 * names don't appear when zoomed out
-* don't join game for reason
 * make names bigger
 * send boat even if touching
-* put number of troops ui
-* boats leave trails
+* directed expansion
 * more random names for game id & client id
 * Make fake humans
-* directed expansion
-* win condition & popup
-* BUG: tiles get left behind during conquer; still problem?
+* UI: win condition & popup
+* UI: boats
+* UI: current attacks
+* UI: leader board
 * Load terrain dataImage in background
-* BUG: shore tiles left behind during conquer
 * BUG: when sending boat to TerraNullius, only takes one tile
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
 * REFACTOR: ocean is considered TerraNullius ?

@@ -3,6 +3,7 @@ import {PseudoRandom} from "../../core/PseudoRandom"
 import {calculateBoundingBox} from "../../core/Util"
 import {Theme} from "../../core/configuration/Config"
 import {placeName} from "./NameBoxCalculator"
+import {renderTroops} from "./Utils"
 
 class RenderInfo {
     public isVisible = true
@@ -123,19 +124,7 @@ export class NameRenderer {
 
         context.fillText(render.player.name(), nameCenterX, nameCenterY - render.fontSize / 2);
         context.font = `bold ${render.fontSize}px ${this.theme.font()}`;
-        let troopsStr: string = ""
-        let troops = render.player.troops() / 10
-
-        if (troops > 100000) {
-            troopsStr = String(Math.floor(troops / 1000)) + "K"
-        } else if (troops > 10000) {
-            troopsStr = String((troops / 1000).toFixed(1)) + "K"
-        } else if (troops > 1000) {
-            troopsStr = String((troops / 1000).toFixed(2)) + "K"
-        }
-        else {
-            troopsStr = String(Math.floor(troops))
-        }
-        context.fillText(troopsStr, nameCenterX, nameCenterY + render.fontSize);
+        
+        context.fillText(renderTroops(render.player.troops()), nameCenterX, nameCenterY + render.fontSize);
     }
 }
