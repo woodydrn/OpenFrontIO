@@ -90,7 +90,7 @@
 * put number of troops ui DONE 9/3/2024
 * names don't appear when zoomed out DONE 9/3/2024
 * make names bigger DONE 9/3/2024
-* boats leave trails
+* boats leave trails DONE 9/3/2024
 * send boat even if touching
 * directed expansion
 * more random names for game id & client id

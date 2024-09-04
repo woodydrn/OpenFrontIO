@@ -65,7 +65,7 @@ export class TerritoryRenderer {
             bfs(event.boat.tile(), dist(event.boat.tile(), 4)).forEach(
                 t => {
                     if (trail.has(t)) {
-                        this.paintCell(t.cell(), this.theme.borderColor(event.boat.owner().id()), 255)
+                        this.paintCell(t.cell(), this.theme.territoryColor(event.boat.owner().id()), 150)
                     }
                 }
             )
