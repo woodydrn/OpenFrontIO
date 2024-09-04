@@ -130,6 +130,6 @@ export function largestRectangleInHistogram(widths: number[]): Rectangle {
 export function calculateFontSize(rectangle: Rectangle, name: string): number {
     // This is a simplified calculation. You might want to adjust it based on your specific font and rendering system.
     const widthConstrained = rectangle.width / name.length;
-    const heightConstrained = rectangle.height / name.length;
+    const heightConstrained = rectangle.height / 3;
     return Math.min(widthConstrained, heightConstrained);
 }

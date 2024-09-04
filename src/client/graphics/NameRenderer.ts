@@ -86,11 +86,11 @@ export class NameRenderer {
     isVisible(render: RenderInfo, min: Cell, max: Cell): boolean {
         const ratio = (max.x - min.x) / Math.max(20, (render.boundingBox.max.x - render.boundingBox.min.x))
         if (render.player.isBot()) {
-            if (ratio > 25) {
+            if (ratio > 35) {
                 return false
             }
         } else {
-            if (ratio > 30) {
+            if (ratio > 35) {
                 return false
             }
         }
@@ -124,7 +124,7 @@ export class NameRenderer {
 
         context.fillText(render.player.name(), nameCenterX, nameCenterY - render.fontSize / 2);
         context.font = `bold ${render.fontSize}px ${this.theme.font()}`;
-        
+
         context.fillText(renderTroops(render.player.troops()), nameCenterX, nameCenterY + render.fontSize);
     }
 }

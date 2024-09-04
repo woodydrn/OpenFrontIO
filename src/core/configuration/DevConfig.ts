@@ -26,12 +26,12 @@ export const devConfig = new class extends DefaultConfig {
         return 5000
     }
 
-    troopAdditionRate(player: Player): number {
-        let max = Math.sqrt(player.numTilesOwned()) * 2000 + 10000 + 10000
-        max = Math.min(max, 1_000_000)
+    // troopAdditionRate(player: Player): number {
+    //     let max = Math.sqrt(player.numTilesOwned()) * 2000 + 10000 + 10000
+    //     max = Math.min(max, 1_000_000)
 
-        let toAdd = 10 + (player.troops() + Math.sqrt(player.troops() * player.numTilesOwned())) / 200 * 100
+    //     let toAdd = 10 + (player.troops() + Math.sqrt(player.troops() * player.numTilesOwned())) / 200 * 100
 
-        return Math.min(player.troops() + toAdd, max)
-    }
+    //     return Math.min(player.troops() + toAdd, max)
+    // }
 }
