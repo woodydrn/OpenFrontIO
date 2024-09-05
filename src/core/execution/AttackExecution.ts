@@ -17,6 +17,7 @@ export class AttackExecution implements Execution {
         private troops: number,
         private _ownerID: PlayerID,
         private targetID: PlayerID | null,
+        private sourceCell: Cell | null,
         private targetCell: Cell | null,
     ) { }
 
@@ -54,16 +55,18 @@ export class AttackExecution implements Execution {
                     }
                 }
                 // Existing attack on same target, add troops
-                if (otherAttack._owner == this._owner && otherAttack.targetID == this.targetID) {
+                if (otherAttack._owner == this._owner && otherAttack.targetID == this.targetID && this.sourceCell == otherAttack.sourceCell) {
                     otherAttack.troops += this.troops
-                    otherAttack.refreshToConquer()
                     this.active = false
                     return
                 }
             }
         }
-
-        this.refreshToConquer()
+        if (this.sourceCell != null) {
+            this.addNeighbors(mg.tile(this.sourceCell))
+        } else {
+            this.refreshToConquer()
+        }
     }
 
     private refreshToConquer() {

@@ -22,11 +22,14 @@ export class Executor {
 
     createExec(intent: Intent): Execution {
         if (intent.type == "attack") {
+            const source: Cell | null = intent.sourceX != null && intent.sourceY != null ? new Cell(intent.sourceX, intent.sourceY) : null
+            const target: Cell | null = intent.targetX != null && intent.targetY != null ? new Cell(intent.targetX, intent.targetY) : null
             return new AttackExecution(
                 intent.troops,
                 intent.attackerID,
                 intent.targetID,
-                new Cell(intent.targetX, intent.targetY)
+                source,
+                target,
             )
         } else if (intent.type == "spawn") {
             return new SpawnExecution(

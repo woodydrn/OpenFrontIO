@@ -286,6 +286,8 @@ export class ClientGame {
             attackerID: this.myPlayer.id(),
             targetID: targetID,
             troops: troops,
+            sourceX: null,
+            sourceY: null,
             targetX: cell.x,
             targetY: cell.y
         })

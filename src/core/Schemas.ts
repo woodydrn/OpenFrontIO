@@ -24,6 +24,7 @@ export type ClientIntentMessage = z.infer<typeof ClientIntentMessageSchema>
 export type ClientJoinMessage = z.infer<typeof ClientJoinMessageSchema>
 export type ClientLeaveMessage = z.infer<typeof ClientLeaveMessageSchema>
 
+// TODO: create Cell schema
 
 export interface Lobby {
     id: string;
@@ -42,8 +43,10 @@ export const AttackIntentSchema = BaseIntentSchema.extend({
     attackerID: z.string(),
     targetID: z.string().nullable(),
     troops: z.number(),
-    targetX: z.number(),
-    targetY: z.number()
+    sourceX: z.number().nullable(),
+    sourceY: z.number().nullable(),
+    targetX: z.number().nullable(),
+    targetY: z.number().nullable()
 });
 
 
