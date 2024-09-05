@@ -1,4 +1,3 @@
-import {functional} from "typia";
 import {Cell, Player, Tile} from "./Game";
 
 export function manhattanDist(c1: Cell, c2: Cell): number {
@@ -70,7 +69,7 @@ export function calculateBoundingBox(borderTiles: ReadonlySet<Tile>): {min: Cell
     return {min: new Cell(minX, minY), max: new Cell(maxX, maxY)}
 }
 
-export function inscribed(outer: { min: Cell; max: Cell }, inner: { min: Cell; max: Cell }): boolean {
+export function inscribed(outer: {min: Cell; max: Cell}, inner: {min: Cell; max: Cell}): boolean {
     return (
         outer.min.x <= inner.min.x &&
         outer.min.y <= inner.min.y &&

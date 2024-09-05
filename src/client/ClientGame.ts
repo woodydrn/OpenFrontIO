@@ -206,38 +206,48 @@ export class ClientGame {
             return
         }
 
-        if (tile.hasOwner()) {
-            // Attack Player
-            if (tile.isLand()) {
-                if (this.myPlayer.sharesBorderWith(tile.owner())) {
-                    this.sendAttackIntent(targetID, cell, this.gs.config().attackAmount(this.myPlayer, owner))
-                } else if (owner.isPlayer()) {
-                    console.log('going to send boat')
-                    this.sendBoatAttackIntent(targetID, cell, this.gs.config().boatAttackAmount(this.myPlayer, owner))
-                }
-            }
-            return
-        }
-
-
-
-        // Attack Terra Nullius
         if (tile.isLand()) {
-
-            const neighbors = Array.from(bfs(tile, and((t) => t.isLand(), dist(tile, 100))));
-            for (const n of neighbors) {
-                if (this.myPlayer.borderTiles().has(n)) {
-                    this.sendAttackIntent(targetID, cell, this.gs.config().attackAmount(this.myPlayer, owner))
-                    return
+            const bordersWithDists: Tile[] = []
+            for (const border of this.myPlayer.borderTiles()) {
+                for (const n of border.neighbors()) {
+                    if (n.owner() == tile.owner()) {
+                        bordersWithDists.push(n)
+                    }
                 }
             }
 
-            const tn = Array.from(bfs(tile, dist(tile, 30)))
-                .filter(t => t.isOceanShore())
-                .filter(t => !t.hasOwner())
-                .sort((a, b) => manhattanDist(tile.cell(), a.cell()) - manhattanDist(tile.cell(), b.cell()))
-            if (tn.length > 0) {
-                this.sendBoatAttackIntent(targetID, tn[0].cell(), this.gs.config().boatAttackAmount(this.myPlayer, owner))
+            // Border with enemy sorted by distance to click tile.
+            const borderWithDists = bordersWithDists.map(t => ({
+                dist: manhattanDist(t.cell(), tile.cell()),
+                tile: t
+            })).sort((a, b) => a.dist - b.dist);
+
+
+            const enemyShoreDists = Array.from(bfs(
+                tile,
+                and((t) => t.isLand() && t.owner() == tile.owner(), dist(tile, 400))
+            )).filter(t => t.isOceanShore()).map(t => ({
+                dist: manhattanDist(t.cell(), tile.cell()),
+                tile: t
+            })).sort((a, b) => a.dist - b.dist);
+
+
+
+            if (bordersWithDists.length == 0 && enemyShoreDists.length == 0) {
+                return
+            }
+
+
+            let borderTileClosest = 10000000
+            let enemyShoreClosest = 10000
+            if (bordersWithDists.length > 0) {
+                borderTileClosest = borderWithDists[0].dist
+            }
+            if (enemyShoreDists.length > 0) {
+                enemyShoreClosest = enemyShoreDists[0].dist
+            }
+            if (enemyShoreClosest < borderTileClosest) {
+                this.sendBoatAttackIntent(targetID, enemyShoreDists[0].tile.cell(), this.gs.config().boatAttackAmount(this.myPlayer, owner))
             } else {
                 this.sendAttackIntent(targetID, cell, this.gs.config().attackAmount(this.myPlayer, owner))
             }

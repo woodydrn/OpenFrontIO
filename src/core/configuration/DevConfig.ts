@@ -16,7 +16,7 @@ export const devConfig = new class extends DefaultConfig {
     }
 
     numBots(): number {
-        return 350
+        return 50
     }
 
     startTroops(playerInfo: PlayerInfo): number {
@@ -26,12 +26,11 @@ export const devConfig = new class extends DefaultConfig {
         return 5000
     }
 
-    // troopAdditionRate(player: Player): number {
-    //     let max = Math.sqrt(player.numTilesOwned()) * 2000 + 10000 + 10000
-    //     max = Math.min(max, 1_000_000)
-
-    //     let toAdd = 10 + (player.troops() + Math.sqrt(player.troops() * player.numTilesOwned())) / 200 * 100
-
-    //     return Math.min(player.troops() + toAdd, max)
-    // }
+    troopAdditionRate(player: Player): number {
+        if (player.isBot()) {
+            return 10000
+        } else {
+            return 100000
+        }
+    }
 }

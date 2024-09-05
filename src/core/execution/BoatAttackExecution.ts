@@ -63,9 +63,9 @@ export class BoatAttackExecution implements Execution {
         this.troops = Math.min(this.troops, this.attacker.troops())
         this.attacker.removeTroops(this.troops)
 
-        this.src = this.closestShoreTileToTarget(this.attacker, this.cell)
+        this.src = this.closestShoreTile(this.attacker, this.cell)
         if (this.target.isPlayer()) {
-            this.dst = this.closestShoreTileToTarget(this.target, this.cell)
+            this.dst = this.closestShoreTile(this.target, this.cell)
         } else {
             this.dst = this.mg.tile(this.cell)
         }
@@ -137,7 +137,7 @@ export class BoatAttackExecution implements Execution {
         return this.active
     }
 
-    private closestShoreTileToTarget(player: Player, target: Cell): Tile | null {
+    private closestShoreTile(player: Player, target: Cell): Tile | null {
         const shoreTiles = Array.from(player.borderTiles()).filter(t => t.isOceanShore())
         if (shoreTiles.length == 0) {
             return null
