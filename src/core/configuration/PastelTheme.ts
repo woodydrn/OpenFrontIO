@@ -1,5 +1,5 @@
 import {Colord, colord, random} from "colord";
-import {PlayerID, Tile} from "../Game";
+import {PlayerID, TerrainType, Tile} from "../Game";
 import {Theme} from "./Config";
 import {time} from "console";
 import {PseudoRandom} from "../PseudoRandom";
@@ -86,59 +86,43 @@ export const pastelTheme = new class implements Theme {
     }
 
     terrainColor(tile: Tile): Colord {
-        if (tile.isLand()) {
-            if (tile.isShore()) {
-                return this.shore
-            }
-            // let mag = Math.min(tile.magnitude() + 4, 15)
-            // if (mag < 3) {
-            //     mag = 0
-            // }
-            let mag = tile.magnitude()
-
-            if (mag > 20) {
-                return colord({
-                    r: 250,
-                    g: 250,
-                    b: 250
-                })
-            }
-
-            if (mag < 5) {
-                return colord({
-                    r: 180,
-                    g: 200,
-                    b: 128
-                })
-            }
-            if (mag < 10) {
+        let mag = tile.magnitude()
+        if (tile.isShore()) {
+            return this.shore
+        }
+        switch (tile.terrain()) {
+            case TerrainType.Ocean:
+            case TerrainType.Lake:
+                const w = this.water.rgba
+                if (tile.isShorelineWater()) {
+                    return this.shorelineWater
+                }
+                if (tile.magnitude() < 7) {
+                    return colord({
+                        r: Math.max(w.r - 7 + mag, 0),
+                        g: Math.max(w.g - 7 + mag, 0),
+                        b: Math.max(w.b - 7 + mag, 0)
+                    })
+                }
+                return this.water
+            case TerrainType.Plains:
                 return colord({
                     r: 190,
-                    g: 200,
+                    g: 200 + 20 - 2 * mag,
                     b: 138
                 })
-            }
-
-            const delta = 2 * mag
-
-            return colord({
-                r: 190 + delta,
-                g: 193 + delta,
-                b: 138 + delta
-            })
-        } else {
-            const w = this.water.rgba
-            if (tile.isShorelineWater()) {
-                return this.shorelineWater
-            }
-            if (tile.magnitude() < 7) {
+            case TerrainType.Highland:
                 return colord({
-                    r: Math.max(w.r - 7 + tile.magnitude(), 0),
-                    g: Math.max(w.g - 7 + tile.magnitude(), 0),
-                    b: Math.max(w.b - 7 + tile.magnitude(), 0)
+                    r: 190 + 2 * mag,
+                    g: 193 + 2 * mag,
+                    b: 138 + 2 * mag
                 })
-            }
-            return this.water
+            case TerrainType.Mountain:
+                return colord({
+                    r: 220 + mag,
+                    g: 220 + mag,
+                    b: 220 + mag
+                })
         }
     }
 

@@ -18,6 +18,14 @@ export class Cell {
     toString(): string {return this.strRepr}
 }
 
+export enum TerrainType {
+    Plains,
+    Highland,
+    Mountain,
+    Lake,
+    Ocean
+}
+
 export interface ExecutionView {
     isActive(): boolean
     owner(): Player
@@ -48,6 +56,7 @@ export interface Tile {
     isShorelineWater(): boolean
     isOcean(): boolean
     isLake(): boolean
+    terrain(): TerrainType
     magnitude(): number
     owner(): Player | TerraNullius
     hasOwner(): boolean
@@ -55,7 +64,6 @@ export interface Tile {
     borders(other: Player | TerraNullius): boolean
     isInterior(): boolean
     cell(): Cell
-    game(): Game
     neighbors(): Tile[]
     neighborsWrapped(): Tile[]
     onShore(): boolean

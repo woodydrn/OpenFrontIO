@@ -1,4 +1,4 @@
-import {Cell} from './Game';
+import {Cell, TerrainType} from './Game';
 import binAsString from "!!binary-loader!../../resources/TopoWorldMap.bin";
 
 export class TerrainMap {
@@ -17,15 +17,11 @@ export class TerrainMap {
     }
 }
 
-export enum TerrainType {
-    Land,
-    Water
-}
-
 export class Terrain {
     public shoreline: boolean = false
-    public ocean: boolean = false
     public magnitude: number = 0
+    public ocean = false
+    public land = false
     constructor(public type: TerrainType) { }
 }
 
@@ -54,15 +50,35 @@ export async function loadTerrainMap(): Promise<TerrainMap> {
     for (let x = 0; x < width; x++) {
         for (let y = 0; y < height; y++) {
             const packedByte = fileData.charCodeAt(4 + y * width + x);  // +4 to skip dimension bytes
-            const type = (packedByte & 0b10000000) ? TerrainType.Land : TerrainType.Water;
+            const isLand = (packedByte & 0b10000000)
             const shoreline = !!(packedByte & 0b01000000);
             const ocean = !!(packedByte & 0b00100000);
             const magnitude = packedByte & 0b00011111;
 
+            let type: TerrainType = null
+            let land = false
+            if (isLand) {
+                land = true
+                if (magnitude < 10) {
+                    type = TerrainType.Plains
+                } else if (magnitude < 20) {
+                    type = TerrainType.Highland
+                } else {
+                    type = TerrainType.Mountain
+                }
+            } else {
+                if (ocean) {
+                    type = TerrainType.Ocean
+                } else {
+                    type = TerrainType.Lake
+                }
+            }
+
             terrain[x][y] = new Terrain(type);
             terrain[x][y].shoreline = shoreline;
-            terrain[x][y].ocean = ocean;
             terrain[x][y].magnitude = magnitude;
+            terrain[x][y].ocean = ocean
+            terrain[x][y].land = land
         }
     }
 

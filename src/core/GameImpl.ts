@@ -1,8 +1,8 @@
 import {Config} from "./configuration/Config";
 import {EventBus} from "./EventBus";
-import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerEvent, PlayerID, PlayerInfo, Player, TerraNullius, Tile, TileEvent, Boat, MutableBoat, BoatEvent} from "./Game";
+import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerEvent, PlayerID, PlayerInfo, Player, TerraNullius, Tile, TileEvent, Boat, MutableBoat, BoatEvent, TerrainType} from "./Game";
 import {ClientID} from "./Schemas";
-import {Terrain, TerrainMap, TerrainType} from "./TerrainMapLoader";
+import {Terrain, TerrainMap} from "./TerrainMapLoader";
 import {simpleHash} from "./Util";
 
 export function createGame(terrainMap: TerrainMap, eventBus: EventBus, config: Config): Game {
@@ -70,17 +70,19 @@ class TileImpl implements Tile {
         return this.isLand() && this._terrain.shoreline
     }
     isOceanShore(): boolean {
-        return this.isShore() && this.neighbors().find(t => t.isOcean()) != null
+        return this.isShore() && this.isOcean()
     }
-
     isShorelineWater(): boolean {
         return this.isWater() && this._terrain.shoreline
     }
     isLand(): boolean {
-        return this._terrain.type == TerrainType.Land
+        return this._terrain.land
     }
     isWater(): boolean {
-        return this._terrain.type == TerrainType.Water
+        return !this._terrain.land
+    }
+    terrain(): TerrainType {
+        return this._terrain.type
     }
 
     borders(other: Player | TerraNullius): boolean {
@@ -110,8 +112,6 @@ class TileImpl implements Tile {
         }
         return this._neighbors
     }
-
-    game(): Game {return this.gs}
 }
 
 export class BoatImpl implements MutableBoat {
