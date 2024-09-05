@@ -28,9 +28,9 @@ export const devConfig = new class extends DefaultConfig {
 
     troopAdditionRate(player: Player): number {
         if (player.isBot()) {
-            return 100000
+            return 1000
         } else {
-            return 100000
+            return 10000
         }
     }
 }

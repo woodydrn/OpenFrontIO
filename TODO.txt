@@ -96,6 +96,7 @@
 * directed expansion
 * more random names for game id & client id
 * Make fake humans
+* Make three terrain types: Plains, highlands, mountains
 * UI: win condition & popup
 * UI: boats
 * UI: current attacks

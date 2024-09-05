@@ -30,7 +30,6 @@ export class AttackExecution implements Execution {
             return
         }
 
-        // TODO: remove this and fix directed expansion.
         this.targetCell = null
 
         this._owner = mg.player(this._ownerID)
@@ -138,7 +137,7 @@ export class AttackExecution implements Execution {
             }
             this.toConquer.enqueue(new TileContainer(
                 neighbor,
-                this.random.nextInt(0, 2) - numOwnedByMe + Math.floor(tile.magnitude() / 10),
+                dist / 100 + this.random.nextInt(0, 2) - numOwnedByMe + Math.floor(tile.magnitude() / 10),
             ))
         }
     }
