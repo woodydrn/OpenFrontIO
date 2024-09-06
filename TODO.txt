@@ -98,6 +98,9 @@
 * BUG: attacks speed up DONE 9/6/2024
 * rebalance income DONE 9/7/2024
 * Make fake humans
+
+--- v3 Release
+
 * directed expansion
 * UI: win condition & popup
 * UI: boats
@@ -107,8 +110,10 @@
 * make random waves on ocean, dark spots
 * Load terrain dataImage in background
 
---- v3 Release
+--- v4 Release
 
+* store username
+* store cookies
 * BUG: when sending boat to TerraNullius, only takes one tile
 * REFACTOR: give terranullius an ID, game.player() returns terranullius
 * REFACTOR: ocean is considered TerraNullius ?

@@ -33,7 +33,7 @@ export class DefaultConfig implements Config {
         let mag = 0
         switch (tileToConquer.terrain()) {
             case TerrainType.Plains:
-                mag = -5
+                mag = 1
             case TerrainType.Highland:
                 mag = 3
             case TerrainType.Mountain:
