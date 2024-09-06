@@ -47,16 +47,16 @@ export class UIRenderer {
         document.body.appendChild(this.exitButton);
     }
 
-    render(context) {
+    render(context: CanvasRenderingContext2D) {
         const p = this.game.players().find(p => p.clientID() == this.clientID);
         let troopCount = p ? `${renderTroops(p.troops())}` : '';
 
         context.save();
-        context.fillStyle = 'black';
+        context.fillStyle = 'rgba(0, 0, 0, 0.7)'; // Black with 70% opacity
         context.textAlign = 'center';
         context.textBaseline = 'top';
 
-        const x = 65 + 18 * (troopCount.length - 2); // Right edge of the text area
+        const x = context.canvas.width / 2; // Center horizontally
         const y = 40; // Distance from the top
 
         context.font = `bold ${60}px ${this.theme.font()}`;
