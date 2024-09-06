@@ -70,7 +70,7 @@ class TileImpl implements Tile {
         return this.isLand() && this._terrain.shoreline
     }
     isOceanShore(): boolean {
-        return this.isShore() && this.isOcean()
+        return this.isShore() && this.neighbors().filter(n => n.isOcean()).length > 0
     }
     isShorelineWater(): boolean {
         return this.isWater() && this._terrain.shoreline
