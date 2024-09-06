@@ -51,6 +51,7 @@ export class BoatAttackExecution implements Execution {
         if (this.attacker.boats().length >= mg.config().boatMaxNumber()) {
             console.log('too many boats')
             this.active = false
+            this.attacker.addTroops(this.troops)
             return
         }
 

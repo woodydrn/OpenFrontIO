@@ -48,20 +48,20 @@ export class UIRenderer {
     }
 
     render(context: CanvasRenderingContext2D) {
-        const p = this.game.players().find(p => p.clientID() == this.clientID);
-        let troopCount = p ? `${renderTroops(p.troops())}` : '';
+        // const p = this.game.players().find(p => p.clientID() == this.clientID);
+        // let troopCount = p ? `${renderTroops(p.troops())}` : '';
 
-        context.save();
-        context.fillStyle = 'rgba(0, 0, 0, 0.7)'; // Black with 70% opacity
-        context.textAlign = 'center';
-        context.textBaseline = 'top';
+        // context.save();
+        // context.fillStyle = 'rgba(0, 0, 0, 0.7)'; // Black with 70% opacity
+        // context.textAlign = 'center';
+        // context.textBaseline = 'top';
 
-        const x = context.canvas.width / 2; // Center horizontally
-        const y = 40; // Distance from the top
+        // const x = context.canvas.width / 2; // Center horizontally
+        // const y = 40; // Distance from the top
 
-        context.font = `bold ${60}px ${this.theme.font()}`;
-        context.fillText(troopCount, x, y);
-        context.restore();
+        // context.font = `bold ${60}px ${this.theme.font()}`;
+        // context.fillText(troopCount, x, y);
+        // context.restore();
     }
 
     onExitButtonClick() {

@@ -85,7 +85,11 @@ export class DefaultConfig implements Config {
         let max = Math.sqrt(player.numTilesOwned()) * 3000 + 50000
         max = Math.min(max, 1_000_000)
 
-        let toAdd = 10 + (player.troops() + Math.sqrt(player.troops() * player.numTilesOwned())) / 150
+        let toAdd = 10 + (player.troops() + Math.sqrt(player.troops() * player.numTilesOwned())) / 100
+
+        const ratio = 1 - (player.troops() / max)
+        toAdd *= ratio
+        // console.log(`to add ${toAdd}`)
 
         return Math.min(player.troops() + toAdd, max)
     }

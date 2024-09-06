@@ -96,6 +96,7 @@
 * Make three terrain types: Plains, highlands, mountains DONE 9/5/2024
 * more random names for game id & client id DONE 9/5/2024
 * BUG: attacks speed up DONE 9/6/2024
+* rebalance income DONE 9/7/2024
 * Make fake humans
 * directed expansion
 * UI: win condition & popup
