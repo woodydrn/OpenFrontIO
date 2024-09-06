@@ -1,4 +1,4 @@
-import {Player, PlayerInfo, TerraNullius, Tile} from "../Game";
+import {Player, PlayerInfo, TerrainType, TerraNullius, Tile} from "../Game";
 import {within} from "../Util";
 import {Config, Theme} from "./Config";
 import {pastelTheme} from "./PastelTheme";
@@ -30,10 +30,18 @@ export class DefaultConfig implements Config {
     theme(): Theme {return pastelTheme;}
 
     attackLogic(attacker: Player, defender: Player | TerraNullius, tileToConquer: Tile): {attackerTroopLoss: number; defenderTroopLoss: number; tilesPerTickUsed: number} {
-        const mag = tileToConquer.magnitude() / 5
+        let mag = 0
+        switch (tileToConquer.terrain()) {
+            case TerrainType.Plains:
+                mag = -5
+            case TerrainType.Highland:
+                mag = 3
+            case TerrainType.Mountain:
+                mag = 10
+        }
         if (defender.isPlayer()) {
             return {
-                attackerTroopLoss: Math.min(defender.troops() / 2000, 10) + mag,
+                attackerTroopLoss: within(defender.troops() / 2000 + mag, 1, 10),
                 defenderTroopLoss: Math.min(attacker.troops() / 3000, 5),
                 tilesPerTickUsed: mag + 1
             }
@@ -41,14 +49,14 @@ export class DefaultConfig implements Config {
             return {
                 attackerTroopLoss: mag,
                 defenderTroopLoss: 0,
-                tilesPerTickUsed: mag + 1
+                tilesPerTickUsed: Math.max(mag / 2, 1)
             }
         }
     }
 
     attackTilesPerTick(attacker: Player, defender: Player | TerraNullius, numAdjacentTilesWithEnemy: number): number {
         if (defender.isPlayer()) {
-            return within(attacker.numTilesOwned() / defender.numTilesOwned() * 2, .01, .5) * numAdjacentTilesWithEnemy * 2 / 10
+            return within(attacker.troops() / defender.troops() * 2, .01, .5) * numAdjacentTilesWithEnemy * 2 / 10
         } else {
             return numAdjacentTilesWithEnemy * 2 / 10
         }
@@ -68,9 +76,9 @@ export class DefaultConfig implements Config {
 
     startTroops(playerInfo: PlayerInfo): number {
         if (playerInfo.isBot) {
-            return 5000
+            return 10000
         }
-        return 5000
+        return 10000
     }
 
     troopAdditionRate(player: Player): number {

@@ -1,7 +1,8 @@
 import {PriorityQueue} from "@datastructures-js/priority-queue";
-import {Cell, Execution, MutableGame, MutablePlayer, PlayerID, TerraNullius, Tile} from "../Game";
+import {Cell, Execution, MutableGame, MutablePlayer, PlayerID, TerrainType, TerraNullius, Tile} from "../Game";
 import {PseudoRandom} from "../PseudoRandom";
 import {manhattanDist} from "../Util";
+import {Terrain} from "../TerrainMapLoader";
 
 export class AttackExecution implements Execution {
     private active: boolean = true;
@@ -134,6 +135,15 @@ export class AttackExecution implements Execution {
             }
             if (numOwnedByMe > 2) {
                 numOwnedByMe = 10
+            }
+            let mag = 0
+            switch (tile.terrain()) {
+                case TerrainType.Plains:
+                    mag = 1
+                case TerrainType.Highland:
+                    mag = 2
+                case TerrainType.Mountain:
+                    mag = 5
             }
             this.toConquer.enqueue(new TileContainer(
                 neighbor,
