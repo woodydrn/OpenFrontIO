@@ -56,9 +56,9 @@ export class DefaultConfig implements Config {
 
     attackTilesPerTick(attacker: Player, defender: Player | TerraNullius, numAdjacentTilesWithEnemy: number): number {
         if (defender.isPlayer()) {
-            return within(attacker.troops() / defender.troops() * 2, .01, .5) * numAdjacentTilesWithEnemy * 2 / 10
+            return within(attacker.troops() / defender.troops() * 2, .01, .5) * numAdjacentTilesWithEnemy * 2 / 5
         } else {
-            return numAdjacentTilesWithEnemy * 2 / 10
+            return numAdjacentTilesWithEnemy * 2 / 5
         }
     }
 

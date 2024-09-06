@@ -251,7 +251,7 @@ export class ClientGame {
             if (enemyShoreDists.length > 0 && bordersOcean) {
                 enemyShoreClosest = enemyShoreDists[0].dist
             }
-            if (enemyShoreClosest < borderTileClosest) {
+            if (enemyShoreClosest < borderTileClosest / 2) {
                 this.sendBoatAttackIntent(targetID, enemyShoreDists[0].tile.cell(), this.gs.config().boatAttackAmount(this.myPlayer, owner))
             } else {
                 this.sendAttackIntent(targetID, cell, this.gs.config().attackAmount(this.myPlayer, owner))
