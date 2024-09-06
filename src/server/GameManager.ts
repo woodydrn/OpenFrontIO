@@ -4,6 +4,7 @@ import {PseudoRandom} from "../core/PseudoRandom";
 import WebSocket from 'ws';
 import {ClientID, GameID} from "../core/Schemas";
 import {Client} from "./Client";
+import {generateUniqueId} from "../core/Util";
 
 
 export class GameManager {
@@ -37,7 +38,7 @@ export class GameManager {
         const now = Date.now()
         if (now > this.lastNewLobby + this.config.gameCreationRate()) {
             this.lastNewLobby = now
-            const id = this.random.nextID()
+            const id = generateUniqueId()
             lobbies.push(new GameServer(id, now, this.config))
         }
 

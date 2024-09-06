@@ -1,7 +1,4 @@
 import {getConfig} from "../core/configuration/Config";
-import {defaultConfig} from "../core/configuration/DefaultConfig";
-import {devConfig} from "../core/configuration/DevConfig";
-import {PseudoRandom} from "../core/PseudoRandom";
 import {GameID, Lobby, ServerMessage, ServerMessageSchema} from "../core/Schemas";
 import {loadTerrainMap, TerrainMap} from "../core/TerrainMapLoader";
 import {ClientGame, createClientGame} from "./ClientGame";
@@ -9,6 +6,7 @@ import backgroundImage from '../../resources/images/TerrainMapFrontPage.png';
 import favicon from '../../resources/images/Favicon.png';
 
 import './styles.css';
+import {generateUniqueId} from "../core/Util";
 
 
 class Client {
@@ -69,7 +67,7 @@ class Client {
             lobbyButton.classList.toggle('highlighted', this.isLobbyHighlighted);
         }
 
-        if (nameElement) nameElement.textContent = `Game ${lobby.id}`;
+        if (nameElement) nameElement.textContent = `Game ${lobby.id.substring(0, 3)}`;
         if (timerElement) {
             const timeRemaining = Math.max(0, Math.floor((lobby.msUntilStart) / 1000));
             timerElement.textContent = `Starts in: ${timeRemaining}s`;
@@ -79,7 +77,7 @@ class Client {
         if (lobbies.length > 1) {
             const nextLobby = lobbies[1]
             const nextGame = document.getElementById('next-game');
-            nextGame.textContent = `Next Game: ${nextLobby.id}`
+            nextGame.textContent = `Next Game: ${nextLobby.id.substring(0, 3)}`
         }
 
     }
@@ -122,7 +120,7 @@ class Client {
         console.log(`got ip ${clientIP}`)
         this.game = createClientGame(
             getUsername(),
-            new PseudoRandom(Date.now()).nextID(), // TODO this can cause dup ids
+            generateUniqueId(),
             clientIP,
             lobby.id,
             getConfig(),

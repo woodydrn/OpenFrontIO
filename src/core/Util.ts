@@ -98,3 +98,10 @@ export function getMode(list: string[]): string {
 
     return mode;
 }
+
+export function generateUniqueId(): string {
+    if (typeof crypto === 'undefined' || !crypto.randomUUID) {
+        throw new Error('crypto.randomUUID is not supported in this environment');
+    }
+    return crypto.randomUUID();
+}
