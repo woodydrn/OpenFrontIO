@@ -30,7 +30,7 @@ export const devConfig = new class extends DefaultConfig {
     //     if (player.isBot()) {
     //         return 1000
     //     } else {
-    //         return 10000
+    //         return 1000000
     //     }
     // }
 }

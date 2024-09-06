@@ -95,6 +95,7 @@
 * when attacking by boat, attack execution only starts from boat pixel DONE 9/4/2024
 * Make three terrain types: Plains, highlands, mountains DONE 9/5/2024
 * more random names for game id & client id DONE 9/5/2024
+* BUG: attacks speed up DONE 9/6/2024
 * Make fake humans
 * directed expansion
 * UI: win condition & popup

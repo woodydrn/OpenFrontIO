@@ -41,8 +41,8 @@ export class DefaultConfig implements Config {
         }
         if (defender.isPlayer()) {
             return {
-                attackerTroopLoss: within(defender.troops() / 2000 + mag, 1, 10),
-                defenderTroopLoss: Math.min(attacker.troops() / 3000, 5),
+                attackerTroopLoss: within(defender.troops() / attacker.troops() / 10 * mag, 1, 100),
+                defenderTroopLoss: within(attacker.troops() / defender.troops() / 10, 1, 100),
                 tilesPerTickUsed: mag + 1
             }
         } else {
@@ -56,9 +56,9 @@ export class DefaultConfig implements Config {
 
     attackTilesPerTick(attacker: Player, defender: Player | TerraNullius, numAdjacentTilesWithEnemy: number): number {
         if (defender.isPlayer()) {
-            return within(attacker.troops() / defender.troops() * 2, .01, .5) * numAdjacentTilesWithEnemy * 2 / 5
+            return within(attacker.troops() / defender.troops() * 2, .01, .5) * numAdjacentTilesWithEnemy * 3
         } else {
-            return numAdjacentTilesWithEnemy * 2 / 5
+            return numAdjacentTilesWithEnemy * 2
         }
     }
 

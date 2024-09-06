@@ -14,6 +14,8 @@ export class AttackExecution implements Execution {
 
     private mg: MutableGame
 
+    private border = new Set<Tile>()
+
     constructor(
         private troops: number,
         private _ownerID: PlayerID,
@@ -71,6 +73,7 @@ export class AttackExecution implements Execution {
 
     private refreshToConquer() {
         this.toConquer.clear()
+        this.border.clear()
         for (const tile of this._owner.borderTiles()) {
             this.addNeighbors(tile)
         }
@@ -84,7 +87,9 @@ export class AttackExecution implements Execution {
             return
         }
 
-        let numTilesPerTick = this.mg.config().attackTilesPerTick(this._owner, this.target, this.toConquer.size() + this.random.nextInt(0, 5))
+        let numTilesPerTick = this.mg.config().attackTilesPerTick(this._owner, this.target, this.border.size + this.random.nextInt(0, 5))
+        // console.log(`num tiles per tick: ${numTilesPerTick}`)
+        // console.log(`num execs: ${this.mg.executions().length}`)
 
 
         while (numTilesPerTick > 0) {
@@ -95,14 +100,13 @@ export class AttackExecution implements Execution {
 
             if (this.toConquer.size() == 0) {
                 this.refreshToConquer()
-                if (this.toConquer.size() == 0) {
-                    this.active = false
-                    this._owner.addTroops(this.troops)
-                    return
-                }
+                this.active = false
+                this._owner.addTroops(this.troops)
+                return
             }
 
             const tileToConquer = this.toConquer.dequeue().tile
+            this.border.delete(tileToConquer)
 
             const onBorder = tileToConquer.neighbors().filter(t => t.owner() == this._owner).length > 0
             if (tileToConquer.owner() != this.target || !onBorder) {
@@ -125,6 +129,7 @@ export class AttackExecution implements Execution {
             if (neighbor.isWater() || neighbor.owner() != this.target) {
                 continue
             }
+            this.border.add(neighbor)
             let numOwnedByMe = neighbor.neighbors()
                 .filter(t => t.isLand())
                 .filter(t => t.owner() == this._owner)
@@ -133,6 +138,9 @@ export class AttackExecution implements Execution {
             if (this.targetCell != null) {
                 dist = manhattanDist(tile.cell(), this.targetCell)
             }
+            // if() {
+
+            // }
             if (numOwnedByMe > 2) {
                 numOwnedByMe = 10
             }
@@ -140,14 +148,17 @@ export class AttackExecution implements Execution {
             switch (tile.terrain()) {
                 case TerrainType.Plains:
                     mag = 1
+                    break
                 case TerrainType.Highland:
                     mag = 2
+                    break
                 case TerrainType.Mountain:
-                    mag = 5
+                    mag = 3
+                    break
             }
             this.toConquer.enqueue(new TileContainer(
                 neighbor,
-                dist / 100 + this.random.nextInt(0, 2) - numOwnedByMe + Math.floor(tile.magnitude() / 10),
+                dist / 100 + this.random.nextInt(0, 3) - numOwnedByMe * 2 + mag,
             ))
         }
     }
