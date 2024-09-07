@@ -16,7 +16,7 @@ export class DefaultConfig implements Config {
         return 100
     }
     numBots(): number {
-        return 350
+        return 400
     }
     turnIntervalMs(): number {
         return 100
@@ -39,14 +39,14 @@ export class DefaultConfig implements Config {
                 mag = 15
                 break
             case TerrainType.Mountain:
-                mag = 50
+                mag = 40
                 break
         }
         if (defender.isPlayer()) {
             return {
                 attackerTroopLoss: within(defender.troops() / attacker.troops() * mag, 1, 1000),
                 defenderTroopLoss: within(attacker.troops() / defender.troops(), 1, 1000),
-                tilesPerTickUsed: mag + 1
+                tilesPerTickUsed: within(attacker.numTilesOwned() / defender.numTilesOwned(), 1, 5) * mag
             }
         } else {
             return {
@@ -93,6 +93,10 @@ export class DefaultConfig implements Config {
         const ratio = 1 - (player.troops() / max)
         toAdd *= ratio
         // console.log(`to add ${toAdd}`)
+
+        if (player.type() == PlayerType.Bot) {
+            toAdd *= .5
+        }
 
         return Math.min(player.troops() + toAdd, max)
     }
