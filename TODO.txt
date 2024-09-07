@@ -97,11 +97,12 @@
 * more random names for game id & client id DONE 9/5/2024
 * BUG: attacks speed up DONE 9/6/2024
 * rebalance income DONE 9/7/2024
-* Make fake humans
-* BUG: when clicking on enemy sometimes boat goes all the way around
 
 --- v3 Release
 
+* Make fake humans
+* BUG: when clicking on enemy sometimes boat goes all the way around
+* names dissappear too much (maybe screen size)
 * directed expansion
 * UI: win condition & popup
 * UI: boats

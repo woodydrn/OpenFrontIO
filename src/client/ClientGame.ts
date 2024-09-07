@@ -242,6 +242,10 @@ export class ClientGame {
 
             let borderTileClosest = 10000000
             let enemyShoreClosest = 10000
+            if (borderWithDists.length == 0 && enemyShoreDists.length == 0) {
+                return
+            }
+
             if (bordersWithDists.length > 0) {
                 borderTileClosest = borderWithDists[0].dist
             }

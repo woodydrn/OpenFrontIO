@@ -4,9 +4,10 @@ import {loadTerrainMap, TerrainMap} from "../core/TerrainMapLoader";
 import {ClientGame, createClientGame} from "./ClientGame";
 import backgroundImage from '../../resources/images/TerrainMapFrontPage.png';
 import favicon from '../../resources/images/Favicon.png';
+import {v4 as uuidv4} from 'uuid';
+
 
 import './styles.css';
-import {generateUniqueId} from "../core/Util";
 
 
 class Client {
@@ -120,7 +121,7 @@ class Client {
         console.log(`got ip ${clientIP}`)
         this.game = createClientGame(
             getUsername(),
-            generateUniqueId(),
+            uuidv4(),
             clientIP,
             lobby.id,
             getConfig(),

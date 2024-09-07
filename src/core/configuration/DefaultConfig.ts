@@ -31,28 +31,32 @@ export class DefaultConfig implements Config {
 
     attackLogic(attacker: Player, defender: Player | TerraNullius, tileToConquer: Tile): {attackerTroopLoss: number; defenderTroopLoss: number; tilesPerTickUsed: number} {
         let mag = 0
+        let speed = 0
         switch (tileToConquer.terrain()) {
             case TerrainType.Plains:
-                mag = 1
+                mag = 5
+                speed = 5
                 break
             case TerrainType.Highland:
                 mag = 15
+                speed = 10
                 break
             case TerrainType.Mountain:
-                mag = 40
+                mag = 45
+                speed = 15
                 break
         }
         if (defender.isPlayer()) {
             return {
                 attackerTroopLoss: within(defender.troops() / attacker.troops() * mag, 1, 1000),
                 defenderTroopLoss: within(attacker.troops() / defender.troops(), 1, 1000),
-                tilesPerTickUsed: within(attacker.numTilesOwned() / defender.numTilesOwned(), 1, 5) * mag
+                tilesPerTickUsed: within(attacker.numTilesOwned() / defender.numTilesOwned() / 2, 1, 5) * speed
             }
         } else {
             return {
                 attackerTroopLoss: mag,
                 defenderTroopLoss: 0,
-                tilesPerTickUsed: Math.max(mag / 2, 1)
+                tilesPerTickUsed: Math.floor(Math.max(speed, 1))
             }
         }
     }

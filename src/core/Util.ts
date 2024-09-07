@@ -1,3 +1,6 @@
+import {v4 as uuidv4} from 'uuid';
+
+
 import {Cell, Player, Tile} from "./Game";
 
 export function manhattanDist(c1: Cell, c2: Cell): number {
@@ -97,11 +100,4 @@ export function getMode(list: string[]): string {
     }
 
     return mode;
-}
-
-export function generateUniqueId(): string {
-    if (typeof crypto === 'undefined' || !crypto.randomUUID) {
-        throw new Error('crypto.randomUUID is not supported in this environment');
-    }
-    return crypto.randomUUID();
 }
