@@ -27,12 +27,13 @@ export function placeName(game: Game, player: Player): [position: Cell, fontSize
     largestRectangle.width = largestRectangle.width * scalingFactor
     largestRectangle.height = largestRectangle.height * scalingFactor
 
-    const center = new Cell(
+    let center = new Cell(
         Math.floor(largestRectangle.x + largestRectangle.width / 2 + boundingBox.min.x),
         Math.floor(largestRectangle.y + largestRectangle.height / 2 + boundingBox.min.y),
     )
 
     const fontSize = calculateFontSize(largestRectangle, player.name());
+    center = new Cell(center.x, center.y - fontSize / 3)
 
     return [center, fontSize]
 }

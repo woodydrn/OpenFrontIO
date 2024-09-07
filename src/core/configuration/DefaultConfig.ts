@@ -36,10 +36,10 @@ export class DefaultConfig implements Config {
                 mag = 1
                 break
             case TerrainType.Highland:
-                mag = 20
+                mag = 15
                 break
             case TerrainType.Mountain:
-                mag = 100
+                mag = 50
                 break
         }
         if (defender.isPlayer()) {
