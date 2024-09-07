@@ -1,4 +1,4 @@
-import {Player, PlayerInfo, TerrainType, TerraNullius, Tile} from "../Game";
+import {Player, PlayerInfo, PlayerType, TerrainType, TerraNullius, Tile} from "../Game";
 import {within} from "../Util";
 import {Config, Theme} from "./Config";
 import {pastelTheme} from "./PastelTheme";
@@ -67,7 +67,7 @@ export class DefaultConfig implements Config {
     }
 
     attackAmount(attacker: Player, defender: Player | TerraNullius) {
-        if (attacker.isBot()) {
+        if (attacker.type() == PlayerType.Bot) {
             return attacker.troops() / 20
         } else {
             return attacker.troops() / 5
@@ -75,7 +75,7 @@ export class DefaultConfig implements Config {
     }
 
     startTroops(playerInfo: PlayerInfo): number {
-        if (playerInfo.isBot) {
+        if (playerInfo.playerType == PlayerType.Bot) {
             return 10000
         }
         return 10000

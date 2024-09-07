@@ -1,4 +1,4 @@
-import {Cell, Game, Tile, TileEvent} from "../Game";
+import {Cell, Game, PlayerType, Tile, TileEvent} from "../Game";
 import {PseudoRandom} from "../PseudoRandom";
 import {SpawnIntent} from "../Schemas";
 import {bfs, dist as dist, manhattanDist} from "../Util";
@@ -40,7 +40,7 @@ export class BotSpawner {
         return {
             type: 'spawn',
             name: botName,
-            isBot: true,
+            playerType: PlayerType.Bot,
             x: tile.cell().x,
             y: tile.cell().y
         };

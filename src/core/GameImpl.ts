@@ -1,6 +1,6 @@
 import {Config} from "./configuration/Config";
 import {EventBus} from "./EventBus";
-import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerEvent, PlayerID, PlayerInfo, Player, TerraNullius, Tile, TileEvent, Boat, MutableBoat, BoatEvent, TerrainType} from "./Game";
+import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerEvent, PlayerID, PlayerInfo, Player, TerraNullius, Tile, TileEvent, Boat, MutableBoat, BoatEvent, TerrainType, PlayerType} from "./Game";
 import {ClientID} from "./Schemas";
 import {Terrain, TerrainMap} from "./TerrainMapLoader";
 import {simpleHash} from "./Util";
@@ -179,8 +179,8 @@ export class PlayerImpl implements MutablePlayer {
         return this.playerInfo.id
     }
 
-    isBot(): boolean {
-        return this.playerInfo.isBot
+    type(): PlayerType {
+        return this.playerInfo.playerType
     }
 
     setName(name: string) {
@@ -348,7 +348,7 @@ export class GameImpl implements MutableGame {
         if (this._ticks % 100 == 0) {
             let hash = 1;
             this._players.forEach(p => {
-                if (!p.info().isBot) {
+                if (p.type() == PlayerType.Human) {
                     console.log(`${p.toString()}`)
                 }
                 hash += p.hash()

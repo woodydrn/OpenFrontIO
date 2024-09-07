@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {PlayerType} from './Game';
 
 export type GameID = string
 export type ClientID = string
@@ -23,6 +24,8 @@ export type ServerStartGameMessage = z.infer<typeof ServerStartGameMessageSchema
 export type ClientIntentMessage = z.infer<typeof ClientIntentMessageSchema>
 export type ClientJoinMessage = z.infer<typeof ClientJoinMessageSchema>
 export type ClientLeaveMessage = z.infer<typeof ClientLeaveMessageSchema>
+
+const PlayerTypeSchema = z.nativeEnum(PlayerType);
 
 // TODO: create Cell schema
 
@@ -53,7 +56,7 @@ export const AttackIntentSchema = BaseIntentSchema.extend({
 export const SpawnIntentSchema = BaseIntentSchema.extend({
     type: z.literal('spawn'),
     name: z.string(),
-    isBot: z.boolean(),
+    playerType: PlayerTypeSchema,
     x: z.number(),
     y: z.number(),
 })

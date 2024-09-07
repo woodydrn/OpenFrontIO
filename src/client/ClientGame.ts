@@ -1,5 +1,5 @@
 import {Executor} from "../core/execution/ExecutionManager";
-import {Cell, MutableGame, PlayerEvent, PlayerID, MutablePlayer, TileEvent, Player, Game, BoatEvent, Tile} from "../core/Game";
+import {Cell, MutableGame, PlayerEvent, PlayerID, MutablePlayer, TileEvent, Player, Game, BoatEvent, Tile, PlayerType} from "../core/Game";
 import {createGame} from "../core/GameImpl";
 import {EventBus} from "../core/EventBus";
 import {Config} from "../core/configuration/Config";
@@ -248,7 +248,7 @@ export class ClientGame {
             if (enemyShoreDists.length > 0 && bordersOcean) {
                 enemyShoreClosest = enemyShoreDists[0].dist
             }
-            if (enemyShoreClosest < borderTileClosest / 4) {
+            if (enemyShoreClosest < borderTileClosest / 6) {
                 this.sendBoatAttackIntent(targetID, enemyShoreDists[0].tile.cell(), this.gs.config().boatAttackAmount(this.myPlayer, owner))
             } else {
                 this.sendAttackIntent(targetID, cell, this.gs.config().attackAmount(this.myPlayer, owner))
@@ -275,7 +275,7 @@ export class ClientGame {
             type: "spawn",
             clientID: this.id,
             name: this.playerName,
-            isBot: false,
+            playerType: PlayerType.Human,
             x: cell.x,
             y: cell.y
         })

@@ -1,4 +1,4 @@
-import {Cell, Game, Player} from "../../core/Game"
+import {Cell, Game, Player, PlayerType} from "../../core/Game"
 import {PseudoRandom} from "../../core/PseudoRandom"
 import {calculateBoundingBox} from "../../core/Util"
 import {Theme} from "../../core/configuration/Config"
@@ -85,7 +85,7 @@ export class NameRenderer {
 
     isVisible(render: RenderInfo, min: Cell, max: Cell): boolean {
         const ratio = (max.x - min.x) / Math.max(20, (render.boundingBox.max.x - render.boundingBox.min.x))
-        if (render.player.isBot()) {
+        if (render.player.type() == PlayerType.Bot) {
             if (ratio > 35) {
                 return false
             }

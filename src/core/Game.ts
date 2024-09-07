@@ -26,6 +26,12 @@ export enum TerrainType {
     Ocean
 }
 
+export enum PlayerType {
+    Bot = "BOT",
+    Human = "HUMAN",
+    FakeHuman = "FAKEHUMAN",
+}
+
 export interface ExecutionView {
     isActive(): boolean
     owner(): Player
@@ -41,7 +47,7 @@ export interface Execution extends ExecutionView {
 export class PlayerInfo {
     constructor(
         public readonly name: string,
-        public readonly isBot: boolean,
+        public readonly playerType: PlayerType,
         // null if bot.
         public readonly clientID: ClientID | null,
         public readonly id: PlayerID
@@ -95,7 +101,7 @@ export interface Player {
     name(): string
     clientID(): ClientID
     id(): PlayerID
-    isBot(): boolean
+    type(): PlayerType
     troops(): number
     boats(): Boat[]
     ownsTile(cell: Cell): boolean

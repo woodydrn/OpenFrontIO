@@ -1,4 +1,4 @@
-import {Cell, Execution, MutableGame, MutablePlayer, PlayerInfo} from "../Game"
+import {Cell, Execution, MutableGame, MutablePlayer, PlayerInfo, PlayerType} from "../Game"
 import {BotExecution} from "./BotExecution"
 import {PlayerExecution} from "./PlayerExecution"
 import {getSpawnCells} from "./Util"
@@ -41,7 +41,7 @@ export class SpawnExecution implements Execution {
             player.conquer(this.mg.tile(c))
         })
         this.mg.addExecution(new PlayerExecution(player.id()))
-        if (player.isBot()) {
+        if (player.type() == PlayerType.Bot) {
             this.mg.addExecution(new BotExecution(player))
         }
         this.active = false
