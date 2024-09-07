@@ -245,7 +245,7 @@ export class ClientGame {
             if (bordersWithDists.length > 0) {
                 borderTileClosest = borderWithDists[0].dist
             }
-            if (enemyShoreDists.length > 0 && bordersOcean) {
+            if (enemyShoreDists.length > 0) {
                 enemyShoreClosest = enemyShoreDists[0].dist
             }
             if (enemyShoreClosest < borderTileClosest / 6) {

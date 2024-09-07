@@ -34,15 +34,18 @@ export class DefaultConfig implements Config {
         switch (tileToConquer.terrain()) {
             case TerrainType.Plains:
                 mag = 1
+                break
             case TerrainType.Highland:
-                mag = 3
+                mag = 20
+                break
             case TerrainType.Mountain:
-                mag = 10
+                mag = 100
+                break
         }
         if (defender.isPlayer()) {
             return {
-                attackerTroopLoss: within(defender.troops() / attacker.troops() / 10 * mag, 1, 100),
-                defenderTroopLoss: within(attacker.troops() / defender.troops() / 10, 1, 100),
+                attackerTroopLoss: within(defender.troops() / attacker.troops() * mag, 1, 1000),
+                defenderTroopLoss: within(attacker.troops() / defender.troops(), 1, 1000),
                 tilesPerTickUsed: mag + 1
             }
         } else {
