@@ -34,7 +34,7 @@ export class Executor {
             )
         } else if (intent.type == "spawn") {
             return new SpawnExecution(
-                new PlayerInfo(intent.name, intent.playerType, intent.clientID, this.random.nextID()),
+                new PlayerInfo(intent.name, intent.playerType, intent.clientID, intent.playerID),
                 new Cell(intent.x, intent.y)
             )
         } else if (intent.type == "boat") {

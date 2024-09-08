@@ -122,6 +122,7 @@ class Client {
         this.game = createClientGame(
             getUsername(),
             uuidv4(),
+            uuidv4(),
             clientIP,
             lobby.id,
             getConfig(),

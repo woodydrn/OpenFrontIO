@@ -12,7 +12,7 @@ import {TerrainRenderer} from "./graphics/TerrainRenderer";
 
 
 
-export function createClientGame(name: string, clientID: ClientID, ip: string | null, gameID: GameID, config: Config, terrainMap: TerrainMap): ClientGame {
+export function createClientGame(name: string, clientID: ClientID, playerID: PlayerID, ip: string | null, gameID: GameID, config: Config, terrainMap: TerrainMap): ClientGame {
     let eventBus = new EventBus()
     let game = createGame(terrainMap, eventBus, config)
     let terrainRenderer = new TerrainRenderer(game)
@@ -21,6 +21,7 @@ export function createClientGame(name: string, clientID: ClientID, ip: string | 
     return new ClientGame(
         name,
         clientID,
+        playerID,
         ip,
         gameID,
         eventBus,
@@ -45,9 +46,11 @@ export class ClientGame {
 
     private isProcessingTurn = false
 
+
     constructor(
         public playerName: string,
         private id: ClientID,
+        private playerID: PlayerID,
         private clientIP: string | null,
         private gameID: GameID,
         private eventBus: EventBus,
@@ -88,13 +91,11 @@ export class ClientGame {
                 if (!this.isActive) {
                     this.start()
                 }
-                this.sendIntent(
-                    {
-                        type: "updateName",
-                        name: this.playerName,
-                        clientID: this.id
-                    }
-                )
+                this.sendIntent({
+                    type: "updateName",
+                    name: this.playerName,
+                    clientID: this.id
+                })
             }
             if (message.type == "turn") {
                 this.addTurn(message.turn)
@@ -279,6 +280,7 @@ export class ClientGame {
         this.sendIntent({
             type: "spawn",
             clientID: this.id,
+            playerID: this.playerID,
             name: this.playerName,
             playerType: PlayerType.Human,
             x: cell.x,

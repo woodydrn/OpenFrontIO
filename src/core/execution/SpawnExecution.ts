@@ -24,7 +24,7 @@ export class SpawnExecution implements Execution {
             return
         }
 
-        const existing = this.mg.players().find(p => p.clientID() != null && p.clientID() == this.playerInfo.clientID)
+        const existing = this.mg.players().find(p => p.id() == this.playerInfo.id)
         if (existing) {
             existing.tiles().forEach(t => existing.relinquish(t))
             getSpawnCells(this.mg, this.cell).forEach(c => {

@@ -55,6 +55,7 @@ export const AttackIntentSchema = BaseIntentSchema.extend({
 
 export const SpawnIntentSchema = BaseIntentSchema.extend({
     type: z.literal('spawn'),
+    playerID: z.string(),
     name: z.string(),
     playerType: PlayerTypeSchema,
     x: z.number(),

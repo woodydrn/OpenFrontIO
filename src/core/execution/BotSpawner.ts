@@ -39,6 +39,7 @@ export class BotSpawner {
         }
         return {
             type: 'spawn',
+            playerID: this.random.nextID(),
             name: botName,
             playerType: PlayerType.Bot,
             x: tile.cell().x,
