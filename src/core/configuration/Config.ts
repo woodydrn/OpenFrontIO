@@ -3,6 +3,11 @@ import {Colord, colord} from "colord";
 import {devConfig} from "./DevConfig";
 import {defaultConfig} from "./DefaultConfig";
 
+export enum GameEnv {
+	Dev,
+	Prod
+}
+
 export function getConfig(): Config {
 	// TODO: 'prod' not found in prod env
 	if (process.env.GAME_ENV == 'dev') {
@@ -12,6 +17,10 @@ export function getConfig(): Config {
 		console.log('Using prod config')
 		return defaultConfig
 	}
+}
+
+export function getGameEnv(): GameEnv {
+	return GameEnv.Prod
 }
 
 export interface Config {

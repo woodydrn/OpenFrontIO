@@ -35,15 +35,15 @@ export class DefaultConfig implements Config {
         switch (tileToConquer.terrain()) {
             case TerrainType.Plains:
                 mag = 5
-                speed = 5
+                speed = 3
                 break
             case TerrainType.Highland:
                 mag = 15
-                speed = 10
+                speed = 5
                 break
             case TerrainType.Mountain:
                 mag = 45
-                speed = 15
+                speed = 10
                 break
         }
         if (defender.isPlayer()) {
@@ -99,7 +99,7 @@ export class DefaultConfig implements Config {
         // console.log(`to add ${toAdd}`)
 
         if (player.type() == PlayerType.Bot) {
-            toAdd *= .5
+            toAdd *= .7
         }
 
         return Math.min(player.troops() + toAdd, max)

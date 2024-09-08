@@ -18,12 +18,9 @@ export class SpawnExecution implements Execution {
     }
 
     tick(ticks: number) {
-        if (!this.isActive()) {
-            return
-        }
+        this.active = false
 
-        if (ticks >= this.mg.config().numSpawnPhaseTurns()) {
-            this.active = false
+        if (!this.mg.inSpawnPhase()) {
             return
         }
 
@@ -44,8 +41,8 @@ export class SpawnExecution implements Execution {
         if (player.type() == PlayerType.Bot) {
             this.mg.addExecution(new BotExecution(player))
         }
-        this.active = false
     }
+
     owner(): MutablePlayer {
         return null
     }

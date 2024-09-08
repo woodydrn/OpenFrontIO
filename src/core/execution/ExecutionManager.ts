@@ -6,6 +6,7 @@ import {BotSpawner} from "./BotSpawner";
 import {BoatAttackExecution} from "./BoatAttackExecution";
 import {PseudoRandom} from "../PseudoRandom";
 import {UpdateNameExecution} from "./UpdateNameExecution";
+import {FakeHumanExecution} from "./FakeHumanExecution";
 
 
 export class Executor {
@@ -57,4 +58,9 @@ export class Executor {
     spawnBots(numBots: number): Execution[] {
         return new BotSpawner(this.gs).spawnBots(numBots).map(i => this.createExec(i))
     }
+
+    fakeHumanExecutions(numFakes: number): Execution[] {
+        return [new FakeHumanExecution(null)]
+    }
+
 }
