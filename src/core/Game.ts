@@ -34,6 +34,7 @@ export enum PlayerType {
 
 export interface ExecutionView {
     isActive(): boolean
+    // TODO: remove owner
     owner(): Player
     activeDuringSpawnPhase(): boolean
 }

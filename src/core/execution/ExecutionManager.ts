@@ -1,4 +1,4 @@
-import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerInfo, TerraNullius, Tile} from "../Game";
+import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerInfo, TerraNullius, Tile, PlayerType} from "../Game";
 import {AttackIntent, BoatAttackIntentSchema, Intent, Turn} from "../Schemas";
 import {AttackExecution} from "./AttackExecution";
 import {SpawnExecution} from "./SpawnExecution";
@@ -60,7 +60,18 @@ export class Executor {
     }
 
     fakeHumanExecutions(numFakes: number): Execution[] {
-        return [new FakeHumanExecution(null)]
+        const execs = []
+        for (let i = 0; i < numFakes; i++) {
+            execs.push(
+                new FakeHumanExecution(new PlayerInfo(
+                    "fake_human" + i,
+                    PlayerType.FakeHuman,
+                    this.random.nextID(),
+                    this.random.nextID()
+                ))
+            )
+        }
+        return execs
     }
 
 }
