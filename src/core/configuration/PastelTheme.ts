@@ -158,12 +158,12 @@ export const pastelTheme = new class implements Theme {
             case TerrainType.Plains:
                 return colord({
                     r: 190,
-                    g: 200 + 20 - 2 * mag,
+                    g: 220 - 2 * mag,
                     b: 138
                 })
             case TerrainType.Highland:
                 return colord({
-                    r: 190 + 2 * mag,
+                    r: 200 + 2 * mag,
                     g: 193 + 2 * mag,
                     b: 138 + 2 * mag
                 })
