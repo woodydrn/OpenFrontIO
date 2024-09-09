@@ -1,5 +1,5 @@
 import {Cell, Execution, MutableGame, Game, MutablePlayer, PlayerInfo, TerraNullius, Tile, PlayerType} from "../Game";
-import {AttackIntent, BoatAttackIntentSchema, Intent, Turn} from "../Schemas";
+import {AttackIntent, BoatAttackIntentSchema, GameID, Intent, Turn} from "../Schemas";
 import {AttackExecution} from "./AttackExecution";
 import {SpawnExecution} from "./SpawnExecution";
 import {BotSpawner} from "./BotSpawner";
@@ -7,14 +7,20 @@ import {BoatAttackExecution} from "./BoatAttackExecution";
 import {PseudoRandom} from "../PseudoRandom";
 import {UpdateNameExecution} from "./UpdateNameExecution";
 import {FakeHumanExecution} from "./FakeHumanExecution";
+import Usernames from '../../../resources/Usernames.txt'
+import {simpleHash} from "../Util";
+
 
 
 export class Executor {
 
-    private random = new PseudoRandom(999)
+    private usernames = Usernames.split('\n')
 
-    constructor(private gs: Game) {
+    // private random = new PseudoRandom(999)
+    private random: PseudoRandom = null
 
+    constructor(private gs: Game, gameID: GameID) {
+        this.random = new PseudoRandom(simpleHash(gameID))
     }
 
     createExecs(turn: Turn): Execution[] {
@@ -64,9 +70,9 @@ export class Executor {
         for (let i = 0; i < numFakes; i++) {
             execs.push(
                 new FakeHumanExecution(new PlayerInfo(
-                    "fake_human" + i,
+                    this.usernames[this.random.nextInt(0, this.usernames.length)],
                     PlayerType.FakeHuman,
-                    this.random.nextID(),
+                    null,
                     this.random.nextID()
                 ))
             )

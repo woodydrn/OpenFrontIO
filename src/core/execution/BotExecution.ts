@@ -1,4 +1,4 @@
-import {Cell, Execution, MutableGame, MutablePlayer, Player, PlayerID, PlayerInfo, TerraNullius} from "../Game"
+import {Cell, Execution, MutableGame, MutablePlayer, Player, PlayerID, PlayerInfo, PlayerType, TerraNullius} from "../Game"
 import {PseudoRandom} from "../PseudoRandom"
 import {simpleHash} from "../Util";
 import {AttackExecution} from "./AttackExecution";
@@ -59,7 +59,13 @@ export class BotExecution implements Execution {
         }
 
         const toAttack = border[this.random.nextInt(0, border.length)]
-        this.sendAttack(toAttack.owner())
+        const owner = toAttack.owner()
+        if (owner.isPlayer() && (owner.type() == PlayerType.FakeHuman || owner.type() == PlayerType.Human)) {
+            if (this.random.nextInt(0, 1) == 1) {
+                return
+            }
+        }
+        this.sendAttack(owner)
     }
 
     sendAttack(toAttack: Player | TerraNullius) {

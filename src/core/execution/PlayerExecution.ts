@@ -97,7 +97,6 @@ export class PlayerExecution implements Execution {
     }
 
     private removeCluster(cluster: Set<Tile>) {
-        console.log('removing cluster!')
         const arr = Array.from(cluster)
         const mode = getMode(arr.flatMap(t => t.neighbors()).filter(t => t.hasOwner() && t.owner() != this.player).map(t => t.owner().id()))
         if (!this.mg.hasPlayer(mode)) {
@@ -155,6 +154,6 @@ export class PlayerExecution implements Execution {
     }
 
     isActive(): boolean {
-        return this.player.isAlive()
+        return this.player == null || this.player.isAlive()
     }
 }

@@ -85,7 +85,6 @@ export class BoatAttackExecution implements Execution {
         this.aStarPre.compute(5)
         this.path = this.aStarPre.reconstructPath()
         if (this.path != null) {
-            console.log(`got path ${this.path.map(t => t.cell().toString())}`)
             this.boat = this.attacker.addBoat(this.troops, this.src, this.target)
         } else {
             console.log('got null path')

@@ -80,7 +80,6 @@ class Client {
             const nextGame = document.getElementById('next-game');
             nextGame.textContent = `Next Game: ${nextLobby.id.substring(0, 3)}`
         }
-
     }
 
     async fetchLobbies(): Promise<Lobby[]> {

@@ -46,6 +46,16 @@ export class DefaultConfig implements Config {
                 speed = 10
                 break
         }
+
+        if (attacker.isPlayer() && defender.isPlayer()) {
+            if (attacker.type() == PlayerType.Bot && defender.type() != PlayerType.Bot) {
+                mag *= 1.2
+            }
+            if (attacker.type() != PlayerType.Bot && defender.type() == PlayerType.Bot) {
+                mag *= .8
+            }
+        }
+
         if (defender.isPlayer()) {
             return {
                 attackerTroopLoss: within(defender.troops() / attacker.troops() * mag, 1, 1000),
@@ -88,9 +98,13 @@ export class DefaultConfig implements Config {
         return 10000
     }
 
-    troopAdditionRate(player: Player): number {
+    maxTroops(player: Player): number {
         let max = Math.sqrt(player.numTilesOwned()) * 3000 + 50000
-        max = Math.min(max, 1_000_000)
+        return Math.min(max, 1_000_000)
+    }
+
+    troopAdditionRate(player: Player): number {
+        let max = this.maxTroops(player)
 
         let toAdd = 10 + (player.troops() + Math.sqrt(player.troops() * player.numTilesOwned())) / 100
 
@@ -98,8 +112,11 @@ export class DefaultConfig implements Config {
         toAdd *= ratio
         // console.log(`to add ${toAdd}`)
 
+        if (player.type() == PlayerType.FakeHuman) {
+            toAdd *= 1.2
+        }
         if (player.type() == PlayerType.Bot) {
-            toAdd *= .7
+            toAdd *= .6
         }
 
         return Math.min(player.troops() + toAdd, max)

@@ -34,4 +34,16 @@ export class PseudoRandom {
     nextID(): string {
         return this.nextInt(0, 1000000).toString(36).padStart(5, '0');
     }
+
+    randElement<T>(arr: T[]): T {
+        if (arr.length == 0) {
+            throw new Error('array must not be empty')
+        }
+        return arr[this.nextInt(0, arr.length)];
+    }
+
+    chance(odds: number): boolean {
+        return this.nextInt(0, odds) == 0
+    }
+
 }

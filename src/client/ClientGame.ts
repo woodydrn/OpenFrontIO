@@ -11,7 +11,6 @@ import {and, bfs, dist, manhattanDist} from "../core/Util";
 import {TerrainRenderer} from "./graphics/TerrainRenderer";
 
 
-
 export function createClientGame(name: string, clientID: ClientID, playerID: PlayerID, ip: string | null, gameID: GameID, config: Config, terrainMap: TerrainMap): ClientGame {
     let eventBus = new EventBus()
     let game = createGame(terrainMap, eventBus, config)
@@ -28,7 +27,7 @@ export function createClientGame(name: string, clientID: ClientID, playerID: Pla
         game,
         gameRenderer,
         new InputHandler(eventBus),
-        new Executor(game)
+        new Executor(game, gameID)
     )
 }
 
@@ -118,6 +117,8 @@ export class ClientGame {
     }
 
     public start() {
+        console.log('version 3')
+
         this.isActive = true
         // TODO: make each class do this, or maybe have client intercept all requests?
         //this.eventBus.on(TickEvent, (e) => this.tick(e))
@@ -131,7 +132,8 @@ export class ClientGame {
         this.renderer.initialize()
         this.input.initialize()
         this.gs.addExecution(...this.executor.spawnBots(this.gs.config().numBots()))
-        this.gs.addExecution(...this.executor.fakeHumanExecutions(1))
+        console.log('!!! number fake humans 15')
+        this.gs.addExecution(...this.executor.fakeHumanExecutions(15))
 
         this.intervalID = setInterval(() => this.tick(), 10);
     }

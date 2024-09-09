@@ -40,6 +40,7 @@ export interface Config {
 		tilesPerTickUsed: number
 	}
 	attackAmount(attacker: Player, defender: Player | TerraNullius): number
+	maxTroops(player: Player): number
 	boatAttackAmount(attacker: Player, defender: Player | TerraNullius): number
 	boatMaxDistance(): number
 	boatMaxNumber(): number

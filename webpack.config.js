@@ -22,6 +22,10 @@ export default (env, argv) => {
 					use: 'raw-loader'
 				},
 				{
+					test: /\.txt$/,
+					use: 'raw-loader'
+				},
+				{
 					test: /\.ts$/,
 					use: 'ts-loader',
 					exclude: /node_modules/,
