@@ -16,56 +16,106 @@ export const pastelTheme = new class implements Theme {
     private shorelineWater = colord({r: 100, g: 143, b: 171});
 
     private territoryColors: Colord[] = [
-        colord({r: 205, g: 129, b: 136}), // Darker Light Pink
-        colord({r: 205, g: 173, b: 136}), // Darker Peach
-        colord({r: 140, g: 205, b: 140}), // Darker Light Green
-        colord({r: 123, g: 166, b: 205}), // Darker Light Blue
-        colord({r: 174, g: 137, b: 205}), // Darker Light Purple
-        colord({r: 205, g: 141, b: 180}), // Darker Pink
-        colord({r: 160, g: 205, b: 160}), // Darker Mint Green
-        colord({r: 205, g: 163, b: 129}), // Darker Light Orange
-        colord({r: 148, g: 148, b: 205}), // Darker Lavender
-        colord({r: 205, g: 205, b: 136}), // Darker Light Yellow
-        colord({r: 136, g: 205, b: 151}), // Darker Seafoam Green
-        colord({r: 205, g: 136, b: 205}), // Darker Light Magenta
-        colord({r: 160, g: 205, b: 160}), // Darker Pale Green
-        colord({r: 205, g: 152, b: 152}), // Darker Salmon Pink
-        colord({r: 156, g: 156, b: 205}), // Darker Periwinkle
-        colord({r: 205, g: 184, b: 136}), // Darker Cream
-        colord({r: 136, g: 205, b: 205}), // Darker Light Cyan
-        colord({r: 188, g: 160, b: 205}), // Darker Lilac
-        colord({r: 156, g: 205, b: 188}), // Darker Pale Turquoise
-        colord({r: 205, g: 159, b: 136}), // Darker Peach
-        colord({r: 136, g: 166, b: 205}), // Darker Baby Blue
-        colord({r: 196, g: 205, b: 136}), // Darker Pale Yellow
-        colord({r: 170, g: 136, b: 205}), // Darker Light Violet
-        colord({r: 205, g: 136, b: 163}), // Darker Rose
-        colord({r: 136, g: 205, b: 176}), // Darker Honeydew
-        colord({r: 156, g: 186, b: 205}), // Darker Sky Blue
-        colord({r: 205, g: 182, b: 156}), // Darker Wheat
-        colord({r: 156, g: 205, b: 205}), // Darker Pale Cyan
-        colord({r: 205, g: 166, b: 166}), // Darker Misty Rose
-        colord({r: 166, g: 166, b: 205}), // Darker Pale Lavender
-        colord({r: 205, g: 200, b: 155}), // Darker Pale Goldenrod
-        colord({r: 166, g: 205, b: 166}), // Darker Pale Mint
-        colord({r: 205, g: 166, b: 205}), // Darker Pale Plum
-        colord({r: 170, g: 205, b: 170}), // Darker Mint Cream
-        colord({r: 205, g: 170, b: 170}), // Darker Pale Pink
-        colord({r: 170, g: 170, b: 205}), // Darker Pale Blue
-        colord({r: 205, g: 205, b: 170}), // Darker Light Goldenrod
-        colord({r: 170, g: 205, b: 205}), // Darker Light Azure
-        colord({r: 205, g: 170, b: 205}), // Darker Pale Magenta
-        colord({r: 180, g: 205, b: 180}), // Darker Honeydew
-        colord({r: 205, g: 180, b: 180}), // Darker Lavender Blush
-        colord({r: 180, g: 180, b: 205}), // Darker Ghost White
-        colord({r: 205, g: 189, b: 169}), // Darker Seashell
-        colord({r: 169, g: 205, b: 189}), // Darker Mint Cream
-        colord({r: 189, g: 169, b: 205}), // Darker Pale Lavender
-        colord({r: 205, g: 200, b: 180}), // Darker Floral White
-        colord({r: 180, g: 205, b: 200}), // Darker Azure Mist
-        colord({r: 200, g: 180, b: 205}), // Darker Pale Purple
-        colord({r: 200, g: 205, b: 180}), // Darker Ivory
-        colord({r: 180, g: 200, b: 205})  // Darker Alice Blue
+        colord({r: 230, g: 100, b: 100}), // Bright Red
+        colord({r: 100, g: 180, b: 230}), // Sky Blue
+        colord({r: 230, g: 180, b: 80}),  // Golden Yellow
+        colord({r: 180, g: 100, b: 230}), // Purple
+        colord({r: 80, g: 200, b: 120}),  // Emerald Green
+        colord({r: 230, g: 130, b: 180}), // Pink
+        colord({r: 100, g: 160, b: 80}),  // Olive Green
+        colord({r: 230, g: 150, b: 100}), // Peach
+        colord({r: 80, g: 130, b: 190}),  // Navy Blue
+        colord({r: 210, g: 210, b: 100}), // Lime Yellow
+        colord({r: 190, g: 100, b: 130}), // Maroon
+        colord({r: 100, g: 210, b: 210}), // Turquoise
+        colord({r: 210, g: 140, b: 80}),  // Light Orange
+        colord({r: 150, g: 110, b: 190}), // Lavender
+        colord({r: 180, g: 210, b: 120}), // Light Green
+        colord({r: 210, g: 100, b: 160}), // Hot Pink
+        colord({r: 100, g: 140, b: 110}), // Sea Green
+        colord({r: 230, g: 180, b: 180}), // Light Pink
+        colord({r: 120, g: 120, b: 190}), // Periwinkle
+        colord({r: 190, g: 170, b: 100}), // Sand
+        colord({r: 160, g: 100, b: 100}), // Indian Red
+        colord({r: 100, g: 180, b: 160}), // Aquamarine
+        colord({r: 210, g: 160, b: 200}), // Orchid
+        colord({r: 170, g: 190, b: 100}), // Yellow Green
+        colord({r: 100, g: 130, b: 150}), // Steel Blue
+        colord({r: 230, g: 140, b: 140}), // Salmon
+        colord({r: 140, g: 180, b: 220}), // Light Blue
+        colord({r: 200, g: 160, b: 110}), // Tan
+        colord({r: 180, g: 130, b: 180}), // Plum
+        colord({r: 130, g: 200, b: 130}), // Light Sea Green
+        colord({r: 220, g: 120, b: 120}), // Coral
+        colord({r: 120, g: 160, b: 200}), // Cornflower Blue
+        colord({r: 200, g: 200, b: 140}), // Khaki
+        colord({r: 160, g: 120, b: 160}), // Purple Gray
+        colord({r: 140, g: 180, b: 140}), // Dark Sea Green
+        colord({r: 200, g: 130, b: 110}), // Dark Salmon
+        colord({r: 130, g: 170, b: 190}), // Cadet Blue
+        colord({r: 190, g: 180, b: 160}), // Tan Gray
+        colord({r: 170, g: 140, b: 190}), // Medium Purple
+        colord({r: 160, g: 190, b: 160}), // Pale Green
+        colord({r: 190, g: 150, b: 130}), // Rosy Brown
+        colord({r: 140, g: 150, b: 180}), // Light Slate Gray
+        colord({r: 180, g: 170, b: 140}), // Dark Khaki
+        colord({r: 150, g: 130, b: 150}), // Thistle
+        colord({r: 170, g: 190, b: 180}), // Pale Blue Green
+        colord({r: 190, g: 140, b: 150}), // Puce
+        colord({r: 130, g: 180, b: 170}), // Medium Aquamarine
+        colord({r: 180, g: 160, b: 180}), // Mauve
+        colord({r: 160, g: 180, b: 140}), // Dark Olive Green
+        colord({r: 170, g: 150, b: 170}),  // Dusty Rose
+        colord({r: 230, g: 100, b: 100}), // Bright Red
+        colord({r: 100, g: 180, b: 230}), // Sky Blue
+        colord({r: 230, g: 180, b: 80}),  // Golden Yellow
+        colord({r: 180, g: 100, b: 230}), // Purple
+        colord({r: 80, g: 200, b: 120}),  // Emerald Green
+        colord({r: 230, g: 130, b: 180}), // Pink
+        colord({r: 100, g: 160, b: 80}),  // Olive Green
+        colord({r: 230, g: 150, b: 100}), // Peach
+        colord({r: 80, g: 130, b: 190}),  // Navy Blue
+        colord({r: 210, g: 210, b: 100}), // Lime Yellow
+        colord({r: 190, g: 100, b: 130}), // Maroon
+        colord({r: 100, g: 210, b: 210}), // Turquoise
+        colord({r: 210, g: 140, b: 80}),  // Light Orange
+        colord({r: 150, g: 110, b: 190}), // Lavender
+        colord({r: 180, g: 210, b: 120}), // Light Green
+        colord({r: 210, g: 100, b: 160}), // Hot Pink
+        colord({r: 100, g: 140, b: 110}), // Sea Green
+        colord({r: 230, g: 180, b: 180}), // Light Pink
+        colord({r: 120, g: 120, b: 190}), // Periwinkle
+        colord({r: 190, g: 170, b: 100}), // Sand
+        colord({r: 160, g: 100, b: 100}), // Indian Red
+        colord({r: 100, g: 180, b: 160}), // Aquamarine
+        colord({r: 210, g: 160, b: 200}), // Orchid
+        colord({r: 170, g: 190, b: 100}), // Yellow Green
+        colord({r: 100, g: 130, b: 150}), // Steel Blue
+        colord({r: 230, g: 140, b: 140}), // Salmon
+        colord({r: 140, g: 180, b: 220}), // Light Blue
+        colord({r: 200, g: 160, b: 110}), // Tan
+        colord({r: 180, g: 130, b: 180}), // Plum
+        colord({r: 130, g: 200, b: 130}), // Light Sea Green
+        colord({r: 220, g: 120, b: 120}), // Coral
+        colord({r: 120, g: 160, b: 200}), // Cornflower Blue
+        colord({r: 200, g: 200, b: 140}), // Khaki
+        colord({r: 160, g: 120, b: 160}), // Purple Gray
+        colord({r: 140, g: 180, b: 140}), // Dark Sea Green
+        colord({r: 200, g: 130, b: 110}), // Dark Salmon
+        colord({r: 130, g: 170, b: 190}), // Cadet Blue
+        colord({r: 190, g: 180, b: 160}), // Tan Gray
+        colord({r: 170, g: 140, b: 190}), // Medium Purple
+        colord({r: 160, g: 190, b: 160}), // Pale Green
+        colord({r: 190, g: 150, b: 130}), // Rosy Brown
+        colord({r: 140, g: 150, b: 180}), // Light Slate Gray
+        colord({r: 180, g: 170, b: 140}), // Dark Khaki
+        colord({r: 150, g: 130, b: 150}), // Thistle
+        colord({r: 170, g: 190, b: 180}), // Pale Blue Green
+        colord({r: 190, g: 140, b: 150}), // Puce
+        colord({r: 130, g: 180, b: 170}), // Medium Aquamarine
+        colord({r: 180, g: 160, b: 180}), // Mauve
+        colord({r: 160, g: 180, b: 140}), // Dark Olive Green
+        colord({r: 170, g: 150, b: 170})  // Dusty Rose
     ];
 
     playerInfoColor(id: PlayerID): Colord {
