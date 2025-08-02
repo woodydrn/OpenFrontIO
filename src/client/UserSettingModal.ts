@@ -181,6 +181,15 @@ export class UserSettingModal extends LitElement {
     console.log("🏳️ Territory Patterns:", enabled ? "ON" : "OFF");
   }
 
+  private toggleAllianceTimer(e: CustomEvent<{ checked: boolean }>) {
+    const enabled = e.detail?.checked;
+    if (typeof enabled !== "boolean") return;
+
+    this.userSettings.set("settings.allianceTimer", enabled);
+
+    console.log("⏱️ Alliance Timer:", enabled ? "ON" : "OFF");
+  }
+
   private togglePerformanceOverlay(e: CustomEvent<{ checked: boolean }>) {
     const enabled = e.detail?.checked;
     if (typeof enabled !== "boolean") return;
@@ -325,6 +334,15 @@ export class UserSettingModal extends LitElement {
         id="territory-patterns-toggle"
         .checked=${this.userSettings.territoryPatterns()}
         @change=${this.toggleTerritoryPatterns}
+      ></setting-toggle>
+
+      <!-- ⏱️ Alliance Timer -->
+      <setting-toggle
+        label="Alliance Timer"
+        description="Show countdown timer on alliance icons indicating when the alliance expires"
+        id="alliance-timer-toggle"
+        .checked=${this.userSettings.allianceTimer()}
+        @change=${this.toggleAllianceTimer}
       ></setting-toggle>
 
       <!-- 📱 Performance Overlay -->

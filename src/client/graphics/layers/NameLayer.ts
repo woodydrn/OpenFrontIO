@@ -444,22 +444,37 @@ export class NameLayer implements Layer {
         const alliance = myPlayer
           .alliances()
           .find((a) => a.other === render.player.id());
-        iconsDiv.appendChild(
-          this.createAllianceIconWithTimer(
-            this.allianceIconImage.src,
-            iconSize,
-            "alliance",
-            alliance?.expiresAt,
-          ),
-        );
+
+        // Check if alliance timer is enabled in settings
+        if (this.userSettings.allianceTimer()) {
+          iconsDiv.appendChild(
+            this.createAllianceIconWithTimer(
+              this.allianceIconImage.src,
+              iconSize,
+              "alliance",
+              alliance?.expiresAt,
+            ),
+          );
+        } else {
+          iconsDiv.appendChild(
+            this.createIconElement(
+              this.allianceIconImage.src,
+              iconSize,
+              "alliance",
+            ),
+          );
+        }
       } else {
-        const alliance = myPlayer
-          .alliances()
-          .find((a) => a.other === render.player.id());
-        this.updateAllianceTimer(
-          existingAlliance as HTMLElement,
-          alliance?.expiresAt,
-        );
+        // Update timer if it exists and setting is enabled
+        if (this.userSettings.allianceTimer()) {
+          const alliance = myPlayer
+            .alliances()
+            .find((a) => a.other === render.player.id());
+          this.updateAllianceTimer(
+            existingAlliance as HTMLElement,
+            alliance?.expiresAt,
+          );
+        }
       }
     } else if (existingAlliance) {
       existingAlliance.remove();
