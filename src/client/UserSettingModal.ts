@@ -338,8 +338,8 @@ export class UserSettingModal extends LitElement {
 
       <!-- ⏱️ Alliance Timer -->
       <setting-toggle
-        label="Alliance Timer"
-        description="Show countdown timer on alliance icons indicating when the alliance expires"
+        label="${translateText("user_setting.alliance_timer_label")}"
+        description="${translateText("user_setting.alliance_timer_desc")}"
         id="alliance-timer-toggle"
         .checked=${this.userSettings.allianceTimer()}
         @change=${this.toggleAllianceTimer}
