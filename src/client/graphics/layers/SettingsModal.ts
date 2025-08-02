@@ -349,11 +349,13 @@ export class SettingsModal extends LitElement implements Layer {
                 height="20"
               />
               <div class="flex-1">
-                <div class="font-medium">Alliance Timer</div>
+                <div class="font-medium">
+                  ${translateText("user_setting.alliance_timer_label")}
+                </div>
                 <div class="text-sm text-slate-400">
                   ${this.userSettings.allianceTimer()
-                    ? "Show countdown timers on alliance icons"
-                    : "Show regular alliance icons without timers"}
+                    ? translateText("user_setting.alliance_timer_enabled")
+                    : translateText("user_setting.alliance_timer_disabled")}
                 </div>
               </div>
               <div class="text-sm text-slate-400">
