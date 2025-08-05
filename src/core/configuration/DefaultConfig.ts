@@ -329,7 +329,7 @@ export class DefaultConfig implements Config {
     return Math.min(1400, Math.round(20 * Math.pow(numberOfStations, 0.5)));
   }
   trainGold(): Gold {
-    return BigInt(10_000);
+    return BigInt(4_000);
   }
   trainStationMinRange(): number {
     return 15;
@@ -506,6 +506,9 @@ export class DefaultConfig implements Config {
   }
   donateCooldown(): Tick {
     return 10 * 10;
+  }
+  deleteUnitCooldown(): Tick {
+    return 5 * 10;
   }
   emojiMessageDuration(): Tick {
     return 5 * 10;
