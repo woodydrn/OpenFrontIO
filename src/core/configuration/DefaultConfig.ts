@@ -334,7 +334,7 @@ export class DefaultConfig implements Config {
     return this._gameConfig.donateTroops;
   }
   trainSpawnRate(numberOfStations: number): number {
-    return Math.min(1400, Math.round(20 * Math.pow(numberOfStations, 0.5)));
+    return Math.min(1400, Math.round(40 * Math.pow(numberOfStations, 0.5)));
   }
   trainGold(): Gold {
     return BigInt(4_000);
