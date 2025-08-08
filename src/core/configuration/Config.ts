@@ -188,6 +188,7 @@ export type Theme = {
   // unit color for alternate view
   selfColor(): Colord;
   allyColor(): Colord;
+  neutralColor(): Colord;
   enemyColor(): Colord;
   spawnHighlightColor(): Colord;
 };

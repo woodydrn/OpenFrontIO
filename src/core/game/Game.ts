@@ -492,7 +492,7 @@ export type TerraNullius = {
 export type Embargo = {
   createdAt: Tick;
   isTemporary: boolean;
-  target: PlayerID;
+  target: Player;
 };
 
 export type Player = {
@@ -603,10 +603,10 @@ export type Player = {
   // Embargo
   hasEmbargoAgainst(other: Player): boolean;
   tradingPartners(): Player[];
-  addEmbargo(other: PlayerID, isTemporary: boolean): void;
+  addEmbargo(other: Player, isTemporary: boolean): void;
   getEmbargoes(): Embargo[];
-  stopEmbargo(other: PlayerID): void;
-  endTemporaryEmbargo(other: PlayerID): void;
+  stopEmbargo(other: Player): void;
+  endTemporaryEmbargo(other: Player): void;
   canTrade(other: Player): boolean;
 
   // Attacking.
