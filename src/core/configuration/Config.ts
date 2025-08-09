@@ -133,7 +133,7 @@ export type Config = {
   unitInfo(type: UnitType): UnitInfo;
   tradeShipGold(dist: number, numPorts: number): Gold;
   tradeShipSpawnRate(numberOfPorts: number): number;
-  trainGold(): Gold;
+  trainGold(isFriendly: boolean): Gold;
   trainSpawnRate(numberOfStations: number): number;
   trainStationMinRange(): number;
   trainStationMaxRange(): number;
