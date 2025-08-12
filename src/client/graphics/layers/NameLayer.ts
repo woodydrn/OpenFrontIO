@@ -675,6 +675,7 @@ export class NameLayer implements Layer {
 
     const timer = document.createElement("div");
     timer.setAttribute("data-timer", "alliance-timer");
+    timer.setAttribute("dark-mode", this.userSettings.darkMode().toString());
     timer.style.fontSize = `${Math.max(6, Math.floor(size * 0.25))}px`;
     timer.style.color = "white";
     timer.style.fontWeight = "bold";
@@ -711,7 +712,8 @@ export class NameLayer implements Layer {
       return;
     }
 
-    const remainingSeconds = Math.max(0, Math.floor(remainingTicks / 10));
+    const TICKS_PER_SECOND = 10;
+    const remainingSeconds = Math.max(0, Math.floor(remainingTicks / TICKS_PER_SECOND));
     const minutes = Math.floor(remainingSeconds / 60);
     const seconds = remainingSeconds % 60;
 
