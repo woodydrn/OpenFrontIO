@@ -323,8 +323,14 @@ export class DefaultConfig implements Config {
   infiniteGold(): boolean {
     return this._gameConfig.infiniteGold;
   }
+  donateGold(): boolean {
+    return this._gameConfig.donateGold;
+  }
   infiniteTroops(): boolean {
     return this._gameConfig.infiniteTroops;
+  }
+  donateTroops(): boolean {
+    return this._gameConfig.donateTroops;
   }
   trainSpawnRate(numberOfStations: number): number {
     return Math.min(1400, Math.round(20 * Math.pow(numberOfStations, 0.5)));
@@ -367,6 +373,7 @@ export class DefaultConfig implements Config {
     return 1_000_000;
   }
 
+  /* eslint-disable sort-keys */
   unitInfo(type: UnitType): UnitInfo {
     switch (type) {
       case UnitType.TransportShip:
@@ -488,6 +495,7 @@ export class DefaultConfig implements Config {
         assertNever(type);
     }
   }
+  /* eslint-enable sort-keys */
 
   private costWrapper(
     type: UnitType,
