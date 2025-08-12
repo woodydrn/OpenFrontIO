@@ -57,7 +57,7 @@ export class NameLayer implements Layer {
   private shieldIconImage: HTMLImageElement;
   private container: HTMLDivElement;
   private firstPlace: PlayerView | null = null;
-  private theme: Theme = this.game.config().theme();
+  private theme: Theme;
   private userSettings: UserSettings = new UserSettings();
   private isVisible = true;
 
@@ -66,6 +66,7 @@ export class NameLayer implements Layer {
     private transformHandler: TransformHandler,
     private eventBus: EventBus,
   ) {
+    this.theme = this.game.config().theme();
     this.traitorIconImage = new Image();
     this.traitorIconImage.src = traitorIcon;
     this.disconnectedIconImage = new Image();
