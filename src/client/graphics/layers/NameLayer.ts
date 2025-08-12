@@ -466,13 +466,29 @@ export class NameLayer implements Layer {
           );
         }
       } else {
-        // Update timer if it exists and setting is enabled
-        if (this.userSettings.allianceTimer()) {
-          const alliance = myPlayer
-            .alliances()
-            .find((a) => a.other === render.player.id());
+        const alliance = myPlayer.alliances().find((a) => a.other === render.player.id());
+        const settingOn = this.userSettings.allianceTimer();
+        const existingEl = existingAlliance as HTMLElement;
+        const isImg = existingEl.tagName === "IMG";
+
+        if (settingOn && isImg) {
+          const container = this.createAllianceIconWithTimer(
+            this.allianceIconImage.src,
+            iconSize,
+            "alliance",
+            alliance?.expiresAt,
+          );
+          existingEl.replaceWith(container);
+        } else if (!settingOn && !isImg) {
+          const img = this.createIconElement(
+            this.allianceIconImage.src,
+            iconSize,
+            "alliance",
+          );
+          existingEl.replaceWith(img);
+        } else if (settingOn && !isImg) {
           this.updateAllianceTimer(
-            existingAlliance as HTMLElement,
+            existingEl,
             alliance?.expiresAt,
           );
         }
