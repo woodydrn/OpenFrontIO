@@ -45,7 +45,13 @@ export class FlagInput extends LitElement {
     super.connectedCallback();
     this.flag = this.getStoredFlag();
     this.dispatchFlagEvent();
+    window.addEventListener("flag-change", this.handleFlagChange);
   }
+
+  private handleFlagChange = (e: Event) => {
+    const event = e as CustomEvent<{ flag: string }>;
+    this.flag = event.detail.flag;
+  };
 
   createRenderRoot() {
     return this;
@@ -84,6 +90,7 @@ export class FlagInput extends LitElement {
       img.style.width = "100%";
       img.style.height = "100%";
       img.style.objectFit = "contain";
+      img.alt = `${this.flag} flag`;
       img.onerror = () => {
         if (!img.src.endsWith("/flags/xx.svg")) {
           img.src = "/flags/xx.svg";
