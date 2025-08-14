@@ -111,6 +111,7 @@ export class RadialMenu implements Layer {
     this.eventBus.on(CloseViewEvent, (e) => {
       this.hideRadialMenu();
     });
+    window.addEventListener("resize", this.handleResize);
   }
 
   private createMenuElement() {
@@ -790,6 +791,7 @@ export class RadialMenu implements Layer {
     this.menuIcons.clear();
 
     this.lastHideTime = Date.now();
+    window.removeEventListener("resize", this.handleResize);
   }
 
   private handleCenterButtonClick() {
@@ -1047,13 +1049,20 @@ export class RadialMenu implements Layer {
     const outerRadius = this.getOuterRadiusForLevel(level);
     const margin = Math.max(outerRadius, this.config.centerButtonSize) + 10;
 
-    const clampedX = Math.max(margin, Math.min(this.anchorX, window.innerWidth - margin));
-    const clampedY = Math.max(margin, Math.min(this.anchorY, window.innerHeight - margin));
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
 
-    this.menuElement
-      .select("svg")
+    // If the menu cannot fully fit on an axis, pin it to the viewport center on that axis.
+    const clampedX = 2 * margin > vw ? vw / 2 : Math.min(Math.max(this.anchorX, margin), vw - margin);
+    const clampedY = 2 * margin > vh ? vh / 2 : Math.min(Math.max(this.anchorY, margin), vh - margin);
+
+    const svgSel = this.menuElement.select("svg");
+    svgSel
       .style("top", `${clampedY}px`)
-      .style("left", `${clampedX}px`)
-      .style("transform", `translate(-50%, -50%)`);
+      .style("left", `${clampedX}px`);
   }
+
+  private handleResize = () => {
+    if (this.isVisible) this.clampAndSetMenuPositionForLevel(this.currentLevel);
+  };
 }
