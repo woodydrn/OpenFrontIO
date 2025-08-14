@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { renderPlayerFlag } from "../core/CustomFlag";
+import { translateText } from "../client/Utils";
 const flagKey = "flag";
 
 @customElement("flag-input")
@@ -24,11 +25,7 @@ export class FlagInput extends LitElement {
   }
 
   private getStoredFlag(): string {
-    const storedFlag = localStorage.getItem(flagKey);
-    if (storedFlag) {
-      return storedFlag;
-    }
-    return "";
+    return localStorage.getItem(flagKey) ?? "";
   }
 
   private dispatchFlagEvent() {
@@ -44,8 +41,8 @@ export class FlagInput extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.flag = this.getStoredFlag();
-    this.dispatchFlagEvent();
     window.addEventListener("flag-change", this.handleFlagChange);
+    this.dispatchFlagEvent();
   }
 
   disconnectedCallback() {
@@ -100,7 +97,7 @@ export class FlagInput extends LitElement {
       img.style.width = "100%";
       img.style.height = "100%";
       img.style.objectFit = "contain";
-      img.alt = `${this.flag} flag`;
+      img.alt = this.flag ? `${this.flag} ` + translateText("flag_modal.flag") : translateText("flag_modal.icon");
       img.onerror = () => {
         if (!img.src.endsWith("/flags/xx.svg")) {
           img.src = "/flags/xx.svg";
