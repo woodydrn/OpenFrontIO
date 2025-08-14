@@ -111,7 +111,6 @@ export class RadialMenu implements Layer {
     this.eventBus.on(CloseViewEvent, (e) => {
       this.hideRadialMenu();
     });
-    window.addEventListener("resize", this.handleResize);
   }
 
   private createMenuElement() {
@@ -768,6 +767,7 @@ export class RadialMenu implements Layer {
 
     this.renderMenuItems(this.currentMenuItems, this.currentLevel);
     this.onCenterButtonHover(true);
+    window.addEventListener("resize", this.handleResize);
   }
 
   public hideRadialMenu() {
