@@ -55,7 +55,12 @@ export class FlagInput extends LitElement {
 
   private handleFlagChange = (e: Event) => {
     const event = e as CustomEvent<{ flag: string }>;
+    const tmpFlag = event?.detail?.flag;
+
+    if (!tmpFlag || tmpFlag === this.flag) return;
+
     this.flag = event.detail.flag;
+    localStorage.setItem(flagKey, this.flag);
   };
 
   createRenderRoot() {
