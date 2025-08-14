@@ -200,7 +200,7 @@ export const GameInfoSchema = z.object({
 });
 export type GameInfo = z.infer<typeof GameInfoSchema>;
 
-const countryCodes = countries.map((c) => c.code);
+const countryCodes = countries.filter((c) => !c.restricted).map((c) => c.code);
 export const FlagSchema = z
   .string()
   .max(128)
