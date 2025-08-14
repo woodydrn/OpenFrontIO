@@ -224,10 +224,6 @@
     "start": "Start Game",
     "host_badge": "Host"
   },
-  "flag_modal": {
-    "flag": "Flag",
-    "icon": "Flag icon"
-  },
   "team_colors": {
     "red": "Red",
     "blue": "Blue",

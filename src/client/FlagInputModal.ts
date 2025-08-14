@@ -1,6 +1,5 @@
 import { LitElement, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
-import { translateText } from "../client/Utils";
 import Countries from "./data/countries.json";
 
 @customElement("flag-input-modal")
@@ -48,7 +47,7 @@ export class FlagInputModal extends LitElement {
                 <img
                   class="country-flag w-full h-auto"
                   src="/flags/${country.code}.svg"
-                  alt="${country.name} ${translateText("flag_modal.flag")}"
+                  alt="${country.name} flag"
                   @error=${(e: Event) => {
                     const img = e.currentTarget as HTMLImageElement;
                     const fallback = "/flags/xx.svg";
