@@ -57,6 +57,9 @@ export class RadialMenu implements Layer {
   private lastHideTime = 0;
   private reopenCooldownMs = 300;
 
+  private anchorX = 0;
+  private anchorY = 0;
+
   private menuGroups: Map<
     number,
     d3.Selection<SVGGElement, unknown, null, undefined>
@@ -146,6 +149,7 @@ export class RadialMenu implements Layer {
       .style("position", "absolute")
       .style("top", "50%")
       .style("left", "50%")
+      .style("transition", `top ${this.config.menuTransitionDuration}ms ease, left ${this.config.menuTransitionDuration}ms ease`)
       .style("transform", "translate(-50%, -50%)")
       .style("pointer-events", "all")
       .on("click", (event) => this.hideRadialMenu());
@@ -576,6 +580,7 @@ export class RadialMenu implements Layer {
     this.currentMenuItems = children;
     this.currentLevel++;
 
+    this.clampAndSetMenuPositionForLevel(this.currentLevel);
     this.renderMenuItems(this.currentMenuItems, this.currentLevel);
     this.updateMenuGroupVisibility();
     this.animatePreviousMenu();
@@ -655,6 +660,7 @@ export class RadialMenu implements Layer {
     this.isTransitioning = true;
 
     this.updateMenuLevels();
+    this.clampAndSetMenuPositionForLevel(this.currentLevel);
     this.clearSelectedItemHoverState();
     this.updateMenuVisibility("backward");
     this.animateMenuTransitions();
@@ -751,14 +757,11 @@ export class RadialMenu implements Layer {
     this.resetMenu();
     this.isTransitioning = false;
     this.selectedItemId = null;
+    this.anchorX = x;
+    this.anchorY = y;
 
     this.menuElement.style("display", "block");
-
-    this.menuElement
-      .select("svg")
-      .style("top", `${y}px`)
-      .style("left", `${x}px`)
-      .style("transform", `translate(-50%, -50%)`);
+    this.clampAndSetMenuPositionForLevel(this.currentLevel);
 
     this.isVisible = true;
 
@@ -1037,5 +1040,20 @@ export class RadialMenu implements Layer {
     if (this.tooltipElement) {
       this.tooltipElement.style.display = "none";
     }
+  }
+
+  // Ensure the menu's SVG center stays within viewport given the current level's outer radius
+  private clampAndSetMenuPositionForLevel(level: number) {
+    const outerRadius = this.getOuterRadiusForLevel(level);
+    const margin = Math.max(outerRadius, this.config.centerButtonSize) + 10;
+
+    const clampedX = Math.max(margin, Math.min(this.anchorX, window.innerWidth - margin));
+    const clampedY = Math.max(margin, Math.min(this.anchorY, window.innerHeight - margin));
+
+    this.menuElement
+      .select("svg")
+      .style("top", `${clampedY}px`)
+      .style("left", `${clampedX}px`)
+      .style("transform", `translate(-50%, -50%)`);
   }
 }
