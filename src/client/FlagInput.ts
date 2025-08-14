@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { renderPlayerFlag } from "../core/CustomFlag";
+import { FlagSchema } from "../core/Schemas";
 const flagKey = "flag";
 
 @customElement("flag-input")
@@ -51,9 +52,9 @@ export class FlagInput extends LitElement {
 
   private handleFlagChange = (e: Event) => {
     const event = e as CustomEvent<{ flag: string }>;
-    const tmpFlag = event?.detail?.flag;
+    const tmpFlag = event?.detail?.flag?.trim();
 
-    if (!tmpFlag || tmpFlag === this.flag) return;
+    if (!tmpFlag || tmpFlag === this.flag || !FlagSchema.safeParse(tmpFlag).success) return;
 
     this.flag = event.detail.flag;
     localStorage.setItem(flagKey, this.flag);
@@ -96,7 +97,6 @@ export class FlagInput extends LitElement {
       img.style.width = "100%";
       img.style.height = "100%";
       img.style.objectFit = "contain";
-      img.alt = this.flag ? `${this.flag} flag` : "Flag icon";
       img.onerror = () => {
         if (!img.src.endsWith("/flags/xx.svg")) {
           img.src = "/flags/xx.svg";
