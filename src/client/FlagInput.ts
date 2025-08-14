@@ -48,6 +48,11 @@ export class FlagInput extends LitElement {
     window.addEventListener("flag-change", this.handleFlagChange);
   }
 
+  disconnectedCallback() {
+    window.removeEventListener("flag-change", this.handleFlagChange);
+    super.disconnectedCallback();
+  }
+
   private handleFlagChange = (e: Event) => {
     const event = e as CustomEvent<{ flag: string }>;
     this.flag = event.detail.flag;
