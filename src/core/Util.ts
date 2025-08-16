@@ -5,6 +5,7 @@ import { GameMap, TileRef } from "./game/GameMap";
 import {
   GameConfig,
   GameID,
+  ClientID,
   GameRecord,
   PlayerRecord,
   Turn,
@@ -226,6 +227,13 @@ export function generateID(): GameID {
     8,
   );
   return nanoid();
+}
+
+export function generateClientID(): ClientID {
+  const clientId = localStorage.getItem('clientId') ?? generateID();
+  localStorage.setItem('clientId', clientId);
+
+  return clientId;
 }
 
 export function toInt(num: number): bigint {

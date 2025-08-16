@@ -2,7 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { translateText } from "../client/Utils";
 import { GameInfo, GameInfoSchema } from "../core/Schemas";
-import { generateID } from "../core/Util";
+import { generateClientID } from "../core/Util";
 import {
   WorkerApiArchivedGameLobbySchema,
   WorkerApiGameIdExistsSchema,
@@ -214,7 +214,7 @@ export class JoinPrivateLobbyModal extends LitElement {
         new CustomEvent("join-lobby", {
           detail: {
             gameID: lobbyId,
-            clientID: generateID(),
+            clientID: generateClientID(),
           } as JoinLobbyEvent,
           bubbles: true,
           composed: true,
@@ -259,7 +259,7 @@ export class JoinPrivateLobbyModal extends LitElement {
           detail: {
             gameID: lobbyId,
             gameRecord: archiveData.gameRecord,
-            clientID: generateID(),
+            clientID: generateClientID(),
           } as JoinLobbyEvent,
           bubbles: true,
           composed: true,

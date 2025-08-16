@@ -4,7 +4,7 @@ import { translateText } from "../client/Utils";
 import { ApiPublicLobbiesResponseSchema } from "../core/ExpressSchemas";
 import { GameMapType, GameMode } from "../core/game/Game";
 import { GameID, GameInfo } from "../core/Schemas";
-import { generateID } from "../core/Util";
+import { generateClientID } from "../core/Util";
 import { JoinLobbyEvent } from "./Main";
 import { terrainMapFileLoader } from "./TerrainMapFileLoader";
 
@@ -204,7 +204,7 @@ export class PublicLobby extends LitElement {
         new CustomEvent("join-lobby", {
           detail: {
             gameID: lobby.gameID,
-            clientID: generateID(),
+            clientID: generateClientID(),
           } as JoinLobbyEvent,
           bubbles: true,
           composed: true,
