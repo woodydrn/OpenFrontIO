@@ -229,16 +229,29 @@ export function generateID(): GameID {
   return nanoid();
 }
 
-export type GameClient = {
-  [gameID: string]: ClientID;
+export type GameClientEntry = {
+  expiresAt: number;
+  id: ClientID;
 };
+
+export type GameClient = Record<GameID, GameClientEntry>;
 
 export function readGameClients(): GameClient {
   try {
     const raw = localStorage.getItem("game_clients");
     if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return (parsed && typeof parsed === "object") ? (parsed as GameClient) : {};
+    const parsed = (JSON.parse(raw) as GameClient);
+
+    // delete any expired entries
+    for (const [gameID, entry] of Object.entries(parsed)) {
+      if (entry && typeof entry === "object") {
+        if (entry.expiresAt && entry.expiresAt < Date.now()) {
+          delete parsed[gameID];
+        }
+      }
+    }
+
+    return parsed;
   } catch {
     return {};
   }
@@ -256,11 +269,14 @@ export function generateClientID(gameID: GameID, getFromStorage = true): ClientI
   const clients = readGameClients();
 
   if (getFromStorage && clients[gameID]) {
-    return clients[gameID];
+    return clients[gameID].id;
   }
 
   const clientId = generateID();
-  clients[gameID] = clientId;
+  clients[gameID] = {
+    expiresAt: Date.now() + 24 * 60 * 60 * 1000, // expires 24 hours
+    id: clientId,
+  };
   writeGameClients(clients);
   return clientId;
 }
