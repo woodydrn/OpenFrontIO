@@ -7,7 +7,6 @@ import { GameView } from "../../../core/game/GameView";
 import { SendWinnerEvent } from "../../Transport";
 import { GutterAdModalEvent } from "./GutterAdModal";
 import { Layer } from "./Layer";
-import { clearClientID } from "../../../core/Util";
 
 @customElement("win-modal")
 export class WinModal extends LitElement implements Layer {
@@ -213,16 +212,9 @@ export class WinModal extends LitElement implements Layer {
       this.hasShownDeathModal = true;
       this._title = translateText("win_modal.died");
       this.show();
-      clearClientID(this.game.gameID());
     }
-
     const updates = this.game.updatesSinceLastTick();
     const winUpdates = updates !== null ? updates[GameUpdateType.Win] : [];
-
-    if (winUpdates.length > 0) {
-      clearClientID(this.game.gameID());
-    }
-
     winUpdates.forEach((wu) => {
       if (wu.winner === undefined) {
         // ...

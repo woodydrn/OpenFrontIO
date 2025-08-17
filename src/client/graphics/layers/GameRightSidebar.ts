@@ -12,7 +12,6 @@ import { GameUpdateType } from "../../../core/game/GameUpdates";
 import { GameView } from "../../../core/game/GameView";
 import { PauseGameEvent } from "../../Transport";
 import { translateText } from "../../Utils";
-import { clearClientID } from "../../../core/Util";
 import { Layer } from "./Layer";
 import { ShowReplayPanelEvent } from "./ReplayPanel";
 import { ShowSettingsModalEvent } from "./SettingsModal";
@@ -95,8 +94,6 @@ export class GameRightSidebar extends LitElement implements Layer {
       );
       if (!isConfirmed) return;
     }
-
-    clearClientID(this.game.gameID());
     window.location.href = "/";
   }
 
