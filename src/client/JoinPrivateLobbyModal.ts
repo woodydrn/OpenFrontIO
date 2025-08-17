@@ -214,7 +214,7 @@ export class JoinPrivateLobbyModal extends LitElement {
         new CustomEvent("join-lobby", {
           detail: {
             gameID: lobbyId,
-            clientID: generateClientID(),
+            clientID: generateClientID(lobbyId),
           } as JoinLobbyEvent,
           bubbles: true,
           composed: true,
@@ -259,7 +259,7 @@ export class JoinPrivateLobbyModal extends LitElement {
           detail: {
             gameID: lobbyId,
             gameRecord: archiveData.gameRecord,
-            clientID: generateClientID(),
+            clientID: generateClientID(lobbyId),
           } as JoinLobbyEvent,
           bubbles: true,
           composed: true,

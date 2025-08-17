@@ -204,7 +204,7 @@ export class PublicLobby extends LitElement {
         new CustomEvent("join-lobby", {
           detail: {
             gameID: lobby.gameID,
-            clientID: generateClientID(),
+            clientID: generateClientID(lobby.gameID, false),
           } as JoinLobbyEvent,
           bubbles: true,
           composed: true,

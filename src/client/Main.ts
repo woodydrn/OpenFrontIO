@@ -479,7 +479,7 @@ class Client {
             : this.flagInput.getCurrentFlag(),
         playerName: this.usernameInput?.getCurrentUsername() ?? "",
         token: getPlayToken(),
-        clientID: generateClientID(),
+        clientID: generateClientID(lobby.gameID),
         gameStartInfo: lobby.gameStartInfo ?? lobby.gameRecord?.info,
         gameRecord: lobby.gameRecord,
       },

@@ -229,11 +229,48 @@ export function generateID(): GameID {
   return nanoid();
 }
 
-export function generateClientID(): ClientID {
-  const clientId = localStorage.getItem('clientId') ?? generateID();
-  localStorage.setItem('clientId', clientId);
+export type GameClient = {
+  [gameID: string]: ClientID;
+};
 
+export function readGameClients(): GameClient {
+  try {
+    const raw = localStorage.getItem("game_clients");
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return (parsed && typeof parsed === "object") ? (parsed as GameClient) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function writeGameClients(clients: GameClient): void {
+  if (Object.keys(clients).length === 0) {
+    localStorage.removeItem("game_clients");
+  } else {
+    localStorage.setItem("game_clients", JSON.stringify(clients));
+  }
+}
+
+export function generateClientID(gameID: GameID, getFromStorage = true): ClientID {
+  const clients = readGameClients();
+
+  if (getFromStorage && clients[gameID]) {
+    return clients[gameID];
+  }
+
+  const clientId = generateID();
+  clients[gameID] = clientId;
+  writeGameClients(clients);
   return clientId;
+}
+
+export function clearClientID(gameID: GameID) {
+  const clients = readGameClients();
+  if (clients[gameID] !== undefined) {
+    delete clients[gameID];
+    writeGameClients(clients);
+  }
 }
 
 export function toInt(num: number): bigint {

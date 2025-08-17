@@ -412,8 +412,8 @@ export class SinglePlayerModal extends LitElement {
     console.log(
       `Starting single player game with map: ${GameMapType[this.selectedMap as keyof typeof GameMapType]}${this.useRandomMap ? " (Randomly selected)" : ""}`,
     );
-    const clientID = generateClientID();
     const gameID = generateID();
+    const clientID = generateClientID(gameID);
 
     const usernameInput = document.querySelector(
       "username-input",
