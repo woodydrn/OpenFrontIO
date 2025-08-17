@@ -10,6 +10,7 @@ export class FlagInputModal extends LitElement {
   };
 
   @state() private search = "";
+  @state() private isModalOpen = false;
 
   createRenderRoot() {
     return this;
@@ -19,10 +20,11 @@ export class FlagInputModal extends LitElement {
     return html`
       <o-modal title="Flag Selector Modal" alwaysMaximized>
         <input
-          class="h-[2rem] border-none text-center border border-gray-300
+          class="h-[2rem] border-none border border-gray-300
           rounded-xl shadow-sm text-2xl text-center focus:outline-none
           focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black
           dark:border-gray-300/60 dark:bg-gray-700 dark:text-white"
+
           type="text"
           placeholder="Search..."
           @change=${this.handleSearch}
@@ -31,7 +33,7 @@ export class FlagInputModal extends LitElement {
         <div
           class="flex flex-wrap justify-evenly gap-[1rem] overflow-y-auto overflow-x-hidden h-[90%]"
         >
-          ${Countries.filter(
+          ${this.isModalOpen ? Countries.filter(
             (country) =>
               country.name.toLowerCase().includes(this.search.toLowerCase()) ||
               country.code.toLowerCase().includes(this.search.toLowerCase()),
@@ -61,7 +63,7 @@ export class FlagInputModal extends LitElement {
                 <span class="country-name">${country.name}</span>
               </button>
             `,
-          )}
+          ) : html``}
         </div>
       </o-modal>
     `;
@@ -83,9 +85,11 @@ export class FlagInputModal extends LitElement {
   }
 
   public open() {
+    this.isModalOpen = true;
     this.modalEl?.open();
   }
   public close() {
+    this.isModalOpen = false;
     this.modalEl?.close();
   }
 
