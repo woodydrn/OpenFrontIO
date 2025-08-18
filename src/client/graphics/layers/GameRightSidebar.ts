@@ -94,6 +94,7 @@ export class GameRightSidebar extends LitElement implements Layer {
       );
       if (!isConfirmed) return;
     }
+    // redirect to the home page
     window.location.href = "/";
   }
 
