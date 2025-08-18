@@ -8,7 +8,6 @@ import {
   GameConfig,
   GameID,
   GameRecord,
-  ID,
   PlayerRecord,
   Turn,
   Winner,
@@ -233,7 +232,7 @@ export function getClientID(gameID: GameID): ClientID {
   const cachedGame = localStorage.getItem("game_id");
   const cachedClient = localStorage.getItem("client_id");
 
-  if (gameID === cachedGame && cachedClient && ID.safeParse(cachedClient).success) return cachedClient;
+  if (gameID === cachedGame && cachedClient) return cachedClient;
 
   const clientId = generateID();
   localStorage.setItem("game_id", gameID);

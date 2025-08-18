@@ -42,4 +42,14 @@ describe("Util", () => {
     const stored = (globalThis as any).localStorage.getItem("client_id");
     expect(stored).toBe(id2);
   });
+
+  test("creates two games with same game id, make sure the id stays the same", () => {
+    const id1 = getClientID("testGameID1");
+    const id2 = getClientID("testGameID1");
+
+    expect(id1).toBe(id2);
+
+    const stored = (globalThis as any).localStorage.getItem("client_id");
+    expect(stored).toBe(id1);
+  });
 });
