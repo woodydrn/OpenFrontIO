@@ -1,7 +1,6 @@
 import "./components/baseComponents/Button";
 import "./components/baseComponents/Modal";
 import { GameInfo, GameInfoSchema } from "../core/Schemas";
-import { generateClientID } from "../core/Util";
 import { LitElement, html } from "lit";
 import {
   WorkerApiArchivedGameLobbySchema,
@@ -9,7 +8,7 @@ import {
 } from "../core/WorkerSchemas";
 import { customElement, query, state } from "lit/decorators.js";
 import { JoinLobbyEvent } from "./Main";
-import { generateID } from "../core/Util";
+import { getClientID } from "../core/Util";
 import { getServerConfigFromClient } from "../core/configuration/ConfigLoader";
 import { translateText } from "../client/Utils";
 
@@ -221,7 +220,7 @@ export class JoinPrivateLobbyModal extends LitElement {
         new CustomEvent("join-lobby", {
           detail: {
             gameID: lobbyId,
-            clientID: generateClientID(lobbyId),
+            clientID: getClientID(lobbyId),
           } as JoinLobbyEvent,
           bubbles: true,
           composed: true,
@@ -266,7 +265,7 @@ export class JoinPrivateLobbyModal extends LitElement {
           detail: {
             gameID: lobbyId,
             gameRecord: archiveData.gameRecord,
-            clientID: generateClientID(lobbyId),
+            clientID: getClientID(lobbyId),
           } as JoinLobbyEvent,
           bubbles: true,
           composed: true,

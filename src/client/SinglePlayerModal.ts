@@ -15,13 +15,13 @@ import {
 } from "../core/game/Game";
 import { LitElement, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
+import { generateID, getClientID } from "../core/Util";
 import { DifficultyDescription } from "./components/Difficulties";
 import { FlagInput } from "./FlagInput";
 import { JoinLobbyEvent } from "./Main";
 import { TeamCountConfig } from "../core/Schemas";
 import { UserSettings } from "../core/game/UserSettings";
 import { UsernameInput } from "./UsernameInput";
-import { generateClientID, generateID } from "../core/Util";
 import randomMap from "../../resources/images/RandomMap.webp";
 import { renderUnitTypeOptions } from "./utilities/RenderUnitTypeOptions";
 import { translateText } from "../client/Utils";
@@ -414,7 +414,7 @@ export class SinglePlayerModal extends LitElement {
       }${this.useRandomMap ? " (Randomly selected)" : ""}`,
     );
     const gameID = generateID();
-    const clientID = generateClientID(gameID);
+    const clientID = getClientID(gameID);
 
     const usernameInput = document.querySelector(
       "username-input",

@@ -17,7 +17,6 @@ import { FlagInput } from "./FlagInput";
 import { FlagInputModal } from "./FlagInputModal";
 import { GameStartingModal } from "./GameStartingModal";
 import { GameType } from "../core/game/Game";
-import { generateClientID } from "../core/Util";
 import { HelpModal } from "./HelpModal";
 import { HostLobbyModal } from "./HostLobbyModal";
 import { JoinPrivateLobbyModal } from "./JoinPrivateLobbyModal";
@@ -35,6 +34,7 @@ import { UserMeResponse } from "../core/ApiSchemas";
 import { UserSettingModal } from "./UserSettingModal";
 import { UserSettings } from "../core/game/UserSettings";
 import { UsernameInput } from "./UsernameInput";
+import { getClientID } from "../core/Util";
 import { getServerConfigFromClient } from "../core/configuration/ConfigLoader";
 import { joinLobby } from "./ClientGameRunner";
 import version from "../../resources/version.txt";
@@ -475,7 +475,7 @@ class Client {
             : this.flagInput.getCurrentFlag(),
         playerName: this.usernameInput?.getCurrentUsername() ?? "",
         token: getPlayToken(),
-        clientID: generateClientID(lobby.gameID),
+        clientID: getClientID(lobby.gameID),
         gameStartInfo: lobby.gameStartInfo ?? lobby.gameRecord?.info,
         gameRecord: lobby.gameRecord,
       },

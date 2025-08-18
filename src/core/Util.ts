@@ -4,10 +4,11 @@ import {
 } from "./execution/utils/BotNames";
 import { Cell, Unit } from "./game/Game";
 import {
+  ClientID,
   GameConfig,
   GameID,
-  ClientID,
   GameRecord,
+  ID,
   PlayerRecord,
   Turn,
   Winner,
@@ -228,64 +229,17 @@ export function generateID(): GameID {
   return nanoid();
 }
 
-export type GameClientEntry = {
-  expiresAt: number;
-  id: ClientID;
-};
+export function getClientID(gameID: GameID): ClientID {
+  const cachedGame = localStorage.getItem("game_id");
+  const cachedClient = localStorage.getItem("client_id");
 
-export type GameClient = Record<GameID, GameClientEntry>;
-
-export function readGameClients(): GameClient {
-  try {
-    const raw = localStorage.getItem("game_clients");
-    if (!raw) return {};
-    const parsed = (JSON.parse(raw) as GameClient);
-
-    // delete any expired entries
-    for (const [gameID, entry] of Object.entries(parsed)) {
-      if (entry && typeof entry === "object") {
-        if (entry.expiresAt && entry.expiresAt < Date.now()) {
-          delete parsed[gameID];
-        }
-      }
-    }
-
-    return parsed;
-  } catch {
-    return {};
-  }
-}
-
-export function writeGameClients(clients: GameClient): void {
-  if (Object.keys(clients).length === 0) {
-    localStorage.removeItem("game_clients");
-  } else {
-    localStorage.setItem("game_clients", JSON.stringify(clients));
-  }
-}
-
-export function generateClientID(gameID: GameID, getFromStorage = true): ClientID {
-  const clients = readGameClients();
-
-  if (getFromStorage && clients[gameID]) {
-    return clients[gameID].id;
-  }
+  if (gameID === cachedGame && cachedClient && ID.safeParse(cachedClient).success) return cachedClient;
 
   const clientId = generateID();
-  clients[gameID] = {
-    expiresAt: Date.now() + 24 * 60 * 60 * 1000, // expires 24 hours
-    id: clientId,
-  };
-  writeGameClients(clients);
-  return clientId;
-}
+  localStorage.setItem("game_id", gameID);
+  localStorage.setItem("client_id", clientId);
 
-export function clearClientID(gameID: GameID) {
-  const clients = readGameClients();
-  if (clients[gameID] !== undefined) {
-    delete clients[gameID];
-    writeGameClients(clients);
-  }
+  return clientId;
 }
 
 export function toInt(num: number): bigint {
