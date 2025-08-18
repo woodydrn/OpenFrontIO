@@ -1,12 +1,12 @@
+import { GameID, GameInfo } from "../core/Schemas";
+import { GameMapType, GameMode } from "../core/game/Game";
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { translateText } from "../client/Utils";
 import { ApiPublicLobbiesResponseSchema } from "../core/ExpressSchemas";
-import { GameMapType, GameMode } from "../core/game/Game";
-import { GameID, GameInfo } from "../core/Schemas";
-import { generateClientID } from "../core/Util";
 import { JoinLobbyEvent } from "./Main";
+import { generateClientID, generateID } from "../core/Util";
 import { terrainMapFileLoader } from "./TerrainMapFileLoader";
+import { translateText } from "../client/Utils";
 
 @customElement("public-lobby")
 export class PublicLobby extends LitElement {
@@ -75,7 +75,7 @@ export class PublicLobby extends LitElement {
 
   async fetchLobbies(): Promise<GameInfo[]> {
     try {
-      const response = await fetch(`/api/public_lobbies`);
+      const response = await fetch("/api/public_lobbies");
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const json = await response.json();

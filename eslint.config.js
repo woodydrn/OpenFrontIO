@@ -1,12 +1,13 @@
 import eslintConfigPrettier from "eslint-config-prettier/flat";
+import eslintPluginLocal from "./eslint-plugin-local/plugin.js";
+import { fileURLToPath } from "node:url";
 import globals from "globals";
+import { includeIgnoreFile } from "@eslint/compat";
+import jest from "eslint-plugin-jest";
 import path from "node:path";
 import pluginJs from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
 import tseslint from "typescript-eslint";
-import { fileURLToPath } from "node:url";
-import { includeIgnoreFile } from "@eslint/compat";
-import eslintPluginLocal from "./eslint-plugin-local/plugin.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,7 +54,7 @@ export default [
     },
     rules: {
       // Enable rules
-      // '@stylistic/quotes': ['error', 'single'], TODO: Enable this rule, https://github.com/openfrontio/OpenFrontIO/issues/1788
+      "@stylistic/quotes": ["error", "double", { avoidEscape: true }],
       "@stylistic/indent": ["error", 2],
       "@stylistic/semi": "error",
       "@stylistic/space-infix-ops": "error",
@@ -112,10 +113,10 @@ export default [
       "object-curly-newline": ["error", { multiline: true, consistent: true }],
       "object-curly-spacing": ["error", "always"],
       "object-property-newline": ["error", { allowAllPropertiesOnSameLine: true }],
-      // "no-undef": "error", // TODO: Enable this rule, https://github.com/openfrontio/OpenFrontIO/issues/1786
+      "no-undef": "error",
       "no-unused-vars": "off", // @typescript-eslint/no-unused-vars
       "quote-props": ["error", "consistent-as-needed"],
-      // 'sort-imports': 'error', // TODO: Enable this rule, https://github.com/openfrontio/OpenFrontIO/issues/1787
+      "sort-imports": "error",
       "space-before-blocks": ["error", "always"],
       "space-before-function-paren": ["error", {
         anonymous: "always",
@@ -141,6 +142,19 @@ export default [
       "max-len": "off",
       "sort-keys": "off",
     },
+  },
+  {
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
+    files: [
+      "**/*.test.{js,ts,jsx,tsx}",
+      "tests/**/*.{js,ts,jsx,tsx}",
+    ],
+    plugins: ["jest"],
+    ...jest.configs["flat/style"],
   },
   {
     files: [

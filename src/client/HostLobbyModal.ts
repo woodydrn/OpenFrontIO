@@ -1,9 +1,14 @@
 /* eslint-disable max-lines */
-import { LitElement, html } from "lit";
-import { customElement, query, state } from "lit/decorators.js";
-import randomMap from "../../resources/images/RandomMap.webp";
-import { translateText } from "../client/Utils";
-import { getServerConfigFromClient } from "../core/configuration/ConfigLoader";
+import "./components/Difficulties";
+import "./components/Maps";
+import "./components/baseComponents/Modal";
+import {
+  ClientInfo,
+  GameConfig,
+  GameInfo,
+  GameInfoSchema,
+  TeamCountConfig,
+} from "../core/Schemas";
 import {
   Difficulty,
   Duos,
@@ -14,21 +19,16 @@ import {
   UnitType,
   mapCategories,
 } from "../core/game/Game";
-import { UserSettings } from "../core/game/UserSettings";
-import {
-  ClientInfo,
-  GameConfig,
-  GameInfo,
-  GameInfoSchema,
-  TeamCountConfig,
-} from "../core/Schemas";
-import { generateID } from "../core/Util";
-import "./components/baseComponents/Modal";
-import "./components/Difficulties";
+import { LitElement, html } from "lit";
+import { customElement, query, state } from "lit/decorators.js";
 import { DifficultyDescription } from "./components/Difficulties";
-import "./components/Maps";
 import { JoinLobbyEvent } from "./Main";
+import { UserSettings } from "../core/game/UserSettings";
+import { generateID } from "../core/Util";
+import { getServerConfigFromClient } from "../core/configuration/ConfigLoader";
+import randomMap from "../../resources/images/RandomMap.webp";
 import { renderUnitTypeOptions } from "./utilities/RenderUnitTypeOptions";
+import { translateText } from "../client/Utils";
 
 @customElement("host-lobby-modal")
 export class HostLobbyModal extends LitElement {
@@ -55,7 +55,7 @@ export class HostLobbyModal extends LitElement {
   @state() private lobbyCreatorClientID = "";
   @state() private lobbyIdVisible = true;
 
-  private playersInterval: NodeJS.Timeout | null = null;
+  private playersInterval: ReturnType<typeof setTimeout> | null = null;
   // Add a new timer for debouncing bot changes
   private botsUpdateTimer: number | null = null;
   private userSettings: UserSettings = new UserSettings();

@@ -1,6 +1,8 @@
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { FlagSchema } from "../core/Schemas";
 import { renderPlayerFlag } from "../core/CustomFlag";
+
 const flagKey = "flag";
 
 @customElement("flag-input")
@@ -41,10 +43,24 @@ export class FlagInput extends LitElement {
     );
   }
 
+  private updateFlag = (ev: Event) => {
+    const e = ev as CustomEvent<{ flag: string }>;
+    if (!FlagSchema.safeParse(e.detail.flag).success) return;
+    if (this.flag !== e.detail.flag) {
+      this.flag = e.detail.flag;
+    }
+  };
+
   connectedCallback() {
     super.connectedCallback();
     this.flag = this.getStoredFlag();
     this.dispatchFlagEvent();
+    window.addEventListener("flag-change", this.updateFlag as EventListener);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener("flag-change", this.updateFlag as EventListener);
   }
 
   createRenderRoot() {
@@ -83,7 +99,7 @@ export class FlagInput extends LitElement {
       renderPlayerFlag(this.flag, preview);
     } else {
       const img = document.createElement("img");
-      img.src = this.flag ? `/flags/${this.flag}.svg` : `/flags/xx.svg`;
+      img.src = this.flag ? `/flags/${this.flag}.svg` : "/flags/xx.svg";
       img.style.width = "100%";
       img.style.height = "100%";
       img.style.objectFit = "contain";

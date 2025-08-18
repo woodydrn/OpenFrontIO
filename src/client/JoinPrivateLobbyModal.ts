@@ -1,16 +1,17 @@
-import { LitElement, html } from "lit";
-import { customElement, query, state } from "lit/decorators.js";
-import { translateText } from "../client/Utils";
+import "./components/baseComponents/Button";
+import "./components/baseComponents/Modal";
 import { GameInfo, GameInfoSchema } from "../core/Schemas";
 import { generateClientID } from "../core/Util";
+import { LitElement, html } from "lit";
 import {
   WorkerApiArchivedGameLobbySchema,
   WorkerApiGameIdExistsSchema,
 } from "../core/WorkerSchemas";
-import { getServerConfigFromClient } from "../core/configuration/ConfigLoader";
+import { customElement, query, state } from "lit/decorators.js";
 import { JoinLobbyEvent } from "./Main";
-import "./components/baseComponents/Button";
-import "./components/baseComponents/Modal";
+import { generateID } from "../core/Util";
+import { getServerConfigFromClient } from "../core/configuration/ConfigLoader";
+import { translateText } from "../client/Utils";
 
 @customElement("join-private-lobby-modal")
 export class JoinPrivateLobbyModal extends LitElement {
@@ -23,7 +24,7 @@ export class JoinPrivateLobbyModal extends LitElement {
   @state() private hasJoined = false;
   @state() private players: string[] = [];
 
-  private playersInterval: NodeJS.Timeout | null = null;
+  private playersInterval: ReturnType<typeof setTimeout> | null = null;
 
   connectedCallback() {
     super.connectedCallback();
