@@ -21,7 +21,7 @@ describe("Util", () => {
     (globalThis as any).localStorage = new InMemoryLocalStorage();
   });
 
-  test("creates and persists a new client when absent", () => {
+  test("creates and persists a new client", () => {
     expect((globalThis as any).localStorage.getItem("client_id")).toBeNull();
 
     const id = getClientID("testGameID");
@@ -30,10 +30,16 @@ describe("Util", () => {
     expect(id).toMatch(/^[0-9a-zA-Z]{8}$/);
 
     const stored = (globalThis as any).localStorage.getItem("client_id");
-    expect(stored).not.toBeNull();
+    expect(stored).toBe(id);
+  });
 
-    const parsed = JSON.parse(stored) as any;
-    expect(parsed).toHaveProperty("testGameID");
-    expect(parsed.testGameID).toHaveProperty("id", id);
+  test("creates two games and make sure only last one is updated", () => {
+    const id1 = getClientID("testGameID1");
+    const id2 = getClientID("testGameID2");
+
+    expect(id1).not.toBe(id2);
+
+    const stored = (globalThis as any).localStorage.getItem("client_id");
+    expect(stored).toBe(id2);
   });
 });
