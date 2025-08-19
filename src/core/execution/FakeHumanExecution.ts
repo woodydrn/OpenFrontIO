@@ -28,25 +28,25 @@ import { closestTwoTiles } from "./Util";
 
 export class FakeHumanExecution implements Execution {
   private active = true;
-  private random: PseudoRandom;
+  private readonly random: PseudoRandom;
   private behavior: BotBehavior | null = null;
   private mg: Game;
   private player: Player | null = null;
 
-  private attackRate: number;
-  private attackTick: number;
-  private triggerRatio: number;
-  private reserveRatio: number;
-  private expandRatio: number;
+  private readonly attackRate: number;
+  private readonly attackTick: number;
+  private readonly triggerRatio: number;
+  private readonly reserveRatio: number;
+  private readonly expandRatio: number;
 
-  private lastEmojiSent = new Map<Player, Tick>();
-  private lastNukeSent: [Tick, TileRef][] = [];
-  private embargoMalusApplied = new Set<PlayerID>();
-  private heckleEmoji: number[];
+  private readonly lastEmojiSent = new Map<Player, Tick>();
+  private readonly lastNukeSent: [Tick, TileRef][] = [];
+  private readonly embargoMalusApplied = new Set<PlayerID>();
+  private readonly heckleEmoji: number[];
 
   constructor(
     gameID: GameID,
-    private nation: Nation,
+    private readonly nation: Nation,
   ) {
     this.random = new PseudoRandom(
       simpleHash(nation.playerInfo.id) + simpleHash(gameID),
@@ -67,7 +67,7 @@ export class FakeHumanExecution implements Execution {
   }
 
   private updateRelationsFromEmbargos() {
-    const player = this.player;
+    const { player } = this;
     if (player === null) return;
     const others = this.mg.players().filter((p) => p.id() !== player.id());
 
@@ -90,7 +90,7 @@ export class FakeHumanExecution implements Execution {
   }
 
   private handleEmbargoesToHostileNations() {
-    const player = this.player;
+    const { player } = this;
     if (player === null) return;
     const others = this.mg.players().filter((p) => p.id() !== player.id());
 
@@ -98,7 +98,8 @@ export class FakeHumanExecution implements Execution {
       /* When player is hostile starts embargo. Do not stop until neutral again */
       if (
         player.relation(other) <= Relation.Hostile &&
-        !player.hasEmbargoAgainst(other)
+        !player.hasEmbargoAgainst(other) &&
+        !player.isOnSameTeam(other)
       ) {
         player.addEmbargo(other, false);
       } else if (
@@ -248,7 +249,7 @@ export class FakeHumanExecution implements Execution {
     if (other.isTraitor()) {
       return false;
     }
-    const difficulty = this.mg.config().gameConfig().difficulty;
+    const { difficulty } = this.mg.config().gameConfig();
     if (
       difficulty === Difficulty.Hard ||
       difficulty === Difficulty.Impossible
@@ -458,7 +459,91 @@ export class FakeHumanExecution implements Execution {
         )
         : Array.from(this.player.tiles());
     if (tiles.length === 0) return null;
-    return this.random.randElement(tiles);
+    const valueFunction = this.structureSpawnTileValue(type);
+    let bestTile: TileRef | null = null;
+    let bestValue = 0;
+    const sampledTiles = this.arraySampler(tiles);
+    for (const t of sampledTiles) {
+      const v = valueFunction(t);
+      if (v <= bestValue && bestTile !== null) continue;
+      if (!this.player.canBuild(type, t)) continue;
+      // Found a better tile
+      bestTile = t;
+      bestValue = v;
+    }
+    return bestTile;
+  }
+
+  private * arraySampler<T>(a: T[], sampleSize = 50): Generator<T> {
+    if (a.length <= sampleSize) {
+      // Return all elements
+      yield* a;
+    } else {
+      // Sample `sampleSize` elements
+      const remaining = new Set<T>(a);
+      while (sampleSize--) {
+        const t = this.random.randFromSet(remaining);
+        remaining.delete(t);
+        yield t;
+      }
+    }
+  }
+
+  private structureSpawnTileValue(type: UnitType): (tile: TileRef) => number {
+    if (this.player === null) throw new Error("not initialized");
+    const borderTiles = this.player.borderTiles();
+    const { mg } = this;
+    const otherUnits = this.player.units(type);
+    // Prefer spacing structures out of atom bomb range
+    const borderSpacing = this.mg.config().nukeMagnitudes(UnitType.AtomBomb).outer;
+    const structureSpacing = borderSpacing * 2;
+    switch (type) {
+      case UnitType.Port:
+        return (tile) => {
+          let w = 0;
+
+          // Prefer to be far away from other structures of the same type
+          const otherTiles: Set<TileRef> = new Set(otherUnits.map((u) => u.tile()));
+          otherTiles.delete(tile);
+          const closestOther = closestTwoTiles(mg, otherTiles, [tile]);
+          if (closestOther !== null) {
+            const d = mg.manhattanDist(closestOther.x, tile);
+            w += Math.min(d, structureSpacing);
+          }
+
+          return w;
+        };
+      case UnitType.City:
+      case UnitType.Factory:
+      case UnitType.MissileSilo:
+        return (tile) => {
+          let w = 0;
+
+          // Prefer higher elevations
+          w += mg.magnitude(tile);
+
+          // Prefer to be away from the border
+          const closestBorder = closestTwoTiles(mg, borderTiles, [tile]);
+          if (closestBorder !== null) {
+            const d = mg.manhattanDist(closestBorder.x, tile);
+            w += Math.min(d, borderSpacing);
+          }
+
+          // Prefer to be away from other structures of the same type
+          const otherTiles: Set<TileRef> = new Set(otherUnits.map((u) => u.tile()));
+          otherTiles.delete(tile);
+          const closestOther = closestTwoTiles(mg, otherTiles, [tile]);
+          if (closestOther !== null) {
+            const d = mg.manhattanDist(closestOther.x, tile);
+            w += Math.min(d, structureSpacing);
+          }
+
+          // TODO: Cities and factories should consider train range limits
+          return w;
+        };
+      default:
+        throw new Error(`Value function not implemented for ${type}`);
+    }
   }
 
   private maybeSpawnWarship(): boolean {

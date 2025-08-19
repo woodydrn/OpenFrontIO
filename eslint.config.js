@@ -86,6 +86,7 @@ export default [
       "@typescript-eslint/prefer-includes": "error",
       "@typescript-eslint/prefer-literal-enum-member": "error",
       "@typescript-eslint/prefer-nullish-coalescing": "error",
+      "@typescript-eslint/prefer-readonly": "error",
       "eqeqeq": "error",
       "indent": "off", // @stylistic/indent
       "sort-keys": "error",
@@ -109,12 +110,18 @@ export default [
       "max-lines-per-function": ["error", { max: 561 }],
       "no-loss-of-precision": "error",
       "no-multi-spaces": "error",
+      "no-multiple-empty-lines": ["error", { max: 1, maxEOF: 0 }],
       "no-trailing-spaces": "error",
       "object-curly-newline": ["error", { multiline: true, consistent: true }],
       "object-curly-spacing": ["error", "always"],
       "object-property-newline": ["error", { allowAllPropertiesOnSameLine: true }],
+      "object-shorthand": ["error", "always"],
       "no-undef": "error",
       "no-unused-vars": "off", // @typescript-eslint/no-unused-vars
+      "prefer-destructuring": ["error", {
+        array: false,
+        object: true,
+      }],
       "quote-props": ["error", "consistent-as-needed"],
       "sort-imports": "error",
       "space-before-blocks": ["error", "always"],

@@ -59,12 +59,12 @@ export class StructureIconsLayer implements Layer {
   private levelsStage: PIXI.Container;
   private dotsStage: PIXI.Container;
   private shouldRedraw = true;
-  private textureCache: Map<string, PIXI.Texture> = new Map();
-  private theme: Theme;
+  private readonly textureCache: Map<string, PIXI.Texture> = new Map();
+  private readonly theme: Theme;
   private renderer: PIXI.Renderer;
   private renders: StructureRenderInfo[] = [];
-  private seenUnits: Set<UnitView> = new Set();
-  private structures: Map<
+  private readonly seenUnits: Set<UnitView> = new Set();
+  private readonly structures: Map<
     UnitType,
     { visible: boolean; iconPath: string; image: HTMLImageElement | null }
   > = new Map([
@@ -87,9 +87,9 @@ export class StructureIconsLayer implements Layer {
   private renderSprites = true;
 
   constructor(
-    private game: GameView,
-    private eventBus: EventBus,
-    private transformHandler: TransformHandler,
+    private readonly game: GameView,
+    private readonly eventBus: EventBus,
+    private readonly transformHandler: TransformHandler,
   ) {
     this.theme = game.config().theme();
     this.structures.forEach((u, unitType) => this.loadIcon(u, unitType));
@@ -532,7 +532,7 @@ export class StructureIconsLayer implements Layer {
     const screenPos = this.transformHandler.worldToScreenCoordinates(worldPos);
 
     const { type, stage } = options;
-    const scale = this.transformHandler.scale;
+    const { scale } = this.transformHandler;
     const spritesEnabled = this.game
       .config()
       .userSettings()
@@ -612,7 +612,7 @@ export class StructureIconsLayer implements Layer {
     const screenPos = this.transformHandler.worldToScreenCoordinates(worldPos);
     screenPos.x = Math.round(screenPos.x);
 
-    const scale = this.transformHandler.scale;
+    const { scale } = this.transformHandler;
     screenPos.y = Math.round(
       scale >= ZOOM_THRESHOLD &&
         this.game.config().userSettings()?.structureSprites()

@@ -76,7 +76,7 @@ export class EventsDisplay extends LitElement implements Layer {
   private events: GameEvent[] = [];
 
   // allianceID -> last checked at tick
-  private alliancesCheckedAt = new Map<number, Tick>();
+  private readonly alliancesCheckedAt = new Map<number, Tick>();
   @state() private incomingAttacks: AttackUpdate[] = [];
   @state() private outgoingAttacks: AttackUpdate[] = [];
   @state() private outgoingLandAttacks: AttackUpdate[] = [];
@@ -87,7 +87,7 @@ export class EventsDisplay extends LitElement implements Layer {
   @state() private latestGoldAmount: bigint | null = null;
   @state() private goldAmountAnimating = false;
   private goldAmountTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  @state() private eventsFilters: Map<MessageCategory, boolean> = new Map([
+  @state() private readonly eventsFilters: Map<MessageCategory, boolean> = new Map([
     [MessageCategory.ATTACK, false],
     [MessageCategory.TRADE, false],
     [MessageCategory.ALLIANCE, false],
@@ -141,7 +141,7 @@ export class EventsDisplay extends LitElement implements Layer {
     this.requestUpdate();
   }
 
-  private updateMap = [
+  private readonly updateMap = [
     [GameUpdateType.DisplayEvent, this.onDisplayMessageEvent.bind(this)],
     [GameUpdateType.DisplayChatEvent, this.onDisplayChatEvent.bind(this)],
     [GameUpdateType.AllianceRequest, this.onAllianceRequestEvent.bind(this)],
@@ -358,7 +358,7 @@ export class EventsDisplay extends LitElement implements Layer {
     }
 
     this.addEvent({
-      description: description,
+      description,
       createdAt: this.game.ticks(),
       highlight: true,
       type: event.messageType,
@@ -534,8 +534,8 @@ export class EventsDisplay extends LitElement implements Layer {
       this.addEvent({
         description: translateText("events_display.betrayal_description", {
           name: betrayed.name(),
-          malusPercent: malusPercent,
-          durationText: durationText,
+          malusPercent,
+          durationText,
         }),
         type: MessageType.ALLIANCE_BROKEN,
         highlight: true,
@@ -685,7 +685,7 @@ export class EventsDisplay extends LitElement implements Layer {
       unsafeDescription: false,
       highlight: true,
       createdAt: this.game.ticks(),
-      unitView: unitView,
+      unitView,
     });
   }
 

@@ -89,7 +89,7 @@ export async function startWorker() {
   app.post(
     "/api/create_game/:id",
     gatekeeper.httpHandler(LimiterType.Post, async (req, res) => {
-      const id = req.params.id;
+      const { id } = req.params;
       const creatorClientID = (() => {
         if (typeof req.query.creatorClientID !== "string") return undefined;
 
@@ -266,7 +266,7 @@ export async function startWorker() {
 
       return res.status(200).json({
         exists: true,
-        gameRecord: gameRecord,
+        gameRecord,
         success: true,
       });
     }),
@@ -340,7 +340,7 @@ export async function startWorker() {
     if (process.send) {
       process.send({
         type: "WORKER_READY",
-        workerId: workerId,
+        workerId,
       });
       log.info("signaled ready state to master");
     }

@@ -29,8 +29,8 @@ export class ConstructionExecution implements Execution {
 
   constructor(
     private player: Player,
-    private constructionType: UnitType,
-    private tile: TileRef,
+    private readonly constructionType: UnitType,
+    private readonly tile: TileRef,
   ) {}
 
   init(mg: Game, ticks: number): void {
@@ -99,7 +99,7 @@ export class ConstructionExecution implements Execution {
   }
 
   private completeConstruction() {
-    const player = this.player;
+    const { player } = this;
     switch (this.constructionType) {
       case UnitType.AtomBomb:
       case UnitType.HydrogenBomb:

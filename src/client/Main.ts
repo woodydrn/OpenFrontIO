@@ -84,7 +84,7 @@ export type KickPlayerEvent = {
 
 class Client {
   private gameStop: (() => void) | null = null;
-  private eventBus: EventBus = new EventBus();
+  private readonly eventBus: EventBus = new EventBus();
 
   private usernameInput: UsernameInput | null = null;
   private flagInput: FlagInput | null = null;
@@ -92,7 +92,7 @@ class Client {
 
   private joinModal: JoinPrivateLobbyModal;
   private publicLobby: PublicLobby;
-  private userSettings: UserSettings = new UserSettings();
+  private readonly userSettings: UserSettings = new UserSettings();
 
   constructor() {}
 
@@ -614,7 +614,7 @@ function hasAllowedFlare(
   const allowed = config.allowedFlares();
   if (allowed === undefined) return true;
   if (userMeResponse === false) return false;
-  const flares = userMeResponse.player.flares;
+  const { flares } = userMeResponse.player;
   if (flares === undefined) return false;
   return allowed.length === 0 || allowed.some((f) => flares.includes(f));
 }
