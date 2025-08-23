@@ -8,13 +8,13 @@ import {
   GameConfig,
   GameID,
   GameRecord,
-  ID,
   PlayerRecord,
   Turn,
   Winner,
 } from "./Schemas";
 import { GameMap, TileRef } from "./game/GameMap";
 import DOMPurify from "dompurify";
+import { ID } from "./BaseSchemas";
 import { ServerConfig } from "./configuration/Config";
 import { customAlphabet } from "nanoid";
 
