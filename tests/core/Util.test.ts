@@ -2,7 +2,7 @@ import { getClientID } from "../../src/core/Util";
 
 describe("Util", () => {
   class InMemoryLocalStorage {
-    private store = new Map<string, string>();
+    private readonly store = new Map<string, string>();
     getItem(key: string): string | null {
       return this.store.has(key) ? this.store.get(key)! : null;
     }
